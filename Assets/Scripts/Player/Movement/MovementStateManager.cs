@@ -1,20 +1,28 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.Windows;
 
 public class MovementStateManager : MonoBehaviour
 {
     // movement variables
     private Vector2 moveInput;
-
-    private Vector3 direction; 
+    [HideInInspector] public Vector3 direction; 
 
     private CharacterController characterController;
     private InputSystem_Actions actionSystem;
-    [SerializeField] private float currentSpeed;
-    private float walkingSpeed = 3f;
+    public float currentSpeed;
+
+    public bool isRunning;
+
+    //Speed variables
+
+    public float walkSpeed = 3, walkBackSpeed = 2;
+    public float runSpeed = 7, runBackSpeed = 5;
+
 
     // Jump & grounded variables
-  
+
     [SerializeField] private float groundYoffSet;
     [SerializeField] private LayerMask groundMask;
     private Vector3 spherePos;
@@ -24,15 +32,30 @@ public class MovementStateManager : MonoBehaviour
     [SerializeField] private float jumpForce; 
 
     // Animator variables
-    private Animator anim;
+    [HideInInspector] public Animator anim;
+
+    // state variables
+
+    public MovementBaseState previousState;
+    public MovementBaseState currentState;
+
+    public IdleState Idle = new IdleState();
+    public WalkState Walk = new WalkState();
+    public RunState Run = new RunState();
+    public JumpState Jump = new JumpState();
 
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         actionSystem = new InputSystem_Actions();
+        
         actionSystem.Player.Move.performed += OnMovePerformed;
         actionSystem.Player.Move.canceled += OnMoveCancelled;
+
+        actionSystem.Player.Sprint.performed += OnRunPerformed;
+        actionSystem.Player.Sprint.canceled += OnRunCancelled;
     }
+
 
     void OnEnable()
     {
@@ -46,7 +69,7 @@ public class MovementStateManager : MonoBehaviour
 
     void Start()
     {
-        currentSpeed = walkingSpeed;
+        currentSpeed = walkSpeed;
         anim = GetComponent<Animator>();
     }
 
@@ -55,8 +78,12 @@ public class MovementStateManager : MonoBehaviour
     {
         Move();
         Gravity();
-        Falling();
         
+    }
+    public void SwitchState(MovementBaseState state)
+    {
+        currentState = state;
+        currentState.EnterState(this);
     }
 
     private void OnMovePerformed(InputAction.CallbackContext context)
@@ -69,12 +96,26 @@ public class MovementStateManager : MonoBehaviour
         moveInput = Vector2.zero;
     }
 
+    public void OnRunPerformed(InputAction.CallbackContext context)
+    {
+        SwitchState(Run);
+    }
+
+    public void OnRunCancelled(InputAction.CallbackContext context)
+    {
+       SwitchState(Walk);
+    }
+
     private void Move()
     {
         
         direction = transform.forward * moveInput.y + transform.right * moveInput.x;
 
         characterController.Move(direction.normalized * currentSpeed * Time.deltaTime);
+
+
+        anim.SetFloat("hInput", moveInput.x, dampTime: 0.1f, Time.deltaTime);
+        anim.SetFloat("vInput", moveInput.y, dampTime: 0.1f, Time.deltaTime);
 
     }
 

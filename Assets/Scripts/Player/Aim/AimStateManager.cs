@@ -9,7 +9,6 @@ public class AimStateManager : MonoBehaviour
 
     // camera rotation
     private Vector2 lookInput;
-    private float xAxis, yAxis;
     public float mouseSense = 1.0f;
     [SerializeField] private float aimRotationSpeed;
 
@@ -21,10 +20,17 @@ public class AimStateManager : MonoBehaviour
     [SerializeField] private LayerMask allMask;
 
     // camera zoom
-    [SerializeField] private float aimSmoothSpeed; 
+    [SerializeField] private float aimSmoothSpeed;
 
-    //
-    private CinemachinePanTilt cinemachinePanTilt;
+    // states
+    public AimStateBase CurrentState;
+    public AimHipState AimIdleState = new AimHipState();
+    public AimingState AimingState = new AimingState();
+
+    [HideInInspector] public MovementStateManager movementStateManager;
+
+    // animator
+    [HideInInspector] public Animator anim; 
      
 
      
@@ -34,27 +40,33 @@ public class AimStateManager : MonoBehaviour
         actionSystem = new InputSystem_Actions();
         actionSystem.Player.Look.performed += OnLookPerformed;
         actionSystem.Player.Look.canceled += OnLookCancelled;
+
+        actionSystem.Player.Aim.performed += OnAimingPerformed;
+        actionSystem.Player.Aim.canceled += OnAimingCancelled;
         actionSystem.Enable();
     }
 
     private void Start()
     {
+        anim = GetComponent<Animator>();
+        movementStateManager = GetComponent<MovementStateManager>();
+
         Cursor.lockState = CursorLockMode.Locked;
-        cinemachinePanTilt = GetComponentInChildren<CinemachinePanTilt>();
-       
+        SwitchState(AimIdleState);
     }
 
     private void Update()
     {
-        MoveAimReference();
-        
+        MoveAimReferenceAndCharacterRotation();
+        CurrentState.UpdateState(this);
     }
 
- 
-     
-
-     
-    private void MoveAimReference()
+    public void SwitchState(AimStateBase state)
+    {
+        CurrentState = state;
+        state.EnterState(this);
+    }
+    private void MoveAimReferenceAndCharacterRotation()
     {
         Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
         Ray ray = Camera.main.ScreenPointToRay(screenCentre);
@@ -77,8 +89,6 @@ public class AimStateManager : MonoBehaviour
            // transform.rotation = targetRotation;
         }
     }
-   
-
     private void OnLookPerformed(InputAction.CallbackContext context)
     {
         lookInput = context.ReadValue<Vector2>();
@@ -88,4 +98,24 @@ public class AimStateManager : MonoBehaviour
     {
         lookInput = Vector2.zero;
     }
+
+    private void OnAimingPerformed(InputAction.CallbackContext context)
+    {
+        if(movementStateManager.currentState != movementStateManager.Run) SwitchState(AimingState);
+    }
+
+    private void OnAimingCancelled(InputAction.CallbackContext context)
+    {
+        SwitchState(AimIdleState);
+    }
+    void OnEnable()
+    {
+        actionSystem.Enable();
+    }
+
+    void OnDisable()
+    {
+        actionSystem.Disable();
+    }
+
 }

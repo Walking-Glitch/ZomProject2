@@ -78,7 +78,9 @@ public class MovementStateManager : MonoBehaviour
     {
         Move();
         Gravity();
-        
+
+        //currentState.UpdateState(this);
+
     }
     public void SwitchState(MovementBaseState state)
     {
@@ -108,7 +110,6 @@ public class MovementStateManager : MonoBehaviour
 
     private void Move()
     {
-        
         direction = transform.forward * moveInput.y + transform.right * moveInput.x;
 
         characterController.Move(direction.normalized * currentSpeed * Time.deltaTime);
@@ -116,7 +117,6 @@ public class MovementStateManager : MonoBehaviour
 
         anim.SetFloat("hInput", moveInput.x, dampTime: 0.1f, Time.deltaTime);
         anim.SetFloat("vInput", moveInput.y, dampTime: 0.1f, Time.deltaTime);
-
     }
 
     public bool IsGrounded()

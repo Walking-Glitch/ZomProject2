@@ -21,6 +21,10 @@ public class ActionStateManager : MonoBehaviour
     // audio 
     public AudioSource audioSource;
 
+    // reference to aim state manager
+
+    public AimStateManager AimStateManager;
+
     void Awake()
     {
         inputSystemActions = new InputSystem_Actions();
@@ -30,6 +34,7 @@ public class ActionStateManager : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        AimStateManager = GetComponent<AimStateManager>();
         LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
         SwitchState(Default);
     }
@@ -51,18 +56,17 @@ public class ActionStateManager : MonoBehaviour
     {
         if (CurrentState == Reload)
         {
-            
             anim.SetLayerWeight(1, 1);
             LeftHandIKConstraint.weight = 0;
             LeftHandIKConstraint.data.hintWeight = 0;
             RightHandAimConstraint.weight = 0;
         }
 
-        
     }
     private void OnReloadPerformed(InputAction.CallbackContext context)
     {
-        SwitchState(Reload);
+        Debug.Log("R has been pressed");
+            SwitchState(Reload);
     }
 
     public void WeaponReloaded()

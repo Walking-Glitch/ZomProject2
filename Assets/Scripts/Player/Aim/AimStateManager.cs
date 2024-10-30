@@ -32,6 +32,8 @@ public class AimStateManager : MonoBehaviour
 
     // animator
     [HideInInspector] public Animator anim;
+    private bool isTransitioning = false;
+     
 
     // Constraint bones 
     [HideInInspector] public TwoBoneIKConstraint LeftHandIKConstraint;
@@ -43,7 +45,7 @@ public class AimStateManager : MonoBehaviour
     [HideInInspector] public ActionStateManager actionStateManager;
 
     // blend variables
-    public float blendDuration = 0.5f; // Duration for blending layers
+    public float blendDuration; // Duration for blending layers
 
     private void Awake()
     {
@@ -83,38 +85,45 @@ public class AimStateManager : MonoBehaviour
     {
         if (CurrentState == AimIdleState)
         {
-            anim.SetLayerWeight(1, 0);
-            //TransitionToMainLayer();
+           // anim.SetLayerWeight(1, 0);
+            TransitionToMainLayer();
 
-            LeftHandIKConstraint.weight = 1;
-            LeftHandIKConstraint.data.hintWeight = 0;
-            RightHandAimConstraint.weight = 0.3f;
+            //LeftHandIKConstraint.weight = 1;
+            //LeftHandIKConstraint.data.hintWeight = 0;
+            //RightHandAimConstraint.weight = 0.3f;
         }
-
-        else if (CurrentState == AimingState)
+        if (CurrentState == AimingState)
         {
-            anim.SetLayerWeight(1, 1);
-            //TransitionToAimLayer();
-            LeftHandIKConstraint.weight = 1;
-            LeftHandIKConstraint.data.hintWeight = 1;
-            RightHandAimConstraint.weight = 1;
+            //anim.SetLayerWeight(1, 1);
+            TransitionToShootingLayer();
+            //LeftHandIKConstraint.weight = 1;
+            //LeftHandIKConstraint.data.hintWeight = 1;
+            //RightHandAimConstraint.weight = 1;
         }
     }
 
     public void TransitionToMainLayer()
     {
-        StartCoroutine(FadeOutUpperBodyLayer());
+        if (!isTransitioning)
+        {
+            StartCoroutine(FadeIntoMainLayer());
+        }
     }
 
-    //public void TransitionToAimLayer()
-    //{
-    //    StartCoroutine(FadeInUpperBodyLayer());
-    //}
-
-
-    private IEnumerator FadeOutUpperBodyLayer()
+    public void TransitionToShootingLayer()
     {
+        if (!isTransitioning)
+        {
+            StartCoroutine(FadeIntoUpperBodyLayer());
+        }
+    }
+
+    private IEnumerator FadeIntoMainLayer()
+    {
+        isTransitioning = true;  // Set the flag to true
         float startWeight = anim.GetLayerWeight(1);
+        float leftHandStartWeight = LeftHandIKConstraint.data.hintWeight;
+        float rightHandStartWeight = RightHandAimConstraint.weight;
         float elapsed = 0;
 
         while (elapsed < blendDuration)
@@ -123,42 +132,52 @@ public class AimStateManager : MonoBehaviour
             float newWeight = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
             anim.SetLayerWeight(1, newWeight);
 
-            //float newWeighTwoBoneIk = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
-            //LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
+            float newWeighTwoBoneIk = Mathf.Lerp(leftHandStartWeight, 0, elapsed / blendDuration);
+            LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
 
-            //float newWeighRightHand = Mathf.Lerp(startWeight, 0.3f, elapsed / blendDuration);
-            //RightHandAimConstraint.weight = newWeighRightHand;
+            float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
+            RightHandAimConstraint.weight = newWeighRightHand;
+
             yield return null;
         }
 
         anim.SetLayerWeight(1, 0); // Fully transitioned to main layer
-        //LeftHandIKConstraint.data.hintWeight = 0;
-        //RightHandAimConstraint.weight = 0.3f;
+        LeftHandIKConstraint.data.hintWeight = 0;
+        RightHandAimConstraint.weight = 0f;
+
+        isTransitioning = false;
     }
 
-    //private IEnumerator FadeInUpperBodyLayer()
-    //{
-    //    float startWeight = anim.GetLayerWeight(1);
-    //    float elapsed = 0;
+    private IEnumerator FadeIntoUpperBodyLayer()
+    {
+        isTransitioning = true;  // Set the flag to true
+        float startWeight = anim.GetLayerWeight(1);
+        float leftHandStartWeight = LeftHandIKConstraint.data.hintWeight;
+        float rightHandStartWeight = RightHandAimConstraint.weight;
+        float elapsed = 0;
 
-    //    while (elapsed < blendDuration)
-    //    {
-    //        elapsed += Time.deltaTime;
-    //        float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
-    //        anim.SetLayerWeight(1, newWeight);
+        while (elapsed < blendDuration)
+        {
+            elapsed += Time.deltaTime;
+            float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
+            anim.SetLayerWeight(1, newWeight);
 
-    //        float newWeighTwoBoneIk = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
-    //        LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
+            float newWeighTwoBoneIk = Mathf.Lerp(leftHandStartWeight, 1, elapsed / blendDuration);
+            LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
 
-    //        float newWeighRightHand = Mathf.Lerp(0.3f, 1, elapsed / blendDuration);
-    //        RightHandAimConstraint.weight = newWeighRightHand;
+            float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 1, elapsed / blendDuration);
+            RightHandAimConstraint.weight = newWeighRightHand;
 
-    //        yield return null;
-    //    }
+            yield return null; // Wait for the next frame
+        }
 
-    //    anim.SetLayerWeight(1, 1); // Fully transitioned to main layer
-    //}
+        // Set final values
+        anim.SetLayerWeight(1, 1);
+        LeftHandIKConstraint.data.hintWeight = 1;
+        RightHandAimConstraint.weight = 1;
 
+        isTransitioning = false;  // Reset the flag when done
+    }
     private void MoveAimReferenceAndCharacterRotation()
     {
         Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);

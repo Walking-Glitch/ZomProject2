@@ -9,7 +9,7 @@ public class DefaultState : ActionStateBase
 
     public override void UpdateState(ActionStateManager actionStateManager)
     {
-        
+       
     }
 }
 

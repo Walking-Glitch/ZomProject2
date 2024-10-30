@@ -1,4 +1,4 @@
-using Unity.Cinemachine;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
@@ -39,6 +39,11 @@ public class AimStateManager : MonoBehaviour
     public MultiAimConstraint TorsoAimConstraint;
     public MultiAimConstraint RightHandAimConstraint;
 
+    // reference to action state manager
+    [HideInInspector] public ActionStateManager actionStateManager;
+
+    // blend variables
+    public float blendDuration = 0.5f; // Duration for blending layers
 
     private void Awake()
     {
@@ -54,6 +59,7 @@ public class AimStateManager : MonoBehaviour
     private void Start()
     {
         anim = GetComponent<Animator>();
+        actionStateManager = GetComponent<ActionStateManager>();
         movementStateManager = GetComponent<MovementStateManager>();
         LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
 
@@ -78,21 +84,81 @@ public class AimStateManager : MonoBehaviour
         if (CurrentState == AimIdleState)
         {
             anim.SetLayerWeight(1, 0);
+            //TransitionToMainLayer();
+
             LeftHandIKConstraint.weight = 1;
             LeftHandIKConstraint.data.hintWeight = 0;
-            TorsoAimConstraint.weight = 0;
             RightHandAimConstraint.weight = 0.3f;
         }
 
         else if (CurrentState == AimingState)
         {
             anim.SetLayerWeight(1, 1);
+            //TransitionToAimLayer();
             LeftHandIKConstraint.weight = 1;
             LeftHandIKConstraint.data.hintWeight = 1;
-            TorsoAimConstraint.weight = 1; 
             RightHandAimConstraint.weight = 1;
         }
     }
+
+    public void TransitionToMainLayer()
+    {
+        StartCoroutine(FadeOutUpperBodyLayer());
+    }
+
+    //public void TransitionToAimLayer()
+    //{
+    //    StartCoroutine(FadeInUpperBodyLayer());
+    //}
+
+
+    private IEnumerator FadeOutUpperBodyLayer()
+    {
+        float startWeight = anim.GetLayerWeight(1);
+        float elapsed = 0;
+
+        while (elapsed < blendDuration)
+        {
+            elapsed += Time.deltaTime;
+            float newWeight = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
+            anim.SetLayerWeight(1, newWeight);
+
+            //float newWeighTwoBoneIk = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
+            //LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
+
+            //float newWeighRightHand = Mathf.Lerp(startWeight, 0.3f, elapsed / blendDuration);
+            //RightHandAimConstraint.weight = newWeighRightHand;
+            yield return null;
+        }
+
+        anim.SetLayerWeight(1, 0); // Fully transitioned to main layer
+        //LeftHandIKConstraint.data.hintWeight = 0;
+        //RightHandAimConstraint.weight = 0.3f;
+    }
+
+    //private IEnumerator FadeInUpperBodyLayer()
+    //{
+    //    float startWeight = anim.GetLayerWeight(1);
+    //    float elapsed = 0;
+
+    //    while (elapsed < blendDuration)
+    //    {
+    //        elapsed += Time.deltaTime;
+    //        float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
+    //        anim.SetLayerWeight(1, newWeight);
+
+    //        float newWeighTwoBoneIk = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
+    //        LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
+
+    //        float newWeighRightHand = Mathf.Lerp(0.3f, 1, elapsed / blendDuration);
+    //        RightHandAimConstraint.weight = newWeighRightHand;
+
+    //        yield return null;
+    //    }
+
+    //    anim.SetLayerWeight(1, 1); // Fully transitioned to main layer
+    //}
+
     private void MoveAimReferenceAndCharacterRotation()
     {
         Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);

@@ -71,6 +71,8 @@ public class MovementStateManager : MonoBehaviour
     {
         currentSpeed = walkSpeed;
         anim = GetComponent<Animator>();
+
+        SwitchState(Idle);
     }
 
     // Update is called once per frame

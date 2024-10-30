@@ -5,9 +5,7 @@ public class AimingState : AimStateBase
     public override void EnterState(AimStateManager aimStateManager)
     {
         aimStateManager.anim.SetBool("IsAiming", true);
-
-        aimStateManager.AdjustConstraintWeight();
- 
+        //aimStateManager.AdjustConstraintWeight();
     }
 
     public override void UpdateState(AimStateManager aimStateManager)
@@ -16,5 +14,12 @@ public class AimingState : AimStateBase
         {
             aimStateManager.SwitchState(aimStateManager.AimIdleState);
         }
+
+        if (aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Reload)
+        {
+            aimStateManager.AdjustConstraintWeight();
+        }
+
+       
     }
 }

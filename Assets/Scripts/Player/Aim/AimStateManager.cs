@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.Windows;
 
@@ -30,11 +31,15 @@ public class AimStateManager : MonoBehaviour
     [HideInInspector] public MovementStateManager movementStateManager;
 
     // animator
-    [HideInInspector] public Animator anim; 
-     
+    [HideInInspector] public Animator anim;
 
-     
-     
+    // Constraint bones 
+    [HideInInspector] public TwoBoneIKConstraint LeftHandIKConstraint;
+    public MultiAimConstraint HeadAimConstraint;
+    public MultiAimConstraint TorsoAimConstraint;
+    public MultiAimConstraint RightHandAimConstraint;
+
+
     private void Awake()
     {
         actionSystem = new InputSystem_Actions();
@@ -50,6 +55,7 @@ public class AimStateManager : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         movementStateManager = GetComponent<MovementStateManager>();
+        LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
 
         Cursor.lockState = CursorLockMode.Locked;
         SwitchState(AimIdleState);
@@ -65,6 +71,27 @@ public class AimStateManager : MonoBehaviour
     {
         CurrentState = state;
         state.EnterState(this);
+    }
+
+    public void AdjustConstraintWeight()
+    {
+        if (CurrentState == AimIdleState)
+        {
+            anim.SetLayerWeight(1, 0);
+            LeftHandIKConstraint.weight = 1;
+            LeftHandIKConstraint.data.hintWeight = 0;
+            TorsoAimConstraint.weight = 0;
+            RightHandAimConstraint.weight = 0.3f;
+        }
+
+        else if (CurrentState == AimingState)
+        {
+            anim.SetLayerWeight(1, 1);
+            LeftHandIKConstraint.weight = 1;
+            LeftHandIKConstraint.data.hintWeight = 1;
+            TorsoAimConstraint.weight = 1; 
+            RightHandAimConstraint.weight = 1;
+        }
     }
     private void MoveAimReferenceAndCharacterRotation()
     {
@@ -86,7 +113,7 @@ public class AimStateManager : MonoBehaviour
             // Calculate the target rotation and smoothly rotate the character towards it
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, aimRotationSpeed * Time.deltaTime);
-           // transform.rotation = targetRotation;
+          
         }
     }
     private void OnLookPerformed(InputAction.CallbackContext context)

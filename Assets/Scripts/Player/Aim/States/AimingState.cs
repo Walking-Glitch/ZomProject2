@@ -15,10 +15,10 @@ public class AimingState : AimStateBase
             aimStateManager.SwitchState(aimStateManager.AimIdleState);
         }
 
-        if (aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Reload)
-        {
-            aimStateManager.AdjustConstraintWeight();
-        }
+        //if (aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Reload)
+        //{
+        //    aimStateManager.AdjustConstraintWeight();
+        //}
 
        
     }

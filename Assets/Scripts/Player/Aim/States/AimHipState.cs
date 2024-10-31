@@ -11,10 +11,10 @@ public class AimHipState : AimStateBase
 
     public override void UpdateState(AimStateManager aimStateManager)
     {
-        if (aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Reload)
-        {
-            aimStateManager.AdjustConstraintWeight();//
-        }
+        //if (aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Reload)
+        //{
+        //    aimStateManager.AdjustConstraintWeight();//
+        //}
 
      
     }

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
@@ -32,7 +33,7 @@ public class AimStateManager : MonoBehaviour
 
     // animator
     [HideInInspector] public Animator anim;
-    private bool isTransitioning = false;
+    [HideInInspector] public bool isTransitioning = false;
      
 
     // Constraint bones 
@@ -73,6 +74,7 @@ public class AimStateManager : MonoBehaviour
     {
         MoveAimReferenceAndCharacterRotation();
         CurrentState.UpdateState(this);
+        AdjustConstraintWeight();
     }
 
     public void SwitchState(AimStateBase state)
@@ -83,26 +85,26 @@ public class AimStateManager : MonoBehaviour
 
     public void AdjustConstraintWeight()
     {
-        if (CurrentState == AimIdleState)
-        {
-           // anim.SetLayerWeight(1, 0);
-            TransitionToMainLayer();
+        if (isTransitioning) return;
 
-            //LeftHandIKConstraint.weight = 1;
-            //LeftHandIKConstraint.data.hintWeight = 0;
-            //RightHandAimConstraint.weight = 0.3f;
-        }
-        if (CurrentState == AimingState)
+        if (actionStateManager.CurrentState == actionStateManager.Reload)
         {
-            //anim.SetLayerWeight(1, 1);
-            TransitionToShootingLayer();
-            //LeftHandIKConstraint.weight = 1;
-            //LeftHandIKConstraint.data.hintWeight = 1;
-            //RightHandAimConstraint.weight = 1;
+            actionStateManager.TransitionToReload();
         }
+        
+        else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
+        {
+            TransitionFromMainToShootingLayer();
+        }
+
+        else 
+        {
+            TransitionFromShootingToMainLayer();
+        }
+      
     }
 
-    public void TransitionToMainLayer()
+    public void TransitionFromShootingToMainLayer()
     {
         if (!isTransitioning)
         {
@@ -110,13 +112,14 @@ public class AimStateManager : MonoBehaviour
         }
     }
 
-    public void TransitionToShootingLayer()
+    public void TransitionFromMainToShootingLayer()
     {
         if (!isTransitioning)
         {
             StartCoroutine(FadeIntoUpperBodyLayer());
         }
     }
+
 
     private IEnumerator FadeIntoMainLayer()
     {
@@ -132,8 +135,8 @@ public class AimStateManager : MonoBehaviour
             float newWeight = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
             anim.SetLayerWeight(1, newWeight);
 
-            float newWeighTwoBoneIk = Mathf.Lerp(leftHandStartWeight, 0, elapsed / blendDuration);
-            LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
+            float newHintWeight = Mathf.Lerp(leftHandStartWeight, 0, elapsed / blendDuration);
+            LeftHandIKConstraint.data.hintWeight = newHintWeight;
 
             float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
             RightHandAimConstraint.weight = newWeighRightHand;
@@ -142,6 +145,7 @@ public class AimStateManager : MonoBehaviour
         }
 
         anim.SetLayerWeight(1, 0); // Fully transitioned to main layer
+        LeftHandIKConstraint.weight = 1;
         LeftHandIKConstraint.data.hintWeight = 0;
         RightHandAimConstraint.weight = 0f;
 
@@ -173,6 +177,7 @@ public class AimStateManager : MonoBehaviour
 
         // Set final values
         anim.SetLayerWeight(1, 1);
+        LeftHandIKConstraint.weight = 1;
         LeftHandIKConstraint.data.hintWeight = 1;
         RightHandAimConstraint.weight = 1;
 

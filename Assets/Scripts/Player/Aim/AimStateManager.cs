@@ -1,9 +1,11 @@
 using System.Collections;
 using System.ComponentModel;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.Windows;
+using static UnityEditor.SceneView;
 
 public class AimStateManager : MonoBehaviour 
 {
@@ -11,8 +13,11 @@ public class AimStateManager : MonoBehaviour
 
     // camera rotation
     private Vector2 lookInput;
-    public float mouseSense = 1.0f;
+    private Vector3 direction;
     [SerializeField] private float aimRotationSpeed;
+
+    private bool cameraAcheck;
+    private bool cameraBcheck;
 
     private InputSystem_Actions actionSystem;
 
@@ -45,6 +50,15 @@ public class AimStateManager : MonoBehaviour
     // reference to action state manager
     [HideInInspector] public ActionStateManager actionStateManager;
 
+    // weapon variables
+    [HideInInspector] public WeaponManager WeaponManager;
+
+    // cinemachine references
+    private CinemachineBrain brain;
+    public CinemachineCamera DefaultCamera;
+    public CinemachineCamera ZoomedCamera;
+    public CinemachinePanTilt cineTilt;
+
     // blend variables
     public float blendDuration; // Duration for blending layers
 
@@ -62,10 +76,13 @@ public class AimStateManager : MonoBehaviour
     private void Start()
     {
         anim = GetComponent<Animator>();
+        WeaponManager = GetComponent<WeaponManager>();
         actionStateManager = GetComponent<ActionStateManager>();
         movementStateManager = GetComponent<MovementStateManager>();
         LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
 
+        brain = Camera.main.GetComponent<CinemachineBrain>();
+        
         Cursor.lockState = CursorLockMode.Locked;
         SwitchState(AimIdleState);
     }
@@ -73,6 +90,7 @@ public class AimStateManager : MonoBehaviour
     private void Update()
     {
         MoveAimReferenceAndCharacterRotation();
+        CharacterRotation();
         CurrentState.UpdateState(this);
         AdjustConstraintWeight();
     }
@@ -183,29 +201,76 @@ public class AimStateManager : MonoBehaviour
 
         isTransitioning = false;  // Reset the flag when done
     }
+
     private void MoveAimReferenceAndCharacterRotation()
     {
         Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
         Ray ray = Camera.main.ScreenPointToRay(screenCentre);
-
+        
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, aimMask))
         {
-            aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed *Time.deltaTime);
-        }
-
-        // Rotate the character to face the hit point
-        if  (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, allMask))
-        {
-            // Calculate the direction from the character to the hit point
-            Vector3 direction = hit2.point - transform.position;
-            direction.y = 0; // Keep the rotation on the y-axis only
-
-            // Calculate the target rotation and smoothly rotate the character towards it
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, aimRotationSpeed * Time.deltaTime);
-          
+            aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
         }
     }
+
+
+    private void CharacterRotation()
+    {
+        {
+            Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+            Ray ray = Camera.main.ScreenPointToRay(screenCentre);
+
+            // rotate when not aiming 
+            if (Physics.Raycast(ray, out RaycastHit hit3, Mathf.Infinity, allMask) && CurrentState == AimIdleState)
+            {
+                SwitchToDefaultCamera();
+
+                // Calculate the direction from the character to the hit point
+                direction = hit3.point - transform.position;
+                direction.y = 0; // Keep the rotation on the y-axis only
+
+                // Calculate the target rotation and smoothly rotate the character towards it
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5 * Time.deltaTime);
+
+            }
+
+            // Rotate the character during aiming 
+            else
+            {
+                if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, allMask))
+
+                {
+                    SwitchToZoomedCamera();
+
+                    // Calculate the direction from the character to the hit point
+                    direction = hit3.point - transform.position;
+                    direction.y = 0; // Keep the rotation on the y-axis only
+
+                    // Calculate the target rotation and smoothly rotate the character towards it
+                    Quaternion targetRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation,
+                        aimRotationSpeed * Time.deltaTime);
+                }
+            }
+        }
+    }
+
+    public void SwitchToDefaultCamera()
+    {
+        DefaultCamera.Priority = 10;
+        ZoomedCamera.Priority = 5;
+    
+    }
+
+    public void SwitchToZoomedCamera()
+    {
+        DefaultCamera.Priority = 5;
+        ZoomedCamera.Priority = 10;
+         
+    }
+
+
     private void OnLookPerformed(InputAction.CallbackContext context)
     {
         lookInput = context.ReadValue<Vector2>();

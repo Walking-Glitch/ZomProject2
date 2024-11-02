@@ -9,8 +9,8 @@ public class WalkState : MovementBaseState
     }
 
     public override void UpdateState(MovementStateManager movementStateManager)
-    {
-        
+    {  
+
     }
     public override void ExitState(MovementStateManager movementStateManager)
     {

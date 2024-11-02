@@ -6,7 +6,7 @@ using UnityEngine.Windows;
 public class MovementStateManager : MonoBehaviour
 {
     // movement variables
-    private Vector2 moveInput;
+    [HideInInspector] public Vector2 moveInput;
     [HideInInspector] public Vector3 direction; 
 
     private CharacterController characterController;
@@ -44,6 +44,9 @@ public class MovementStateManager : MonoBehaviour
     public RunState Run = new RunState();
     public JumpState Jump = new JumpState();
 
+    // reference to aim manager
+    [HideInInspector] public AimStateManager aimStateManager;
+
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -70,6 +73,7 @@ public class MovementStateManager : MonoBehaviour
     void Start()
     {
         currentSpeed = walkSpeed;
+        aimStateManager = GetComponent<AimStateManager>();
         anim = GetComponent<Animator>();
 
         SwitchState(Idle);
@@ -81,7 +85,7 @@ public class MovementStateManager : MonoBehaviour
         Move();
         Gravity();
 
-        //currentState.UpdateState(this);
+        currentState.UpdateState(this);
 
     }
     public void SwitchState(MovementBaseState state)
@@ -90,7 +94,7 @@ public class MovementStateManager : MonoBehaviour
         currentState.EnterState(this);
     }
 
-    private void OnMovePerformed(InputAction.CallbackContext context)
+    public void OnMovePerformed(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }

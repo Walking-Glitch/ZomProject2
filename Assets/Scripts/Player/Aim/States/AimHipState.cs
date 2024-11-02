@@ -5,8 +5,8 @@ public class AimHipState : AimStateBase
     public override void EnterState(AimStateManager aimStateManager)
     { 
           aimStateManager.anim.SetBool("IsAiming", false);
-        //  aimStateManager.AdjustConstraintWeight();
-        
+          if(aimStateManager.WeaponManager.laser != null) aimStateManager.WeaponManager.laser.DisableLaser();
+
     }
 
     public override void UpdateState(AimStateManager aimStateManager)

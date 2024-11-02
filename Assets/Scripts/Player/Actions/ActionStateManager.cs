@@ -30,6 +30,9 @@ public class ActionStateManager : MonoBehaviour
     // reference to aim state manager
     [HideInInspector] public AimStateManager AimStateManager;
 
+    // reference to weapon manager
+    [HideInInspector] public WeaponManager WeaponManager;
+
 
 
     void Awake()
@@ -42,6 +45,7 @@ public class ActionStateManager : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         AimStateManager = GetComponent<AimStateManager>();
+        WeaponManager = GetComponent<WeaponManager>();
         LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
         SwitchState(Default);
     }

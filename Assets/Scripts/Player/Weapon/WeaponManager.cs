@@ -1,0 +1,108 @@
+using Unity.Burst.Intrinsics;
+using UnityEngine;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
+using UnityEngine.Audio;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
+
+public class WeaponManager : MonoBehaviour
+{
+    // ray casting variables 
+    [SerializeField] private LayerMask shootMask;
+    public Transform GunEndTransform;
+    public Transform TargetTransform;
+    
+    //reference to laser 
+    [HideInInspector] public WeaponLaser laser;
+
+    // input system
+    private InputSystem_Actions inputSystemActions;
+
+    void Awake()
+    {
+        inputSystemActions = new InputSystem_Actions();
+        inputSystemActions.Player.Attack.performed += OnFirePerformed;
+    }
+    void Start()
+    {
+        laser = GetComponent<WeaponLaser>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    void Fire()
+    {
+        Debug.Log("hello");
+        Vector3 direction = TargetTransform.position - GunEndTransform.position;
+        if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
+                shootMask))
+        {
+            Debug.Log(hit.distance);
+        }
+    }
+
+    private void OnFirePerformed(InputAction.CallbackContext context)
+    {
+        Fire();
+    }
+
+    void OnEnable()
+    {
+        inputSystemActions.Enable();
+    }
+
+    void OnDisable()
+    {
+        inputSystemActions.Disable();
+    }
+
+    //void Fire()
+    //{
+    //    fireRateTimer = 0;
+    //    barrelPos.LookAt(aim.aimPos);
+    //    //barrelPos.localEulerAngles = bloom.BloomAngle(barrelPos);
+    //    cameraAdjustment.transform.localEulerAngles = bloom.BloomAngle(cameraAdjustment.transform);
+
+    //    audioSource.PlayOneShot(gunShot);
+
+    //    recoil.TriggerRecoil();
+    //    TriggerMuzzleFlash();
+    //    ammo.currentAmmo--;
+    //    for (int i = 0; i < bulletsPershot; i++)
+    //    {
+
+    //        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+    //        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
+
+    //        Vector3 shootingDirection = (ray.direction).normalized;
+
+    //        // Set the ray origin to the camera adjustment's position
+    //        RaycastHit hit;
+    //        // Does the ray intersect any objects excluding the player layer
+    //        if (Physics.Raycast(cameraAdjustment.transform.position, shootingDirection, out hit, Mathf.Infinity, aimMask))
+    //        {
+    //            shootingDirection = (hit.point - barrelPos.position).normalized;
+    //            Debug.DrawRay(cameraAdjustment.transform.position, shootingDirection * hit.distance, Color.yellow);
+    //            //Debug.Log("Did Hit");
+    //        }
+
+    //        GameObject currentBullet = gameManager.BulletPool.RequestBullet();
+    //        currentBullet.transform.position = barrelPos.position;
+    //        currentBullet.transform.rotation = Quaternion.LookRotation(shootingDirection);
+    //        currentBullet.SetActive(true);
+
+
+    //        Rigidbody rb = currentBullet.GetComponent<Rigidbody>();
+    //        rb.velocity = Vector3.zero;
+    //        rb.angularVelocity = Vector3.zero;
+    //        rb.AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
+    //    }
+
+    //    RefreshDisplay(ammo.currentAmmo, ammo.extraAmmo);
+
+    //}
+}

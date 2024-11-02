@@ -57,7 +57,8 @@ public class AimStateManager : MonoBehaviour
     private CinemachineBrain brain;
     public CinemachineCamera DefaultCamera;
     public CinemachineCamera ZoomedCamera;
-    public CinemachinePanTilt cineTilt;
+    public CinemachinePanTilt cineDefaultTilt;
+    public CinemachinePanTilt cineZoomedTilt;
 
     // blend variables
     public float blendDuration; // Duration for blending layers
@@ -260,14 +261,23 @@ public class AimStateManager : MonoBehaviour
     {
         DefaultCamera.Priority = 10;
         ZoomedCamera.Priority = 5;
-    
+        if (brain.IsBlending)
+        {
+            cineDefaultTilt.PanAxis = cineZoomedTilt.PanAxis;
+        }
     }
 
     public void SwitchToZoomedCamera()
     {
+       
         DefaultCamera.Priority = 5;
         ZoomedCamera.Priority = 10;
-         
+        
+        if (brain.IsBlending)
+        {
+            cineZoomedTilt.PanAxis = cineDefaultTilt.PanAxis;
+        }
+
     }
 
 

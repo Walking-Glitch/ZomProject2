@@ -11,28 +11,40 @@ public class WeaponManager : MonoBehaviour
     [SerializeField] private LayerMask shootMask;
     public Transform GunEndTransform;
     public Transform TargetTransform;
-    
+    public Transform weaponTransform;
+
     //reference to laser 
     [HideInInspector] public WeaponLaser laser;
 
     // input system
     private InputSystem_Actions inputSystemActions;
 
+    // reference to state managers
+    private AimStateManager aimStateManager;
+    private MovementStateManager moveStateManager;
+    private ActionStateManager actionStateManager;
     void Awake()
     {
         inputSystemActions = new InputSystem_Actions();
         inputSystemActions.Player.Attack.performed += OnFirePerformed;
     }
+
     void Start()
     {
+        aimStateManager = GetComponent<AimStateManager>();
+        moveStateManager = GetComponent<MovementStateManager>();
+        actionStateManager = GetComponent<ActionStateManager>();
         laser = GetComponent<WeaponLaser>();
     }
 
     // Update is called once per frame
     void Update()
-    {
-        
+    { 
+
     }
+
+
+
 
     void Fire()
     {

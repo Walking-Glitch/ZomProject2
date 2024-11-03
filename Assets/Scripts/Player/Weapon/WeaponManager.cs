@@ -41,6 +41,9 @@ public class WeaponManager : MonoBehaviour
     private float lightIntensity;
     [SerializeField] private float lightReturnSpeed = 20;
 
+    // animator
+    private Animator anim;
+
     void Awake()
     {
         inputSystemActions = new InputSystem_Actions();
@@ -49,6 +52,7 @@ public class WeaponManager : MonoBehaviour
 
     void Start()
     {
+        anim = GetComponent<Animator>();
         aimStateManager = GetComponent<AimStateManager>();
         moveStateManager = GetComponent<MovementStateManager>();
         actionStateManager = GetComponent<ActionStateManager>();
@@ -57,7 +61,8 @@ public class WeaponManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    { 
+    {
+        fireRateTimer += Time.deltaTime;
 
     }
 
@@ -66,7 +71,7 @@ public class WeaponManager : MonoBehaviour
 
     void Fire()
     {
-
+        anim.SetTrigger("Firing");
         fireRateTimer = 0;
         audioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
         //TriggerMuzzleFlash();
@@ -89,9 +94,36 @@ public class WeaponManager : MonoBehaviour
         }
     }
 
+    bool CanFire()
+    {
+        
+        if (fireRateTimer < fireRate) return false;
+        //if (ammo.currentAmmo == 0)
+        //{
+        //    if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0))
+        //    {
+        //        if (!playedEmptySound)
+        //        {
+        //            EmptyAudioSource.PlayOneShot(emptyClip);
+        //            playedEmptySound = true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        playedEmptySound = false;
+        //    }
+        //    return false;
+        //}
+        if (moveStateManager.currentState == moveStateManager.Run) return false;
+        if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
+        if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
+        //if (!semiAuto && Input.GetKey(KeyCode.Mouse0)) return true;
+        return false;
+    }
+
     private void OnFirePerformed(InputAction.CallbackContext context)
     {
-        Fire();
+        if(CanFire()) Fire();
     }
 
     void TriggerMuzzleFlash()

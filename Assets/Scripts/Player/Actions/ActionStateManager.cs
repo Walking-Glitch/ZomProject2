@@ -159,8 +159,7 @@ public class ActionStateManager : MonoBehaviour
 
     private void OnReloadPerformed(InputAction.CallbackContext context)
     {
-        
-        SwitchState(Reload);
+        if (AimStateManager.CurrentState == AimStateManager.AimingState) SwitchState(Reload);
     }
 
     public void WeaponReloaded()

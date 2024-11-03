@@ -222,7 +222,7 @@ public class AimStateManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(screenCentre);
 
             // rotate when not aiming 
-            if (Physics.Raycast(ray, out RaycastHit hit3, Mathf.Infinity, allMask) && CurrentState == AimIdleState)
+            if (Physics.Raycast(ray, out RaycastHit hit3, Mathf.Infinity, allMask) && CurrentState == AimIdleState && actionStateManager.CurrentState != actionStateManager.Reload)
             {
                 SwitchToDefaultCamera();
 

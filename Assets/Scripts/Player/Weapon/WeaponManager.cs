@@ -23,6 +23,24 @@ public class WeaponManager : MonoBehaviour
     private AimStateManager aimStateManager;
     private MovementStateManager moveStateManager;
     private ActionStateManager actionStateManager;
+
+    // decals 
+    public GameObject hitGroundDecal;
+
+    // audio variables
+    public AudioSource audioSource;
+    public AudioClip [] gunShots;
+
+    // firing variables
+    [Header("Fire Rate")]
+    [SerializeField] float fireRate;
+    private float fireRateTimer;
+
+    private Light muzzleFlashLight;
+    ParticleSystem muzzleFlashParticleSystem;
+    private float lightIntensity;
+    [SerializeField] private float lightReturnSpeed = 20;
+
     void Awake()
     {
         inputSystemActions = new InputSystem_Actions();
@@ -48,18 +66,38 @@ public class WeaponManager : MonoBehaviour
 
     void Fire()
     {
-        Debug.Log("hello");
+
+        fireRateTimer = 0;
+        audioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
+        //TriggerMuzzleFlash();
+
         Vector3 direction = TargetTransform.position - GunEndTransform.position;
         if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
                 shootMask))
         {
-            Debug.Log(hit.distance);
+            if (hit.collider.CompareTag("Ground"))
+            {
+                Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                Instantiate(hitGroundDecal, hit.point, decalRotation);
+            }
+
+            else
+            {
+                Debug.Log(hit.distance);
+            }
         }
     }
 
     private void OnFirePerformed(InputAction.CallbackContext context)
     {
         Fire();
+    }
+
+    void TriggerMuzzleFlash()
+    {
+        muzzleFlashParticleSystem.Play();
+        muzzleFlashLight.intensity = lightIntensity;
     }
 
     void OnEnable()

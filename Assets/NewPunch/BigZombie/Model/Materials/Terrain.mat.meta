@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0759f098beb4fbe4ea13cb58148324f1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Model/Materials/Terrain.mat
+  uploadId: 646008

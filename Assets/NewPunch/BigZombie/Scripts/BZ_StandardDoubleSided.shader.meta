@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b93c072c31a31e8479b22d936cddbc9c
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Scripts/BZ_StandardDoubleSided.shader
+  uploadId: 646008

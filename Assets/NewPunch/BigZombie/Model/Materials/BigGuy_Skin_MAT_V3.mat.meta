@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9ce547e5aba21ab46a18eb2c366c9ec3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Model/Materials/BigGuy_Skin_MAT_V3.mat
+  uploadId: 646008

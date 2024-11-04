@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3470311068e230149ad8a067548f2c0e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Prefab/URP/BigZombieParts_URP.prefab
+  uploadId: 646008

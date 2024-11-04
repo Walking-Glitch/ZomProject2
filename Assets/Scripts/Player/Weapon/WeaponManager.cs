@@ -87,6 +87,16 @@ public class WeaponManager : MonoBehaviour
                 Instantiate(hitGroundDecal, hit.point, decalRotation);
             }
 
+            else if (hit.collider.CompareTag("Zombie"))
+            {
+
+                Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+                Instantiate(hitGroundDecal, hit.point, decalRotation);
+
+                //hit.collider.gameObject.SetActive(false);
+                hit.collider.GetComponentInParent<Rigidbody>().AddForce(hit.normal*-1, ForceMode.Impulse);
+            }
+
             else
             {
                 Debug.Log(hit.distance);

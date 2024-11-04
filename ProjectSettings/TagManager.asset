@@ -6,6 +6,7 @@ TagManager:
   tags:
   - FxTemporaire
   - Ground
+  - Zombie
   layers:
   - Default
   - TransparentFX

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e6bce1d6bef6a4844b0e031c868736db
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Model/Materials/URP/Terrain_URP.mat
+  uploadId: 646008

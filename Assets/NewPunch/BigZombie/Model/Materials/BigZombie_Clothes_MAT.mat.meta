@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 58afaca4c8ba1fe46b1ea4998150d593
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Model/Materials/BigZombie_Clothes_MAT.mat
+  uploadId: 646008

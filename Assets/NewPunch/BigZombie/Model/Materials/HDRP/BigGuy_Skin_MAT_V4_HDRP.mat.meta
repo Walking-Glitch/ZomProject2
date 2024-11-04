@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 433c45f73d01d0843b5262e449587251
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Model/Materials/HDRP/BigGuy_Skin_MAT_V4_HDRP.mat
+  uploadId: 646008

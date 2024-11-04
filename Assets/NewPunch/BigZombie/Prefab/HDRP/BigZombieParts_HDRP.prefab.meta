@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 492af8654857af842af6e7acb9851b15
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Prefab/HDRP/BigZombieParts_HDRP.prefab
+  uploadId: 646008

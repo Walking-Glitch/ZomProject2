@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e1cde065a494b6b44b17096d853b9371
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 270786
+  packageName: Zombie Big
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/BigZombie/Scripts/BZ_CharInstantiate.cs
+  uploadId: 646008

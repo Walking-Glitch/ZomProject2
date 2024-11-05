@@ -1,30 +1,30 @@
 using UnityEngine;
 
-public class Roaming : ZombieMovementBaseState
+public class Roaming : ZombieBaseState
 {
-    public override void EnterState(ZombieMovementStateManager zombieMovement)
+    public override void EnterState(ZombieStateManager zombie)
     {
-        zombieMovement.patrol.enabled = true; 
+        zombie.patrol.enabled = true; 
     }
 
-    public override void UpdateState(ZombieMovementStateManager zombieMovement)
+    public override void UpdateState(ZombieStateManager zombie)
     {
-        if (zombieMovement.currentSpeed < 0.1f && !zombieMovement.IsPlayerInDetectionArea())
+        if (zombie.currentSpeed < 0.1f && !zombie.IsPlayerInDetectionArea())
         {
-            zombieMovement.SwitchState(zombieMovement.idle);
+            zombie.SwitchState(zombie.idle);
         }
 
-        if (zombieMovement.IsPlayerInDetectionArea())
+        if (zombie.IsPlayerInDetectionArea())
         {
-            ExitState(zombieMovement, zombieMovement.chasing);
+            ExitState(zombie, zombie.chasing);
         }
     }
 
-    private void ExitState(ZombieMovementStateManager zombieMovement, ZombieMovementBaseState state)
+    private void ExitState(ZombieStateManager zombie, ZombieBaseState state)
     {
-        zombieMovement.patrol.enabled = false;
+        zombie.patrol.enabled = false;
 
 
-        zombieMovement.SwitchState(state);
+        zombie.SwitchState(state);
     }
 }

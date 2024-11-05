@@ -1,25 +1,25 @@
 using UnityEngine;
 
-public class Chasing : ZombieMovementBaseState
+public class Chasing : ZombieBaseState
 {
     private float elapsed;
     private float timeToChange = 2f;
-    public override void EnterState(ZombieMovementStateManager zombieMovement)
+    public override void EnterState(ZombieStateManager zombie)
     {
         elapsed = 0;
-        zombieMovement.destinationSetter.enabled = true;
+        zombie.destinationSetter.enabled = true;
     }
 
-    public override void UpdateState(ZombieMovementStateManager zombieMovement)
+    public override void UpdateState(ZombieStateManager zombie)
     {
-        if (!zombieMovement.IsPlayerInDetectionArea())
+        if (!zombie.IsPlayerInDetectionArea())
         {
             Debug.Log(elapsed);
             elapsed += Time.deltaTime;
 
             if (elapsed >= timeToChange)
             {
-                ExitState(zombieMovement, zombieMovement.roaming);
+                ExitState(zombie, zombie.roaming);
             }
         }
         else
@@ -30,10 +30,9 @@ public class Chasing : ZombieMovementBaseState
        
     }
 
-    private void ExitState(ZombieMovementStateManager zombieMovement, ZombieMovementBaseState state)
+    private void ExitState(ZombieStateManager zombie, ZombieBaseState state)
     {
-        zombieMovement.destinationSetter.enabled = false;
-        elapsed = 0;
-        zombieMovement.SwitchState(state);
+        zombie.destinationSetter.enabled = false;
+        zombie.SwitchState(state);
     }
 }

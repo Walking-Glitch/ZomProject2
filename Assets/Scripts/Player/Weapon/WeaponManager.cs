@@ -93,8 +93,8 @@ public class WeaponManager : MonoBehaviour
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
                 Instantiate(hitGroundDecal, hit.point, decalRotation);
 
-                //hit.collider.gameObject.SetActive(false);
-                hit.collider.GetComponentInParent<Rigidbody>().AddForce(hit.normal*-1, ForceMode.Impulse);
+                hit.collider.gameObject.SetActive(false);
+                //hit.collider.GetComponentInParent<Rigidbody>().AddForce(hit.normal*-1, ForceMode.Impulse);
             }
 
             else

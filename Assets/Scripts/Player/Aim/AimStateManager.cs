@@ -90,7 +90,7 @@ public class AimStateManager : MonoBehaviour
 
     private void Update()
     {
-        MoveAimReferenceAndCharacterRotation();
+        MoveAimReference();
         CharacterRotation();
         CurrentState.UpdateState(this);
         AdjustConstraintWeight();
@@ -203,7 +203,7 @@ public class AimStateManager : MonoBehaviour
         isTransitioning = false;  // Reset the flag when done
     }
 
-    private void MoveAimReferenceAndCharacterRotation()
+    private void MoveAimReference()
     {
         Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
         Ray ray = Camera.main.ScreenPointToRay(screenCentre);

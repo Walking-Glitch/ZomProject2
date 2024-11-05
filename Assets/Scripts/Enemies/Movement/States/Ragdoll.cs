@@ -1,18 +1,14 @@
 using UnityEngine;
 
-public class Idle : ZombieBaseState
+public class Ragdoll : ZombieBaseState
 {
     public override void EnterState(ZombieStateManager zombie)
     {
-        
+        throw new System.NotImplementedException();
     }
 
     public override void UpdateState(ZombieStateManager zombie)
     {
-        if (zombie.currentSpeed > 0.1f)
-        {
-            zombie.SwitchState(zombie.roaming);
-        }
-
+        throw new System.NotImplementedException();
     }
 }

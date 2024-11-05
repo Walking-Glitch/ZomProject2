@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class SetDetection : MonoBehaviour
 {
-    private ZombieMovementStateManager movementManager;
+    private ZombieStateManager _manager;
     void Start()
     {
-        movementManager = GetComponentInParent<ZombieMovementStateManager>();
+        _manager = GetComponentInParent<ZombieStateManager>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            movementManager.SetPlayerDetectionStatus(true);
+            _manager.SetPlayerDetectionStatus(true);
         }
     }
 
@@ -21,7 +21,7 @@ public class SetDetection : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            movementManager.SetPlayerDetectionStatus(false);
+            _manager.SetPlayerDetectionStatus(false);
         }
     }
 

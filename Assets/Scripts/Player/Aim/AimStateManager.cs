@@ -220,15 +220,6 @@ public class AimStateManager : MonoBehaviour
             aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
         }
 
-        //if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, laserMask))
-        //{
-        //    aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
-
-        //    laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
-        //    laserPos.position = hit2.point;
-        //    IsOnTarget = true;
-        //}
-
         Vector3 laserDirection = (aimPos.position - weaponLaser.laserOrigin.position);
         Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection );
 

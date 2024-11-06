@@ -121,8 +121,8 @@ public class MovementStateManager : MonoBehaviour
         characterController.Move(direction.normalized * currentSpeed * Time.deltaTime);
 
 
-        anim.SetFloat("hInput", moveInput.x, dampTime: 0.1f, Time.deltaTime);
-        anim.SetFloat("vInput", moveInput.y, dampTime: 0.1f, Time.deltaTime);
+        anim.SetFloat("hInput", moveInput.x, dampTime: 0.12f, Time.deltaTime);
+        anim.SetFloat("vInput", moveInput.y, dampTime: 0.12f, Time.deltaTime);
     }
 
     public bool IsGrounded()

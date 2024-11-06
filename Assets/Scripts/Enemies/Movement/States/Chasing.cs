@@ -14,7 +14,7 @@ public class Chasing : ZombieBaseState
     {
         if (!zombie.IsPlayerInDetectionArea())
         {
-            Debug.Log(elapsed);
+            //Debug.Log(elapsed);
             elapsed += Time.deltaTime;
 
             if (elapsed >= timeToChange)

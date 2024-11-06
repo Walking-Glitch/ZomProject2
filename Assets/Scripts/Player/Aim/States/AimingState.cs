@@ -16,7 +16,7 @@ public class AimingState : AimStateBase
 
         if (aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Reload)
         {
-            aimStateManager.WeaponManager.laser.DisplayLaser();
+            aimStateManager.WeaponManager.laser.DisplayLaser(aimStateManager.IsOnTarget);
         }
        
     }

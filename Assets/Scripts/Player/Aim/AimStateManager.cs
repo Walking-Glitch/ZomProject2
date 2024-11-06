@@ -23,7 +23,9 @@ public class AimStateManager : MonoBehaviour
 
     // camera aim
     public Transform aimPos;
+    public Transform laserPos;
     [SerializeField] private LayerMask aimMask;
+    [SerializeField] private LayerMask laserMask;
     [SerializeField] private LayerMask allMask;
 
     // camera zoom
@@ -63,6 +65,10 @@ public class AimStateManager : MonoBehaviour
     // blend variables
     public float blendDuration; // Duration for blending layers
 
+    // bool to set laser
+    [HideInInspector] public bool IsOnTarget;
+    private WeaponLaser weaponLaser;
+
     private void Awake()
     {
         actionSystem = new InputSystem_Actions();
@@ -76,6 +82,7 @@ public class AimStateManager : MonoBehaviour
 
     private void Start()
     {
+        weaponLaser = GetComponent<WeaponLaser>();
         anim = GetComponent<Animator>();
         WeaponManager = GetComponent<WeaponManager>();
         actionStateManager = GetComponent<ActionStateManager>();
@@ -212,9 +219,36 @@ public class AimStateManager : MonoBehaviour
         {
             aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
         }
+
+        //if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, laserMask))
+        //{
+        //    aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+        //    laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+        //    laserPos.position = hit2.point;
+        //    IsOnTarget = true;
+        //}
+
+        Vector3 laserDirection = (aimPos.position - weaponLaser.laserOrigin.position);
+        Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection );
+
+        if (Physics.Raycast( ray2  , out RaycastHit hit2, Mathf.Infinity, laserMask))
+        {
+            aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+            laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+            laserPos.position = hit2.point;
+            IsOnTarget = true;
+        }
+        else
+        {
+            aimPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+
+            laserPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            IsOnTarget = false;
+        }
     }
-
-
+     
     private void CharacterRotation()
     {
         {

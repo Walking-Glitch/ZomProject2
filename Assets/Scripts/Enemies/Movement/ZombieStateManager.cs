@@ -19,6 +19,7 @@ public class ZombieStateManager : MonoBehaviour
     // state references
     public ZombieBaseState currentState;
 
+    public Ragdoll ragdoll = new Ragdoll();
     public Chasing chasing = new Chasing();
     public Roaming roaming = new Roaming();
     public Idle idle = new Idle();
@@ -62,6 +63,17 @@ public class ZombieStateManager : MonoBehaviour
         UpdateCurrentSpeed();
         currentState.UpdateState(this);
         //Debug.Log(currentState);
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            SwitchState(ragdoll);
+        }
+
+
+        if (Input.GetKey(KeyCode.F))
+        {
+            SwitchState(roaming);
+        }
     }
 
     public void SwitchState(ZombieBaseState state)
@@ -77,10 +89,10 @@ public class ZombieStateManager : MonoBehaviour
     }
     public void RagdollModeOn()
     {
-        foreach (Collider col in ragdollColliders)
-        {
-            col.enabled = true;
-        }
+        //foreach (Collider col in ragdollColliders)
+        //{
+        //    col.enabled = true;
+        //}
 
         foreach (Rigidbody rigid in ragdollRigidbodies)
         {
@@ -89,22 +101,21 @@ public class ZombieStateManager : MonoBehaviour
 
         anim.enabled = false;
 
-        //mainCollider.enabled = false;
-
-        //GetComponent<Rigidbody>().isKinematic = true;
+         
 
     }
 
-    protected virtual void RagdollModeOff()
+    public void RagdollModeOff()
     {
+        
         isDead = false;
 
         health = maxHealth;
 
-        foreach (Collider col in ragdollColliders)
-        {
-            col.enabled = false;
-        }
+        //foreach (Collider col in ragdollColliders)
+        //{
+        //   // col.enabled = false;
+        //}
 
         foreach (Rigidbody rigid in ragdollRigidbodies)
         {
@@ -113,11 +124,7 @@ public class ZombieStateManager : MonoBehaviour
 
         anim.enabled = true;
 
-        //mainCollider.enabled = true;
-
-        //GetComponent<Rigidbody>().isKinematic = false;
-
-
+         
 
         //bloodVisualEffect.enabled = false;
 

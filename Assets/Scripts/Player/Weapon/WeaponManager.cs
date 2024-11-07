@@ -44,6 +44,9 @@ public class WeaponManager : MonoBehaviour
     // animator
     private Animator anim;
 
+    // zombie reference
+    ZombieStateManager zombieStateManager;
+
     void Awake()
     {
         inputSystemActions = new InputSystem_Actions();
@@ -89,11 +92,30 @@ public class WeaponManager : MonoBehaviour
 
             else if (hit.collider.CompareTag("Zombie"))
             {
-
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
                 Instantiate(hitGroundDecal, hit.point, decalRotation);
 
-                hit.collider.gameObject.SetActive(false);
+                
+
+                Limbs limb = hit.collider.GetComponent<Limbs>();
+
+                if (limb != null)
+                {
+                    float baseDamage = 10;
+                    float finalDamage = baseDamage * limb.damageMultiplier;
+
+                    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                    zombieStateManager.TakeDamage((int)finalDamage);
+
+                    float baseLimbDmg = 100f;
+                    float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
+
+                    limb.LimbTakeDamage((int)finalLimbDmg);
+                    Debug.Log(finalLimbDmg);
+                    Debug.Log(limb.limbName);
+
+                }
+               
                 //hit.collider.GetComponentInParent<Rigidbody>().AddForce(hit.normal*-1, ForceMode.Impulse);
             }
 

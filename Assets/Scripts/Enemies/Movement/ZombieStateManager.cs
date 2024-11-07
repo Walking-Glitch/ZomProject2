@@ -19,6 +19,7 @@ public class ZombieStateManager : MonoBehaviour
     // state references
     public ZombieBaseState currentState;
 
+    public Hurt hurt = new Hurt();
     public Ragdoll ragdoll = new Ragdoll();
     public Chasing chasing = new Chasing();
     public Roaming roaming = new Roaming();
@@ -39,11 +40,15 @@ public class ZombieStateManager : MonoBehaviour
     public int health;
     public bool isDead;
 
+    // alerted
+    public bool alerted; 
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        health = maxHealth;
+
         anim = GetComponent<Animator>();
 
         aiPath = GetComponentInParent<AIPath>();
@@ -110,7 +115,7 @@ public class ZombieStateManager : MonoBehaviour
         
         isDead = false;
 
-        health = maxHealth;
+        //health = maxHealth;
 
         //foreach (Collider col in ragdollColliders)
         //{
@@ -145,9 +150,21 @@ public class ZombieStateManager : MonoBehaviour
 
     }
 
-    public virtual void TakeDamage(int damage, Vector3 bloodSpeed, bool explosion, float force)
+    public virtual void TakeDamage(int damage)
     {
         health -= damage;
+
+        if (health > 0)
+        {
+            SwitchState(hurt);
+           
+        }
+        else
+        {
+            SwitchState(ragdoll);
+             
+        }
+       
     }
 
     private void UpdateCurrentSpeed()

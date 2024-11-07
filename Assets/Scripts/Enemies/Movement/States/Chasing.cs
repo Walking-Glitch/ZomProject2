@@ -8,6 +8,7 @@ public class Chasing : ZombieBaseState
     {
         elapsed = 0;
         zombie.destinationSetter.enabled = true;
+        zombie.aiPath.canMove = true;
     }
 
     public override void UpdateState(ZombieStateManager zombie)

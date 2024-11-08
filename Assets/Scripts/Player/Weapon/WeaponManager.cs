@@ -111,12 +111,16 @@ public class WeaponManager : MonoBehaviour
                     float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
 
                     limb.LimbTakeDamage((int)finalLimbDmg);
-                    Debug.Log(finalLimbDmg);
-                    Debug.Log(limb.limbName);
 
+                    Rigidbody rb = hit.collider.GetComponentInParent<Rigidbody>();
+
+                    if (rb != null)
+                    {
+                        rb.AddForce(hit.normal * -1 * 300f, ForceMode.Impulse); 
+                    }
                 }
-               
-                //hit.collider.GetComponentInParent<Rigidbody>().AddForce(hit.normal*-1, ForceMode.Impulse);
+
+
             }
 
             else

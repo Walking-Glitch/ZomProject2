@@ -4,6 +4,7 @@ public class Roaming : ZombieBaseState
 {
     public override void EnterState(ZombieStateManager zombie)
     {
+
         zombie.RagdollModeOff();
         zombie.aiPath.canMove = true;
         zombie.patrol.enabled = true; 
@@ -19,6 +20,11 @@ public class Roaming : ZombieBaseState
         if (zombie.IsPlayerInDetectionArea())
         {
             ExitState(zombie, zombie.chasing);
+        }
+
+        if (zombie.isCrippled)
+        {
+            zombie.anim.SetBool("IsCrippled", true);
         }
     }
 

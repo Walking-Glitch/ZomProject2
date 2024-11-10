@@ -9,10 +9,19 @@ public class Chasing : ZombieBaseState
         elapsed = 0;
         zombie.destinationSetter.enabled = true;
         zombie.aiPath.canMove = true;
+
+        zombie.alerted = true;
+
+        zombie.anim.SetBool("IsAlerted", zombie.alerted);
     }
 
     public override void UpdateState(ZombieStateManager zombie)
     {
+        if (zombie.isCrippled)
+        {
+            zombie.anim.SetBool("IsCrippled", true);
+        }
+
         if (!zombie.IsPlayerInDetectionArea())
         {
             //Debug.Log(elapsed);

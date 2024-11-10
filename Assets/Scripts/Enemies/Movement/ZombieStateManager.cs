@@ -1,5 +1,6 @@
 using System.Collections;
 using Pathfinding;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
@@ -20,7 +21,7 @@ public class ZombieStateManager : MonoBehaviour
     public ZombieBaseState currentState;
 
     public Hurt hurt = new Hurt();
-    public Ragdoll ragdoll = new Ragdoll();
+    public Death Death = new Death();
     public Chasing chasing = new Chasing();
     public Roaming roaming = new Roaming();
     public Idle idle = new Idle();
@@ -43,6 +44,10 @@ public class ZombieStateManager : MonoBehaviour
     // alerted
     public bool alerted; 
 
+    // legs
+    public bool isCrippled;
+    public Limbs [] LeftLeg;
+    public Limbs [] RightLeg;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -67,18 +72,19 @@ public class ZombieStateManager : MonoBehaviour
     {
         UpdateCurrentSpeed();
         currentState.UpdateState(this);
-        //Debug.Log(currentState);
+        Debug.Log(currentState);
 
         if (Input.GetKey(KeyCode.Space))
         {
-            SwitchState(ragdoll);
+            SwitchState(Death);
         }
-
 
         if (Input.GetKey(KeyCode.F))
         {
             SwitchState(roaming);
         }
+
+        CheckIfCrippled();
     }
 
     public void SwitchState(ZombieBaseState state)
@@ -87,6 +93,24 @@ public class ZombieStateManager : MonoBehaviour
         currentState.EnterState(this);
     }
 
+    public void CheckIfCrippled()
+    {
+        foreach (Limbs limb in LeftLeg)
+        {
+            if (limb.limbHealth <= 0)
+            {
+                isCrippled = true;
+            }
+        }
+
+        foreach (Limbs limb in RightLeg)
+        {
+            if (limb.limbHealth <= 0)
+            {
+                isCrippled = true;
+            }
+        }
+    }
     protected void GetRagdollBits()
     {
         ragdollColliders = rig.GetComponentsInChildren<Collider>();
@@ -150,18 +174,19 @@ public class ZombieStateManager : MonoBehaviour
 
     }
 
-    public virtual void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage, string limbName)
     {
         health -= damage;
+        
 
-        if (health > 0)
+        if (health > 0 && limbName == "torso" || limbName == "belly" && !isDead)
         {
             SwitchState(hurt);
            
         }
         else
         {
-            SwitchState(ragdoll);
+            SwitchState(Death);
              
         }
        

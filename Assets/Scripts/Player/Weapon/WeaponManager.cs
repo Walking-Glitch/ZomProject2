@@ -26,6 +26,7 @@ public class WeaponManager : MonoBehaviour
 
     // decals 
     public GameObject hitGroundDecal;
+    public GameObject fleshDecal;
 
     // audio variables
     public AudioSource audioSource;
@@ -96,7 +97,6 @@ public class WeaponManager : MonoBehaviour
                 Instantiate(hitGroundDecal, hit.point, decalRotation);
 
                 
-
                 Limbs limb = hit.collider.GetComponent<Limbs>();
 
                 if (limb != null)
@@ -104,8 +104,17 @@ public class WeaponManager : MonoBehaviour
                     float baseDamage = 10;
                     float finalDamage = baseDamage * limb.damageMultiplier;
 
-                    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                    zombieStateManager.TakeDamage((int)finalDamage);
+                    if (limb.limbName == "head")
+                    {
+                        zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName);
+                    }
+                    else if (limb.limbName == "torso" || limb.limbName == "belly")
+                    {
+                        zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                        zombieStateManager.TakeDamage(0, limb.limbName);
+                    }
+                  
 
                     float baseLimbDmg = 100f;
                     float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
@@ -116,11 +125,10 @@ public class WeaponManager : MonoBehaviour
 
                     if (rb != null)
                     {
-                        rb.AddForce(hit.normal * -1 * 300f, ForceMode.Impulse); 
+                        rb.AddForce(hit.normal * -1 * 100f, ForceMode.Impulse); 
                     }
                 }
-
-
+                Debug.Log(limb.limbName);
             }
 
             else

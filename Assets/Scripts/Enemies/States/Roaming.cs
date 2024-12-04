@@ -31,8 +31,6 @@ public class Roaming : ZombieBaseState
     private void ExitState(ZombieStateManager zombie, ZombieBaseState state)
     {
         zombie.patrol.enabled = false;
-
-
         zombie.SwitchState(state);
     }
 }

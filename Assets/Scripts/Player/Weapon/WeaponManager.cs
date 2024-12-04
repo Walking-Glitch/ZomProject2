@@ -109,11 +109,22 @@ public class WeaponManager : MonoBehaviour
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
                         zombieStateManager.TakeDamage((int)finalDamage, limb.limbName);
                     }
-                    else if (limb.limbName == "torso" || limb.limbName == "belly")
+                    else
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
                         zombieStateManager.TakeDamage(0, limb.limbName);
                     }
+                    //else if (limb.limbName == "torso" || limb.limbName == "belly")
+                    //{
+                    //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                    //    zombieStateManager.TakeDamage(0, limb.limbName);
+                    //}
+
+                    //else
+                    //{
+                    //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                    //    zombieStateManager.TakeDamage(0, limb.limbName);
+                    //}
                   
 
                     float baseLimbDmg = 100f;
@@ -127,8 +138,9 @@ public class WeaponManager : MonoBehaviour
                     {
                         rb.AddForce(hit.normal * -1 * 100f, ForceMode.Impulse); 
                     }
+                    Debug.Log(limb.limbName);
                 }
-                Debug.Log(limb.limbName);
+               
             }
 
             else

@@ -10,9 +10,9 @@ public class Chasing : ZombieBaseState
         zombie.destinationSetter.enabled = true;
         zombie.aiPath.canMove = true;
 
-        zombie.alerted = true;
+        zombie.aiPath.maxSpeed = 0.3f;
 
-        zombie.anim.SetBool("IsAlerted", zombie.alerted);
+        zombie.SetIsAlerted(true);
     }
 
     public override void UpdateState(ZombieStateManager zombie)
@@ -35,6 +35,11 @@ public class Chasing : ZombieBaseState
         else
         {
             elapsed = 0; 
+        }
+
+        if (zombie.IsPlayerInAttackArea())
+        {
+            zombie.SwitchState(zombie.attack);
         }
 
        

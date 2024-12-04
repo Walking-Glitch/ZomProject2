@@ -5,7 +5,7 @@ public class Hurt : ZombieBaseState
 {
     public override void EnterState(ZombieStateManager zombie)
     {
-        zombie.alerted = true;
+        zombie.SetIsAlerted(true);
         zombie.aiPath.canMove = false;
         zombie.anim.SetTrigger("IsHit");
     }

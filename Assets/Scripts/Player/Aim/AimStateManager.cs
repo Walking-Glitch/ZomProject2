@@ -9,15 +9,11 @@ using static UnityEditor.SceneView;
 
 public class AimStateManager : MonoBehaviour 
 {
-     
-
+    
     // camera rotation
     private Vector2 lookInput;
     private Vector3 direction;
     [SerializeField] private float aimRotationSpeed;
-
-    private bool cameraAcheck;
-    private bool cameraBcheck;
 
     private InputSystem_Actions actionSystem;
 

@@ -7,7 +7,7 @@ public class Death : ZombieBaseState
         zombie.isDead = true;
         zombie.aiPath.canMove = false;
 
-        if (!zombie.alerted)
+        if (!zombie.IsZombieAlerted())
         {
             zombie.RagdollModeOn();
         }

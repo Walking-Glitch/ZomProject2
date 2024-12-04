@@ -25,10 +25,12 @@ public class ZombieStateManager : MonoBehaviour
     public Chasing chasing = new Chasing();
     public Roaming roaming = new Roaming();
     public Idle idle = new Idle();
+    public Attack attack = new Attack();
 
 
     // detection variables
     private bool PlayerDetected;
+    private bool AttackPlayer;
 
     // ragdoll
     public GameObject rig;
@@ -177,19 +179,24 @@ public class ZombieStateManager : MonoBehaviour
     public virtual void TakeDamage(int damage, string limbName)
     {
         health -= damage;
-        
 
-        if (health > 0 && limbName == "torso" || limbName == "belly" && !isDead)
+
+
+        if (health > 0)
         {
-            SwitchState(hurt);
-           
+            if (limbName == "torso" || limbName == "belly" && !isDead)
+            {
+                SwitchState(hurt);
+            }
+            else
+            {
+                SwitchState(chasing);
+            }
         }
         else
         {
             SwitchState(Death);
-             
         }
-       
     }
 
     private void UpdateCurrentSpeed()
@@ -198,6 +205,15 @@ public class ZombieStateManager : MonoBehaviour
         anim.SetFloat("Speed", currentSpeed);
     }
 
+    public void SetPlayerAttackStatus(bool isInAttackArea)
+    {
+        AttackPlayer = isInAttackArea;
+    }
+
+    public bool IsPlayerInAttackArea()
+    {
+        return AttackPlayer;
+    }
     public void SetPlayerDetectionStatus(bool isDetected)
     {
         PlayerDetected = isDetected;
@@ -206,5 +222,16 @@ public class ZombieStateManager : MonoBehaviour
     public bool IsPlayerInDetectionArea()
     {
         return PlayerDetected;
+    }
+
+    public void SetIsAlerted(bool isAlerted)
+    {
+        alerted = isAlerted;
+        anim.SetBool("IsAlerted", alerted);
+    }
+
+    public bool IsZombieAlerted()
+    {
+        return alerted;
     }
 }

@@ -19,7 +19,7 @@ public class SetAttackStatus : MonoBehaviour
             float distance = Vector3.Distance(this.transform.position, other.transform.position);
             if (distance < 0.95f)
             {
-                Debug.Log("inside 0.95f");
+                //Debug.Log("inside 0.95f");
                 _manager.SetPlayerAttackStatus(true);
             }
            

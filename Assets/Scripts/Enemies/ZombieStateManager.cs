@@ -7,7 +7,7 @@ using UnityEngine.Animations.Rigging;
 public class ZombieStateManager : MonoBehaviour
 {
     // player reference
-    public GameObject Player;
+    public PlayerStatus Player;
     // navigation variables
     [HideInInspector] public AIPath aiPath;
     [HideInInspector] public AIDestinationSetter destinationSetter;
@@ -33,6 +33,7 @@ public class ZombieStateManager : MonoBehaviour
     // detection variables
     private bool PlayerDetected;
     private bool AttackPlayer;
+    private bool CanDamagePlayer;
 
     // ragdoll
     public GameObject rig;
@@ -201,6 +202,14 @@ public class ZombieStateManager : MonoBehaviour
         }
     }
 
+    public void DealDamage()
+    {
+        if (IsPlayerInDamageArea())
+        {
+            Player.PlayerTakeDamage(10);
+        }
+    }
+
     private void UpdateCurrentSpeed()
     {
         currentSpeed = agent.velocity.magnitude;
@@ -209,14 +218,7 @@ public class ZombieStateManager : MonoBehaviour
 
     public void SetPlayerAttackStatus(bool isInAttackArea)
     {
-        //    float distance = Vector3.Distance(this.transform.position, Player.transform.position);
-        //    if (distance < 0.8f)
-        //    {
-        //        Debug.Log("inside 0.8f");
-        //        AttackPlayer = isInAttackArea;
-        //    }
         AttackPlayer = isInAttackArea;
-
     }
 
     public bool IsPlayerInAttackArea()
@@ -242,5 +244,15 @@ public class ZombieStateManager : MonoBehaviour
     public bool IsZombieAlerted()
     {
         return alerted;
+    }
+
+    public void SetIsInDamageArea(bool isInDamageArea)
+    {
+        CanDamagePlayer = isInDamageArea;
+    }
+
+    public bool IsPlayerInDamageArea()
+    {
+        return CanDamagePlayer;
     }
 }

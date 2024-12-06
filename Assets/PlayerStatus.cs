@@ -4,9 +4,15 @@ public class PlayerStatus : MonoBehaviour
 {
     public int MaxHealth;
     public int Health;
-    void Start()
+    public UIManager UiManager;
+
+    void Awake()
     {
         Health = MaxHealth;
+    }
+    void Start()
+    {
+        
     }
 
     // Update is called once per frame
@@ -22,6 +28,7 @@ public class PlayerStatus : MonoBehaviour
     {
         Health -= damage;
         Health = Mathf.Clamp(Health, 0, MaxHealth);
+        UiManager.UpdateHealthUI();
     }
 
 

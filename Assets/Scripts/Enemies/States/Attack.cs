@@ -11,8 +11,6 @@ public class Attack : ZombieBaseState
         cooldown = 5f;
 
 
-
-
         zombie.aiPath.maxSpeed = 0f;
         zombie.anim.SetTrigger("IsAttacking");
     }

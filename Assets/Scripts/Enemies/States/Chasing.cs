@@ -1,3 +1,4 @@
+using Pathfinding;
 using UnityEngine;
 
 public class Chasing : ZombieBaseState
@@ -8,6 +9,7 @@ public class Chasing : ZombieBaseState
     {
         elapsed = 0;
         zombie.destinationSetter.enabled = true;
+        zombie.destinationSetter.target = zombie.PlayerTransform;
         zombie.aiPath.canMove = true;
 
         zombie.aiPath.maxSpeed = 0.3f;
@@ -22,20 +24,20 @@ public class Chasing : ZombieBaseState
             zombie.anim.SetBool("IsCrippled", true);
         }
 
-        if (!zombie.IsPlayerInDetectionArea())
-        {
-            //Debug.Log(elapsed);
-            elapsed += Time.deltaTime;
+        //if (!zombie.IsPlayerInDetectionArea())
+        //{
+        //    //Debug.Log(elapsed);
+        //    elapsed += Time.deltaTime;
 
-            if (elapsed >= timeToChange)
-            {
-                ExitState(zombie, zombie.roaming);
-            }
-        }
-        else
-        {
-            elapsed = 0; 
-        }
+        //    if (elapsed >= timeToChange)
+        //    {
+        //        ExitState(zombie, zombie.roaming);
+        //    }
+        //}
+        //else
+        //{
+        //    elapsed = 0; 
+        //}
 
         if (zombie.IsPlayerInAttackArea())
         {

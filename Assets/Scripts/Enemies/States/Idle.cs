@@ -15,10 +15,10 @@ public class Idle : ZombieBaseState
 
     public override void UpdateState(ZombieStateManager zombie)
     {
-        if (zombie.currentSpeed > 0.1f && !zombie.IsZombieAlerted())
-        {
-            zombie.SwitchState(zombie.roaming);
-        }
+        //if (zombie.currentSpeed > 0.1f && !zombie.IsZombieAlerted())
+        //{
+        //    zombie.SwitchState(zombie.roaming);
+        //}
 
         if (zombie.IsPlayerInAttackArea())
         {

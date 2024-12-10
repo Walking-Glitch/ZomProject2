@@ -8,6 +8,7 @@ public class ZombieStateManager : MonoBehaviour
 {
     // player reference
     public PlayerStatus Player;
+    public Transform PlayerTransform;
     // navigation variables
     [HideInInspector] public AIPath aiPath;
     [HideInInspector] public AIDestinationSetter destinationSetter;
@@ -66,10 +67,12 @@ public class ZombieStateManager : MonoBehaviour
         patrol = GetComponentInParent<Patrol>();
         agent = GetComponentInParent<IAstarAI>();
 
+        PlayerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>(); ;
+
         GetRagdollBits();
         RagdollModeOff();
 
-        SwitchState(roaming);
+        SwitchState(chasing);
     }
 
     // Update is called once per frame

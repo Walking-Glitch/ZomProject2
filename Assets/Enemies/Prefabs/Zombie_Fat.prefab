@@ -2023,6 +2023,7 @@ MonoBehaviour:
   RightLeg:
   - {fileID: 2661999613414482274}
   - {fileID: 2786333571081714136}
+  SkinRig: {fileID: 2229627935626855848}
 --- !u!1 &2283387086249013358
 GameObject:
   m_ObjectHideFlags: 0

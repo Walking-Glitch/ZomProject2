@@ -60,8 +60,12 @@ public class ZombieStateManager : MonoBehaviour
     public Limbs [] RightLeg;
 
     // game manager reference
-
     private GameManager gameManager;
+
+    //skin mesh object reference
+    public GameObject SkinRig;
+    private SkinnedMeshRenderer[] zombieMeshRenderers;
+    private Limbs[] zombieLimbs;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -82,6 +86,8 @@ public class ZombieStateManager : MonoBehaviour
         PlayerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         Player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
 
+        GetSkinMeshBits();
+        GetZombieLimbs();
         GetRagdollBits();
         RagdollModeOff();
 
@@ -137,6 +143,16 @@ public class ZombieStateManager : MonoBehaviour
         ragdollColliders = rig.GetComponentsInChildren<Collider>();
         ragdollRigidbodies = rig.GetComponentsInChildren<Rigidbody>();
     }
+
+    protected void GetSkinMeshBits()
+    {
+        zombieMeshRenderers = SkinRig.GetComponentsInChildren<SkinnedMeshRenderer>();
+    }
+
+    protected void GetZombieLimbs()
+    {
+        zombieLimbs = rig.GetComponentsInChildren<Limbs>();
+    }
     public void RagdollModeOn()
     {
         //foreach (Collider col in ragdollColliders)
@@ -190,12 +206,33 @@ public class ZombieStateManager : MonoBehaviour
     {
 
         yield return new WaitForSeconds(delay);
+       
         RagdollModeOff();
+
         gameManager.EnemyManager.DecreaseEnemyCtr(); 
-        SwitchState(chasing);
+       
         health = maxHealth;
+
+        foreach (var skin in zombieMeshRenderers)
+        {
+                skin.enabled = true;
+        }
+
+        foreach (var col in ragdollColliders)
+        {
+            col.enabled = true;
+        }
+
+        foreach (var limb in zombieLimbs)
+        {
+            limb.limbHealth = limb.limbMaxHealth;
+        }
+
+        isCrippled = false;
+
         zombieParent.SetActive(false);
 
+        SwitchState(chasing);
 
     }
 

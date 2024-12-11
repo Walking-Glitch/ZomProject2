@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Death : ZombieBaseState
 {
-    public override void EnterState(ZombieStateManager zombie)
+     public override void EnterState(ZombieStateManager zombie)
     {
         zombie.isDead = true;
         zombie.aiPath.canMove = false;
@@ -19,6 +19,8 @@ public class Death : ZombieBaseState
         {
             zombie.anim.SetBool("IsDead", true);
         }
+
+        zombie.PlayerDestroyZombie();
     }
 
     public override void UpdateState(ZombieStateManager zombie)

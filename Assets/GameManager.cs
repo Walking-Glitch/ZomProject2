@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour
 {
     #region References
     public EnemyPool EnemyPool;
+    public EnemyManager EnemyManager;
     #endregion
 
     #region Singleton

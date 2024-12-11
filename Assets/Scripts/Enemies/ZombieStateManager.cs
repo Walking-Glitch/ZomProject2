@@ -9,6 +9,10 @@ public class ZombieStateManager : MonoBehaviour
     // player reference
     public PlayerStatus Player;
     public Transform PlayerTransform;
+
+    //Zombie parent obj reference
+    private GameObject zombieParent; 
+
     // navigation variables
     [HideInInspector] public AIPath aiPath;
     [HideInInspector] public AIDestinationSetter destinationSetter;
@@ -55,10 +59,18 @@ public class ZombieStateManager : MonoBehaviour
     public Limbs [] LeftLeg;
     public Limbs [] RightLeg;
 
+    // game manager reference
+
+    private GameManager gameManager;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        gameManager = GameManager.Instance;
+
         health = maxHealth;
+
+        zombieParent = transform.parent.gameObject;
 
         anim = GetComponent<Animator>();
 
@@ -67,7 +79,8 @@ public class ZombieStateManager : MonoBehaviour
         patrol = GetComponentInParent<Patrol>();
         agent = GetComponentInParent<IAstarAI>();
 
-        PlayerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>(); ;
+        PlayerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        Player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
 
         GetRagdollBits();
         RagdollModeOff();
@@ -167,7 +180,7 @@ public class ZombieStateManager : MonoBehaviour
 
     }
 
-    protected virtual void PlayerDestroyZombie()
+    public void PlayerDestroyZombie()
     {
         StartCoroutine(DelayDestruction(3f));
 
@@ -178,7 +191,11 @@ public class ZombieStateManager : MonoBehaviour
 
         yield return new WaitForSeconds(delay);
         RagdollModeOff();
-        gameObject.SetActive(false);
+        gameManager.EnemyManager.DecreaseEnemyCtr(); 
+        SwitchState(chasing);
+        health = maxHealth;
+        zombieParent.SetActive(false);
+
 
     }
 

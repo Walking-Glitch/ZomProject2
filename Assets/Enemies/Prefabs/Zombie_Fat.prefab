@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbName: leg
+  limbName: thigh
   damageMultiplier: 0.8
   limbDamageMultiplier: 0
   limbHealth: 0
@@ -361,7 +361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbName: leg
+  limbName: thigh
   damageMultiplier: 0.8
   limbDamageMultiplier: 0
   limbHealth: 0
@@ -1839,7 +1839,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 342273271546848232}
-  m_Layer: 0
+  - component: {fileID: 7271060469487883269}
+  m_Layer: 2
   m_Name: BigZombieParts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1875,6 +1876,29 @@ Transform:
   - {fileID: 2930207670603765039}
   m_Father: {fileID: 8329145503156190372}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7271060469487883269
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2229627935626855848}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4096
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.35
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2269721203575315693
 GameObject:
   m_ObjectHideFlags: 0
@@ -2004,7 +2028,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b871ffc45524964395f490a3c00a748, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
   PlayerTransform: {fileID: 0}
   aiPath: {fileID: 0}
   destinationSetter: {fileID: 0}
@@ -4161,7 +4184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbName: arm
+  limbName: upperArm
   damageMultiplier: 0.5
   limbDamageMultiplier: 0
   limbHealth: 0
@@ -4561,7 +4584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbName: arm
+  limbName: lowerArm
   damageMultiplier: 0.5
   limbDamageMultiplier: 0.25
   limbHealth: 0
@@ -5056,7 +5079,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbName: arm
+  limbName: upperArm
   damageMultiplier: 0.5
   limbDamageMultiplier: 0
   limbHealth: 100
@@ -5521,7 +5544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbName: arm
+  limbName: lowerArm
   damageMultiplier: 0.5
   limbDamageMultiplier: 0.25
   limbHealth: 0

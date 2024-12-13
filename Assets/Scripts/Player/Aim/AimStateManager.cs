@@ -1,5 +1,7 @@
 using System.Collections;
 using System.ComponentModel;
+using Assets.Scripts.Player.Actions;
+using Assets.Scripts.Player.Weapon;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;

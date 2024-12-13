@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c801785c9a6a58345b9a7f47d68fce2f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271227
+  packageName: Zombie Girl B.
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/ZombieGirl_B/Model/Materials/URP/ZombieGirl_B_MAT_V2_URP.mat
+  uploadId: 646427

@@ -1,246 +1,246 @@
-using Unity.Burst.Intrinsics;
+using Assets.Scripts.Player.Actions;
 using UnityEngine;
-using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
-using UnityEngine.Audio;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering.Universal;
 
-public class WeaponManager : MonoBehaviour
+namespace Assets.Scripts.Player.Weapon
 {
-    // ray casting variables 
-    [SerializeField] private LayerMask shootMask;
-    public Transform GunEndTransform;
-    public Transform TargetTransform;
-    public Transform weaponTransform;
-
-    //reference to laser 
-    [HideInInspector] public WeaponLaser laser;
-
-    // input system
-    private InputSystem_Actions inputSystemActions;
-
-    // reference to state managers
-    private AimStateManager aimStateManager;
-    private MovementStateManager moveStateManager;
-    private ActionStateManager actionStateManager;
-
-    // decals 
-    public GameObject hitGroundDecal;
-    public GameObject fleshDecal;
-
-    // audio variables
-    public AudioSource audioSource;
-    public AudioClip [] gunShots;
-
-    // firing variables
-    [Header("Fire Rate")]
-    [SerializeField] float fireRate;
-    private float fireRateTimer;
-
-    private Light muzzleFlashLight;
-    ParticleSystem muzzleFlashParticleSystem;
-    private float lightIntensity;
-    [SerializeField] private float lightReturnSpeed = 20;
-
-    // animator
-    private Animator anim;
-
-    // zombie reference
-    ZombieStateManager zombieStateManager;
-
-    void Awake()
+    public class WeaponManager : MonoBehaviour
     {
-        inputSystemActions = new InputSystem_Actions();
-        inputSystemActions.Player.Attack.performed += OnFirePerformed;
-    }
+        // ray casting variables 
+        [SerializeField] private LayerMask shootMask;
+        public Transform GunEndTransform;
+        public Transform TargetTransform;
+        public Transform weaponTransform;
 
-    void Start()
-    {
-        anim = GetComponent<Animator>();
-        aimStateManager = GetComponent<AimStateManager>();
-        moveStateManager = GetComponent<MovementStateManager>();
-        actionStateManager = GetComponent<ActionStateManager>();
-        laser = GetComponent<WeaponLaser>();
-    }
+        //reference to laser 
+        [HideInInspector] public WeaponLaser laser;
 
-    // Update is called once per frame
-    void Update()
-    {
-        fireRateTimer += Time.deltaTime;
+        // input system
+        private InputSystem_Actions inputSystemActions;
 
-    }
+        // reference to state managers
+        private AimStateManager aimStateManager;
+        private MovementStateManager moveStateManager;
+        private ActionStateManager actionStateManager;
 
+        // decals 
+        public GameObject hitGroundDecal;
+        public GameObject fleshDecal;
 
+        // audio variables
+        public AudioSource audioSource;
+        public AudioClip [] gunShots;
 
+        // firing variables
+        [Header("Fire Rate")]
+        [SerializeField] float fireRate;
+        private float fireRateTimer;
 
-    void Fire()
-    {
-        anim.SetTrigger("Firing");
-        fireRateTimer = 0;
-        audioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
-        //TriggerMuzzleFlash();
+        private Light muzzleFlashLight;
+        ParticleSystem muzzleFlashParticleSystem;
+        private float lightIntensity;
+        [SerializeField] private float lightReturnSpeed = 20;
 
-        Vector3 direction = TargetTransform.position - GunEndTransform.position;
-        if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
-                shootMask))
+        // animator
+        private Animator anim;
+
+        // zombie reference
+        ZombieStateManager zombieStateManager;
+
+        void Awake()
         {
-            if (hit.collider.CompareTag("Ground"))
-            {
-                Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+            inputSystemActions = new InputSystem_Actions();
+            inputSystemActions.Player.Attack.performed += OnFirePerformed;
+        }
 
-                Instantiate(hitGroundDecal, hit.point, decalRotation);
-            }
+        void Start()
+        {
+            anim = GetComponent<Animator>();
+            aimStateManager = GetComponent<AimStateManager>();
+            moveStateManager = GetComponent<MovementStateManager>();
+            actionStateManager = GetComponent<ActionStateManager>();
+            laser = GetComponent<WeaponLaser>();
+        }
 
-            else if (hit.collider.CompareTag("Zombie"))
+        // Update is called once per frame
+        void Update()
+        {
+            fireRateTimer += Time.deltaTime;
+
+        }
+
+
+
+
+        void Fire()
+        {
+            anim.SetTrigger("Firing");
+            fireRateTimer = 0;
+            audioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
+            //TriggerMuzzleFlash();
+
+            Vector3 direction = TargetTransform.position - GunEndTransform.position;
+            if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
+                    shootMask))
             {
-                Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                Instantiate(hitGroundDecal, hit.point, decalRotation);
+                if (hit.collider.CompareTag("Ground"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                    Instantiate(hitGroundDecal, hit.point, decalRotation);
+                }
+
+                else if (hit.collider.CompareTag("Zombie"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+                    Instantiate(hitGroundDecal, hit.point, decalRotation);
 
                 
-                Limbs limb = hit.collider.GetComponent<Limbs>();
+                    Limbs limb = hit.collider.GetComponent<Limbs>();
 
-                if (limb != null)
-                {
-                    float baseDamage = 10;
-                    float finalDamage = baseDamage * limb.damageMultiplier;
-
-                    if (limb.limbName == "head")
+                    if (limb != null)
                     {
-                        zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName);
-                    }
-                    else
-                    {
-                        zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage(0, limb.limbName);
-                    }
-                    //else if (limb.limbName == "torso" || limb.limbName == "belly")
-                    //{
-                    //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                    //    zombieStateManager.TakeDamage(0, limb.limbName);
-                    //}
+                        float baseDamage = 10;
+                        float finalDamage = baseDamage * limb.damageMultiplier;
 
-                    //else
-                    //{
-                    //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                    //    zombieStateManager.TakeDamage(0, limb.limbName);
-                    //}
+                        if (limb.limbName == "head")
+                        {
+                            zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                            zombieStateManager.TakeDamage((int)finalDamage, limb.limbName);
+                        }
+                        else
+                        {
+                            zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                            zombieStateManager.TakeDamage(0, limb.limbName);
+                        }
+                        //else if (limb.limbName == "torso" || limb.limbName == "belly")
+                        //{
+                        //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                        //    zombieStateManager.TakeDamage(0, limb.limbName);
+                        //}
+
+                        //else
+                        //{
+                        //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                        //    zombieStateManager.TakeDamage(0, limb.limbName);
+                        //}
                   
 
-                    float baseLimbDmg = 100f;
-                    float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
+                        float baseLimbDmg = 100f;
+                        float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
 
-                    limb.LimbTakeDamage((int)finalLimbDmg);
+                        limb.LimbTakeDamage((int)finalLimbDmg);
 
-                    Rigidbody rb = hit.collider.GetComponentInParent<Rigidbody>();
+                        Rigidbody rb = hit.collider.GetComponentInParent<Rigidbody>();
 
-                    if (rb != null)
-                    {
-                        rb.AddForce(hit.normal * -1 * 100f, ForceMode.Impulse); 
+                        if (rb != null)
+                        {
+                            rb.AddForce(hit.normal * -1 * 100f, ForceMode.Impulse); 
+                        }
+                        Debug.Log(limb.limbName);
                     }
-                    Debug.Log(limb.limbName);
-                }
                
-            }
+                }
 
-            else
-            {
-                Debug.Log(hit.distance);
+                else
+                {
+                    Debug.Log(hit.distance);
+                }
             }
         }
-    }
 
-    bool CanFire()
-    {
+        bool CanFire()
+        {
         
-        if (fireRateTimer < fireRate) return false;
-        //if (ammo.currentAmmo == 0)
+            if (fireRateTimer < fireRate) return false;
+            //if (ammo.currentAmmo == 0)
+            //{
+            //    if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0))
+            //    {
+            //        if (!playedEmptySound)
+            //        {
+            //            EmptyAudioSource.PlayOneShot(emptyClip);
+            //            playedEmptySound = true;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        playedEmptySound = false;
+            //    }
+            //    return false;
+            //}
+            if (moveStateManager.currentState == moveStateManager.Run) return false;
+            if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
+            if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
+            //if (!semiAuto && Input.GetKey(KeyCode.Mouse0)) return true;
+            return false;
+        }
+
+        private void OnFirePerformed(InputAction.CallbackContext context)
+        {
+            if(CanFire()) Fire();
+        }
+
+        void TriggerMuzzleFlash()
+        {
+            muzzleFlashParticleSystem.Play();
+            muzzleFlashLight.intensity = lightIntensity;
+        }
+
+        void OnEnable()
+        {
+            inputSystemActions.Enable();
+        }
+
+        void OnDisable()
+        {
+            inputSystemActions.Disable();
+        }
+
+        //void Fire()
         //{
-        //    if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0))
+        //    fireRateTimer = 0;
+        //    barrelPos.LookAt(aim.aimPos);
+        //    //barrelPos.localEulerAngles = bloom.BloomAngle(barrelPos);
+        //    cameraAdjustment.transform.localEulerAngles = bloom.BloomAngle(cameraAdjustment.transform);
+
+        //    audioSource.PlayOneShot(gunShot);
+
+        //    recoil.TriggerRecoil();
+        //    TriggerMuzzleFlash();
+        //    ammo.currentAmmo--;
+        //    for (int i = 0; i < bulletsPershot; i++)
         //    {
-        //        if (!playedEmptySound)
+
+        //        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+        //        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
+
+        //        Vector3 shootingDirection = (ray.direction).normalized;
+
+        //        // Set the ray origin to the camera adjustment's position
+        //        RaycastHit hit;
+        //        // Does the ray intersect any objects excluding the player layer
+        //        if (Physics.Raycast(cameraAdjustment.transform.position, shootingDirection, out hit, Mathf.Infinity, aimMask))
         //        {
-        //            EmptyAudioSource.PlayOneShot(emptyClip);
-        //            playedEmptySound = true;
+        //            shootingDirection = (hit.point - barrelPos.position).normalized;
+        //            Debug.DrawRay(cameraAdjustment.transform.position, shootingDirection * hit.distance, Color.yellow);
+        //            //Debug.Log("Did Hit");
         //        }
+
+        //        GameObject currentBullet = gameManager.BulletPool.RequestBullet();
+        //        currentBullet.transform.position = barrelPos.position;
+        //        currentBullet.transform.rotation = Quaternion.LookRotation(shootingDirection);
+        //        currentBullet.SetActive(true);
+
+
+        //        Rigidbody rb = currentBullet.GetComponent<Rigidbody>();
+        //        rb.velocity = Vector3.zero;
+        //        rb.angularVelocity = Vector3.zero;
+        //        rb.AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
         //    }
-        //    else
-        //    {
-        //        playedEmptySound = false;
-        //    }
-        //    return false;
+
+        //    RefreshDisplay(ammo.currentAmmo, ammo.extraAmmo);
+
         //}
-        if (moveStateManager.currentState == moveStateManager.Run) return false;
-        if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
-        if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
-        //if (!semiAuto && Input.GetKey(KeyCode.Mouse0)) return true;
-        return false;
     }
-
-    private void OnFirePerformed(InputAction.CallbackContext context)
-    {
-        if(CanFire()) Fire();
-    }
-
-    void TriggerMuzzleFlash()
-    {
-        muzzleFlashParticleSystem.Play();
-        muzzleFlashLight.intensity = lightIntensity;
-    }
-
-    void OnEnable()
-    {
-        inputSystemActions.Enable();
-    }
-
-    void OnDisable()
-    {
-        inputSystemActions.Disable();
-    }
-
-    //void Fire()
-    //{
-    //    fireRateTimer = 0;
-    //    barrelPos.LookAt(aim.aimPos);
-    //    //barrelPos.localEulerAngles = bloom.BloomAngle(barrelPos);
-    //    cameraAdjustment.transform.localEulerAngles = bloom.BloomAngle(cameraAdjustment.transform);
-
-    //    audioSource.PlayOneShot(gunShot);
-
-    //    recoil.TriggerRecoil();
-    //    TriggerMuzzleFlash();
-    //    ammo.currentAmmo--;
-    //    for (int i = 0; i < bulletsPershot; i++)
-    //    {
-
-    //        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
-    //        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
-
-    //        Vector3 shootingDirection = (ray.direction).normalized;
-
-    //        // Set the ray origin to the camera adjustment's position
-    //        RaycastHit hit;
-    //        // Does the ray intersect any objects excluding the player layer
-    //        if (Physics.Raycast(cameraAdjustment.transform.position, shootingDirection, out hit, Mathf.Infinity, aimMask))
-    //        {
-    //            shootingDirection = (hit.point - barrelPos.position).normalized;
-    //            Debug.DrawRay(cameraAdjustment.transform.position, shootingDirection * hit.distance, Color.yellow);
-    //            //Debug.Log("Did Hit");
-    //        }
-
-    //        GameObject currentBullet = gameManager.BulletPool.RequestBullet();
-    //        currentBullet.transform.position = barrelPos.position;
-    //        currentBullet.transform.rotation = Quaternion.LookRotation(shootingDirection);
-    //        currentBullet.SetActive(true);
-
-
-    //        Rigidbody rb = currentBullet.GetComponent<Rigidbody>();
-    //        rb.velocity = Vector3.zero;
-    //        rb.angularVelocity = Vector3.zero;
-    //        rb.AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
-    //    }
-
-    //    RefreshDisplay(ammo.currentAmmo, ammo.extraAmmo);
-
-    //}
 }

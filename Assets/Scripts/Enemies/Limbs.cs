@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Limbs : MonoBehaviour
@@ -27,6 +28,53 @@ public class Limbs : MonoBehaviour
         limbCollider = GetComponent<Collider>();
 
         GetNestedLimbs();
+    }
+
+    void OnEnable()
+    {
+        if (limbName == "head")
+        {
+            damageMultiplier = 10;
+
+            limbDamageMultiplier = 1;
+
+            isDestructible = true;
+
+        }
+        else if (limbName == "leg")
+        {
+            damageMultiplier = 0.8f;
+
+            limbDamageMultiplier = 0.25f;
+
+            isDestructible = true;
+        }
+        else if (limbName == "foot")
+        {
+            damageMultiplier = 0.2f;
+
+            limbDamageMultiplier = 0f;
+
+            isDestructible = true;
+        }
+
+        else if (limbName == "hand")
+        {
+            damageMultiplier = 0.2f;
+
+            limbDamageMultiplier = 0.5f;
+
+            isDestructible = true;
+        }
+
+        else if (limbName == "lowerArm")
+        {
+            damageMultiplier = 0.5f;
+
+            limbDamageMultiplier = 0.25f;
+
+            isDestructible = true;
+        }
     }
 
     public void LimbTakeDamage(int damage)

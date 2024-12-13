@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b945eae07799c74459c4abd4ef495f76
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271227
+  packageName: Zombie Girl B.
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/ZombieGirl_B/Scripts/ZombieGirlB_Instantiate.cs
+  uploadId: 646427

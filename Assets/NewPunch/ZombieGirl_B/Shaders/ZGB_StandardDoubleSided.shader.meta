@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7ac1c6751167d42438fc5f75f2a01ca4
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271227
+  packageName: Zombie Girl B.
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/ZombieGirl_B/Shaders/ZGB_StandardDoubleSided.shader
+  uploadId: 646427

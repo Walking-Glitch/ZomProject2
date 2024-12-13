@@ -1,4 +1,5 @@
 using System.Collections;
+using Assets.Scripts.Game_Manager;
 using Pathfinding;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -7,8 +8,8 @@ using UnityEngine.Animations.Rigging;
 public class ZombieStateManager : MonoBehaviour
 {
     // player reference
-    public PlayerStatus Player;
-    public Transform PlayerTransform;
+    
+    [SerializeField] public Transform PlayerTransform;
 
     //Zombie parent obj reference
     private GameObject zombieParent; 
@@ -70,7 +71,11 @@ public class ZombieStateManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+       
+
         gameManager = GameManager.Instance;
+
+        PlayerTransform = gameManager.PlayerGameObject.transform;
 
         health = maxHealth;
 
@@ -83,9 +88,7 @@ public class ZombieStateManager : MonoBehaviour
         patrol = GetComponentInParent<Patrol>();
         agent = GetComponentInParent<IAstarAI>();
 
-        PlayerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
-        Player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStatus>();
-
+        
         GetSkinMeshBits();
         GetZombieLimbs();
         GetRagdollBits();
@@ -94,12 +97,16 @@ public class ZombieStateManager : MonoBehaviour
         SwitchState(chasing);
     }
 
+    
+
+
+
     // Update is called once per frame
     void Update()
     {
         UpdateCurrentSpeed();
         currentState.UpdateState(this);
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
 
         if (Input.GetKey(KeyCode.Space))
         {
@@ -263,7 +270,14 @@ public class ZombieStateManager : MonoBehaviour
     {
         if (IsPlayerInDamageArea())
         {
-            Player.PlayerTakeDamage(10);
+            if (gameManager.PlayerStats == null)
+            {
+                Debug.Log("player is null");
+            }
+            else
+            {
+                gameManager.PlayerStats.PlayerTakeDamage(10);
+            }
         }
     }
 

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 05d3301f78e138d459ef4cc0ba306bf5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Materials/URP/UrbanZombie_Hoodie_MAT_URP.mat
+  uploadId: 647030

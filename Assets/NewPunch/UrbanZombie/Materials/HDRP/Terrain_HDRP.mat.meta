@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 13d602ccc423f86429600cc552fe2e1b
+timeCreated: 1475671404
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Materials/HDRP/Terrain_HDRP.mat
+  uploadId: 647030

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e66c70c9d6112a746ba4cdc6824d1e44
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Scenes/UrbanZombieDemoScene_HDRPSettings.lighting
+  uploadId: 647030

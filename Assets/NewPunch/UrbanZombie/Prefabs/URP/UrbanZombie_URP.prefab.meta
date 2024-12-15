@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ec69426412f4c8147be58ea7aca75062
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Prefabs/URP/UrbanZombie_URP.prefab
+  uploadId: 647030

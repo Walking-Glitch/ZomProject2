@@ -29,7 +29,7 @@ public class EnemyPool : MonoBehaviour
 
             //else
             //{
-                GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count - 1)];
+                GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
                 GameObject enemy = Instantiate(enemyPrefab);
                 enemy.SetActive(false);
                 enemyList.Add(enemy);

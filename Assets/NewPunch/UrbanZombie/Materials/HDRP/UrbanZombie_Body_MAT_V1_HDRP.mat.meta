@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 916de2738d033a64a9ea338e6032275e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Materials/HDRP/UrbanZombie_Body_MAT_V1_HDRP.mat
+  uploadId: 647030

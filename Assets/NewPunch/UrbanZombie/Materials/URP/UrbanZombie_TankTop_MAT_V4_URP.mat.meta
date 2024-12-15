@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a92ee38c977a69342a5114bc2ff1b363
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Materials/URP/UrbanZombie_TankTop_MAT_V4_URP.mat
+  uploadId: 647030

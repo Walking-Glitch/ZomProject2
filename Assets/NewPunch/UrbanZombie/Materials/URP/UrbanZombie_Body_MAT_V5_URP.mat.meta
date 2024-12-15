@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e15cc008c347c1f4584750831d95e6a5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Materials/URP/UrbanZombie_Body_MAT_V5_URP.mat
+  uploadId: 647030

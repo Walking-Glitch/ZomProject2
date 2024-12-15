@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 2c37c6124f90ca744898cc5c10c0695a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Scripts/UrbanZombie_Parts_CharacterCustomize.cs
+  uploadId: 647030

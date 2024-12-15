@@ -1949,6 +1949,7 @@ GameObject:
   - component: {fileID: 4651114153035907980}
   - component: {fileID: 5833468359064118563}
   - component: {fileID: 7407883976718834508}
+  - component: {fileID: 3460075964958310962}
   m_Layer: 0
   m_Name: Zombie_Girl
   m_TagString: Untagged
@@ -2108,6 +2109,28 @@ MonoBehaviour:
   wallAvoidFalloff: 1
   priority: 0.5
   debug: 0
+--- !u!114 &3460075964958310962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3399612128849449041}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6a34d769a1e4ac7b0b30e433aa443c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1073741824
+  smoothType: 0
+  subdivisions: 2
+  iterations: 2
+  strength: 0.5
+  uniformLength: 1
+  maxSegmentLength: 2
+  bezierTangentLength: 0.4
+  offset: 0.2
+  factor: 0.1
 --- !u!1 &3538940889935297136
 GameObject:
   m_ObjectHideFlags: 0

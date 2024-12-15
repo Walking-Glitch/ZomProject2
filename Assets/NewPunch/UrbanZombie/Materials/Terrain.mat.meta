@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5036f4e2d468b384587720ebb11388e7
+timeCreated: 1475671404
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Materials/Terrain.mat
+  uploadId: 647030

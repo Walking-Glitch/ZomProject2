@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 02e5eade89ac8b0458ceefb37e29f60b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 276479
+  packageName: Zombie Urban
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/UrbanZombie/Prefabs/HDRP/UrbanZombie_Parts_HDRP.prefab
+  uploadId: 647030

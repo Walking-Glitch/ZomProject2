@@ -18,7 +18,7 @@ public class Limbs : MonoBehaviour
 
     [Header("To hide Skin")]
     public bool isDestructible;
-    public SkinnedMeshRenderer limbMesh;
+    public SkinnedMeshRenderer [] limbMesh;
 
     [SerializeField] private Limbs[] NestedLimbs; 
     void Start()
@@ -96,7 +96,15 @@ public class Limbs : MonoBehaviour
     public void DestroyLimb()
     {
         if (limbCollider != null) limbCollider.enabled = false;
-        if (limbMesh != null) limbMesh.enabled = false;
+        if (limbMesh != null)
+        {
+            foreach (var limbMeshRenderer in limbMesh)
+            {
+                limbMeshRenderer.enabled = false;
+            }
+        }
+
+        
 
         if (NestedLimbs.Length > 0)
         {

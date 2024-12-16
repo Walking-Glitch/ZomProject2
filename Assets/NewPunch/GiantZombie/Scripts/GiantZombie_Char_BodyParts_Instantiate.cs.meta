@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: becefb3f2afaf184db6f304a40424b5e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Scripts/GiantZombie_Char_BodyParts_Instantiate.cs
+  uploadId: 646378

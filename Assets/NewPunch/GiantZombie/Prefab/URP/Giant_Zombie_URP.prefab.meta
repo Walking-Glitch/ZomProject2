@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 385ee1d4f35cec0488ca5eb13ce5ffd2
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Prefab/URP/Giant_Zombie_URP.prefab
+  uploadId: 646378

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fdaedc5e85ae5ae4e93cd2afd76d040b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Giant_Zombie_TankTop_MAT.mat
+  uploadId: 646378

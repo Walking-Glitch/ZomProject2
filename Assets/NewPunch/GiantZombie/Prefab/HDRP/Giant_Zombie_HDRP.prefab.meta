@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 932b35ad3b296e048bf88bb4052bcd61
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Prefab/HDRP/Giant_Zombie_HDRP.prefab
+  uploadId: 646378

@@ -342,7 +342,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 1665233406323262528}
+  limbMesh:
+  - {fileID: 1665233406323262528}
   NestedLimbs: []
 --- !u!1 &466245460986344850
 GameObject:
@@ -611,7 +612,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 923022089722951131}
+  limbMesh:
+  - {fileID: 923022089722951131}
   NestedLimbs: []
 --- !u!1 &684742023117909769
 GameObject:
@@ -1597,7 +1599,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 7141804627562580278}
+  limbMesh:
+  - {fileID: 7141804627562580278}
   NestedLimbs: []
 --- !u!1 &1649813833480512622
 GameObject:
@@ -2512,7 +2515,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &2565632830059054461
 GameObject:
@@ -4895,7 +4899,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &5586630643424486292
 GameObject:
@@ -5048,7 +5053,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 8206712414856855829}
+  limbMesh:
+  - {fileID: 8206712414856855829}
   NestedLimbs: []
 --- !u!1 &5651278505843300858
 GameObject:
@@ -6289,7 +6295,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 5000034855492161170}
+  limbMesh:
+  - {fileID: 5000034855492161170}
   NestedLimbs: []
 --- !u!1 &7360375650800845142
 GameObject:
@@ -6398,7 +6405,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 8991874380348895958}
+  limbMesh:
+  - {fileID: 8991874380348895958}
   NestedLimbs: []
 --- !u!1 &7493709643161992480
 GameObject:
@@ -7030,7 +7038,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 4728014916773425416}
+  limbMesh:
+  - {fileID: 4728014916773425416}
   NestedLimbs: []
 --- !u!1 &7797462406588878661
 GameObject:
@@ -7174,7 +7183,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 5819153294068850763}
+  limbMesh:
+  - {fileID: 5819153294068850763}
   NestedLimbs: []
 --- !u!1 &7925070030288135557
 GameObject:
@@ -8001,5 +8011,6 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 1754236880375445659}
+  limbMesh:
+  - {fileID: 1754236880375445659}
   NestedLimbs: []

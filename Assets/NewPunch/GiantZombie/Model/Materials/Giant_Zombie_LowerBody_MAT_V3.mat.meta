@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3d9f791684009ba4d95c5ca67e604fe6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Giant_Zombie_LowerBody_MAT_V3.mat
+  uploadId: 646378

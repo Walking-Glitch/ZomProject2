@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5c5538d15d15d504e90efe7122d228bf
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Materials_URP/Giant_Zombie_Body_MAT_V4
+    _URP.mat
+  uploadId: 646378

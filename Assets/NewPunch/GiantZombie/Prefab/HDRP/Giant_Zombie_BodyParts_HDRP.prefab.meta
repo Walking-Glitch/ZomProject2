@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4b912220799aaec4aac839691cce0af8
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Prefab/HDRP/Giant_Zombie_BodyParts_HDRP.prefab
+  uploadId: 646378

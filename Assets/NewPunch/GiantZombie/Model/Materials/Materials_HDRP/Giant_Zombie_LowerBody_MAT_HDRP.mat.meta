@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9426177c326226743aa6bc6dc390e612
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Materials_HDRP/Giant_Zombie_LowerBody_MAT_HDRP.mat
+  uploadId: 646378

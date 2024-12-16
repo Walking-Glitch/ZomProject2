@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9bf46f0707b18414a812d955acdd2a48
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Materials_HDRP/Terrain_HDRP.mat
+  uploadId: 646378

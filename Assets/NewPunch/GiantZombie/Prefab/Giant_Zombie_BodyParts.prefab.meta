@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cf02915b39a26c6478ee31fc9f516da8
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Prefab/Giant_Zombie_BodyParts.prefab
+  uploadId: 646378

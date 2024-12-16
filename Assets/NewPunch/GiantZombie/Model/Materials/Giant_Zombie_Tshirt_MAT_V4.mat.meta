@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 13e7d81a4afce4046bd524fde4c1e26d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Giant_Zombie_Tshirt_MAT_V4.mat
+  uploadId: 646378

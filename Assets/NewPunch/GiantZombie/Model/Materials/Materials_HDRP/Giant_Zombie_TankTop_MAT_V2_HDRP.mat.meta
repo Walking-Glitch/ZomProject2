@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 86f70b3ea9eddd0439c5724de293086a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Materials_HDRP/Giant_Zombie_TankTop_MAT_V2_HDRP.mat
+  uploadId: 646378

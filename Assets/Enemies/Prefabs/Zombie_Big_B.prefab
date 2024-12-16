@@ -277,7 +277,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 1
-  limbMesh: {fileID: 2358824857911992347}
+  limbMesh:
+  - {fileID: 2358824857911992347}
   NestedLimbs: []
 --- !u!1 &810926428504067840
 GameObject:
@@ -539,7 +540,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 1
-  limbMesh: {fileID: 3387640070954419400}
+  limbMesh:
+  - {fileID: 3387640070954419400}
   NestedLimbs: []
 --- !u!1 &1202507384521240389
 GameObject:
@@ -882,7 +884,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &1531146493883167449
 GameObject:
@@ -1093,7 +1096,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 1
-  limbMesh: {fileID: 1413739022589619263}
+  limbMesh:
+  - {fileID: 1413739022589619263}
   NestedLimbs: []
 --- !u!136 &2869252565829204447
 CapsuleCollider:
@@ -1301,7 +1305,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 1
-  limbMesh: {fileID: 2660458259164404940}
+  limbMesh:
+  - {fileID: 2660458259164404940}
   NestedLimbs: []
 --- !u!1 &1982997590040931242
 GameObject:
@@ -1454,7 +1459,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 1
-  limbMesh: {fileID: 2460088340108380504}
+  limbMesh:
+  - {fileID: 2460088340108380504}
   NestedLimbs: []
 --- !u!1 &2034563476545519892
 GameObject:
@@ -1794,7 +1800,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 1
-  limbMesh: {fileID: 7062398182516185483}
+  limbMesh:
+  - {fileID: 7062398182516185483}
   NestedLimbs: []
 --- !u!1 &2469161960437291806
 GameObject:
@@ -2825,7 +2832,8 @@ MonoBehaviour:
   limbHealth: 100
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &3678279421391495720
 GameObject:
@@ -3250,7 +3258,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7444453038271588312
 Transform:
   m_ObjectHideFlags: 0
@@ -3760,7 +3768,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &4446456984979847150
 GameObject:
@@ -4031,7 +4040,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 1
-  limbMesh: {fileID: 7748143291086698038}
+  limbMesh:
+  - {fileID: 7748143291086698038}
   NestedLimbs: []
 --- !u!136 &762223324430250477
 CapsuleCollider:
@@ -4528,7 +4538,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &5368066128693945109
 GameObject:
@@ -4968,7 +4979,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &6608525388733824198
 GameObject:
@@ -5215,7 +5227,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 0
-  limbMesh: {fileID: 0}
+  limbMesh:
+  - {fileID: 0}
   NestedLimbs: []
 --- !u!1 &6774892732312957533
 GameObject:
@@ -5453,7 +5466,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 1
-  limbMesh: {fileID: 2820780062118345154}
+  limbMesh:
+  - {fileID: 2820780062118345154}
   NestedLimbs: []
 --- !u!1 &7816442037183816696
 GameObject:
@@ -5848,7 +5862,8 @@ MonoBehaviour:
   limbHealth: 0
   limbMaxHealth: 0
   isDestructible: 1
-  limbMesh: {fileID: 4586338924533638040}
+  limbMesh:
+  - {fileID: 4586338924533638040}
   NestedLimbs: []
 --- !u!1 &8581841963082183436
 GameObject:

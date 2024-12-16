@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 418a63cbafbf950468d9f1638a67cdb8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Model/Materials/Materials_HDRP/Giant_Zombie_Tshirt_MAT_V3_HDRP.mat
+  uploadId: 646378

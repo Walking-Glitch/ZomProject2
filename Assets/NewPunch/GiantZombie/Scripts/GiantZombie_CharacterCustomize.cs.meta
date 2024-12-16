@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b53dfa1b19caa09449905e36aee0f9f4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 271095
+  packageName: Zombie Giant
+  packageVersion: 1.0
+  assetPath: Assets/NewPunch/GiantZombie/Scripts/GiantZombie_CharacterCustomize.cs
+  uploadId: 646378

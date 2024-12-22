@@ -10,23 +10,43 @@ public class Grenade : MonoBehaviour
 
     [SerializeField] Collider[] colliders;
 
+    private float elapsed;
+    private float timeToexplode = 5f;
+
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
-    void Start()
+    void OnEnable()
+    {
+      elapsed = 0;
+    }
+
+    private void OnDisable()
     {
         
     }
-
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            FindEnemies();
-            //EnemiesInBlastRadius();
-        }
+     
+       GrenadeTimer();
+        
     }
 
-    public void EnemiesInBlastRadius()
+    public void GrenadeTimer()
+    {
+        if (elapsed < timeToexplode)
+        {
+            elapsed += Time.deltaTime;
+            Debug.Log(elapsed);
+        }
+
+        else {
+
+            FindEnemies();
+
+            gameObject.SetActive(false);
+        }
+    }
+    public void KillEnemiesInBlastRadius()
     {
         //ExplosionParticleSystem.Play();
 
@@ -58,7 +78,7 @@ public class Grenade : MonoBehaviour
                 enemies.Add(col.GetComponentInParent<ZombieStateManager>());
         }
 
-        EnemiesInBlastRadius();
+        KillEnemiesInBlastRadius();
 
     }
 

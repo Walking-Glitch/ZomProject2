@@ -40,6 +40,7 @@ public class ZombieStateManager : MonoBehaviour
     private bool PlayerDetected;
     private bool AttackPlayer;
     private bool CanDamagePlayer;
+    private bool HurtByExplosion;
 
     // ragdoll
     public GameObject rig;
@@ -67,6 +68,9 @@ public class ZombieStateManager : MonoBehaviour
     public GameObject SkinRig;
     private SkinnedMeshRenderer[] zombieMeshRenderers;
     private Limbs[] zombieLimbs;
+
+    //explosion
+    public Vector3 ExpDirection;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -107,17 +111,7 @@ public class ZombieStateManager : MonoBehaviour
         UpdateCurrentSpeed();
         currentState.UpdateState(this);
         //Debug.Log(currentState);
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            SwitchState(Death);
-        }
-
-        if (Input.GetKey(KeyCode.F))
-        {
-            SwitchState(roaming);
-        }
-
+         
         CheckIfCrippled();
     }
 
@@ -243,11 +237,11 @@ public class ZombieStateManager : MonoBehaviour
 
     }
 
-    public virtual void TakeDamage(int damage, string limbName)
+    public virtual void TakeDamage(int damage, string limbName, bool explosion, float force)
     {
         health -= damage;
 
-
+        SetKilledByExplosion(explosion);
 
         if (health > 0)
         {
@@ -264,6 +258,18 @@ public class ZombieStateManager : MonoBehaviour
         {
             SwitchState(Death);
         }
+    }
+
+    public void SetExplosionDirection(Vector3 grenade, Vector3 zombie)
+    {
+        Vector3 direction = (zombie - grenade).normalized * 500f;
+
+        ExpDirection = direction;   
+    }
+
+    public Vector3 GetExplosionDirection()
+    {
+        return ExpDirection;
     }
 
     public void DealDamage()
@@ -325,5 +331,15 @@ public class ZombieStateManager : MonoBehaviour
     public bool IsPlayerInDamageArea()
     {
         return CanDamagePlayer;
+    }
+
+    public void SetKilledByExplosion(bool isHurtByExplosion)
+    {
+        HurtByExplosion = isHurtByExplosion;
+    }
+
+    public bool IsKilledByExplosion()
+    {
+        return HurtByExplosion;
     }
 }

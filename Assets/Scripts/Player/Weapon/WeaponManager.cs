@@ -106,12 +106,12 @@ namespace Assets.Scripts.Player.Weapon
                         if (limb.limbName == "head")
                         {
                             zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                            zombieStateManager.TakeDamage((int)finalDamage, limb.limbName);
+                            zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
                         }
                         else
                         {
                             zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                            zombieStateManager.TakeDamage(0, limb.limbName);
+                            zombieStateManager.TakeDamage(0, limb.limbName, false, 0);
                         }
                         //else if (limb.limbName == "torso" || limb.limbName == "belly")
                         //{
@@ -197,50 +197,6 @@ namespace Assets.Scripts.Player.Weapon
             inputSystemActions.Disable();
         }
 
-        //void Fire()
-        //{
-        //    fireRateTimer = 0;
-        //    barrelPos.LookAt(aim.aimPos);
-        //    //barrelPos.localEulerAngles = bloom.BloomAngle(barrelPos);
-        //    cameraAdjustment.transform.localEulerAngles = bloom.BloomAngle(cameraAdjustment.transform);
-
-        //    audioSource.PlayOneShot(gunShot);
-
-        //    recoil.TriggerRecoil();
-        //    TriggerMuzzleFlash();
-        //    ammo.currentAmmo--;
-        //    for (int i = 0; i < bulletsPershot; i++)
-        //    {
-
-        //        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
-        //        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
-
-        //        Vector3 shootingDirection = (ray.direction).normalized;
-
-        //        // Set the ray origin to the camera adjustment's position
-        //        RaycastHit hit;
-        //        // Does the ray intersect any objects excluding the player layer
-        //        if (Physics.Raycast(cameraAdjustment.transform.position, shootingDirection, out hit, Mathf.Infinity, aimMask))
-        //        {
-        //            shootingDirection = (hit.point - barrelPos.position).normalized;
-        //            Debug.DrawRay(cameraAdjustment.transform.position, shootingDirection * hit.distance, Color.yellow);
-        //            //Debug.Log("Did Hit");
-        //        }
-
-        //        GameObject currentBullet = gameManager.BulletPool.RequestBullet();
-        //        currentBullet.transform.position = barrelPos.position;
-        //        currentBullet.transform.rotation = Quaternion.LookRotation(shootingDirection);
-        //        currentBullet.SetActive(true);
-
-
-        //        Rigidbody rb = currentBullet.GetComponent<Rigidbody>();
-        //        rb.velocity = Vector3.zero;
-        //        rb.angularVelocity = Vector3.zero;
-        //        rb.AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
-        //    }
-
-        //    RefreshDisplay(ammo.currentAmmo, ammo.extraAmmo);
-
-        //}
+     
     }
 }

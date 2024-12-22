@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class Death : ZombieBaseState
 {
@@ -11,6 +12,16 @@ public class Death : ZombieBaseState
         {
             zombie.RagdollModeOn();
         }
+
+        else if (zombie.IsKilledByExplosion())
+        {
+            zombie.RagdollModeOn();
+
+            zombie.rig.GetComponent<Rigidbody>().AddForce(zombie.GetExplosionDirection(), ForceMode.Impulse);
+        }
+
+
+
         else if (zombie.isCrippled)
         {
             zombie.RagdollModeOn();

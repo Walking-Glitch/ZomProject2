@@ -11,6 +11,7 @@ namespace Assets.Scripts.Player.Actions
         // states
         [HideInInspector] public ActionStateBase CurrentState;
         [HideInInspector] public ReloadState Reload = new ReloadState();
+        [HideInInspector] public ThrowGrenade Grenade = new ThrowGrenade();
         [HideInInspector] public DefaultState Default = new DefaultState();
 
         // animator
@@ -116,8 +117,6 @@ namespace Assets.Scripts.Player.Actions
 
             AimStateManager.isTransitioning = false;
 
-      
-
         }
 
         private IEnumerator CheckAnimationProgress()
@@ -157,6 +156,12 @@ namespace Assets.Scripts.Player.Actions
 
         }
 
+        public void TossGrenade()
+        {
+             ////////////
+        }
+
+      
         private void OnReloadPerformed(InputAction.CallbackContext context)
         {
             if (AimStateManager.CurrentState == AimStateManager.AimingState) SwitchState(Reload);

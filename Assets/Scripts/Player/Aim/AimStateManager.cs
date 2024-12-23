@@ -68,8 +68,7 @@ public class AimStateManager : MonoBehaviour
     [HideInInspector] public bool IsOnTarget;
     private WeaponLaser weaponLaser;
 
-    //Grenades
-    public GameObject GrenadePrefab;
+    
 
     private void Awake()
     {
@@ -99,17 +98,10 @@ public class AimStateManager : MonoBehaviour
 
     private void Update()
     {
-
         MoveAimReference();
         CharacterRotation();
         CurrentState.UpdateState(this);
         AdjustConstraintWeight();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-           GameObject GrenadeClone =  Instantiate(GrenadePrefab, this.gameObject.transform.position, Quaternion.identity);
-            GrenadeClone.GetComponent<Rigidbody>().AddForce(transform.forward * 20f, ForceMode.Impulse);
-        }
     }
 
     public void SwitchState(AimStateBase state)

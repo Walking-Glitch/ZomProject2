@@ -34,12 +34,18 @@ namespace Assets.Scripts.Player.Actions
         // reference to weapon manager
         [HideInInspector] public WeaponManager WeaponManager;
 
+        //Grenades
+        public GameObject GrenadePrefab;
+
 
 
         void Awake()
         {
             inputSystemActions = new InputSystem_Actions();
-            inputSystemActions.Player.Reload.performed += OnReloadPerformed; 
+            inputSystemActions.Player.Reload.performed += OnReloadPerformed;
+            inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
+
+
         }
     
         void Start()
@@ -158,13 +164,20 @@ namespace Assets.Scripts.Player.Actions
 
         public void TossGrenade()
         {
-             ////////////
+            Vector3 direction = WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position;
+            GameObject GrenadeClone = Instantiate(GrenadePrefab, this.gameObject.transform.position, Quaternion.identity);
+            GrenadeClone.GetComponent<Rigidbody>().AddForce(direction * 1f, ForceMode.Impulse);
         }
 
       
         private void OnReloadPerformed(InputAction.CallbackContext context)
         {
             if (AimStateManager.CurrentState == AimStateManager.AimingState) SwitchState(Reload);
+        }
+
+        private void OnThrowGrenadePerformed(InputAction.CallbackContext context)
+        {
+            if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Grenade); 
         }
 
         public void WeaponReloaded()

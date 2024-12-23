@@ -11,6 +11,7 @@ namespace Assets.Scripts.Player.Weapon
         public Transform GunEndTransform;
         public Transform TargetTransform;
         public Transform weaponTransform;
+        public Transform RightHandTransform;
 
         //reference to laser 
         [HideInInspector] public WeaponLaser laser;

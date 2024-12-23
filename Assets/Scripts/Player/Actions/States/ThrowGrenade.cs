@@ -1,28 +1,31 @@
 using Assets.Scripts.Player.Actions;
 using UnityEngine;
 
-public class ThrowGrenade : ActionStateBase
+public class GrenadeState : ActionStateBase
 {
-    private float elapsed;
-    private float timeToexplode = 5f;
+    //private float elapsed;
+    //private float timeToexplode = 2f;
     public override void EnterState(ActionStateManager actionStateManager)
     {
-        elapsed = 0;
-        actionStateManager.TossGrenade();
+        //elapsed = 0;
+        actionStateManager.WeaponManager.AdjustParentedHand();
+        actionStateManager.anim.SetTrigger("Grenade");
+        actionStateManager.WeaponManager.laser.DisableLaser();
+      
     }
 
     public override void UpdateState(ActionStateManager actionStateManager)
     {
 
-        if (elapsed < timeToexplode)
-        {
-            elapsed += Time.deltaTime;
-            Debug.Log(elapsed);
-        }
+        //if (elapsed < timeToexplode)
+        //{
+        //    elapsed += Time.deltaTime;
+        //    Debug.Log(elapsed);
+        //}
 
-        else
-        {
-            actionStateManager.SwitchState(actionStateManager.Default);
-        }
+        //else
+        //{
+        //    actionStateManager.SwitchState(actionStateManager.Default);
+        //}
     }
 }

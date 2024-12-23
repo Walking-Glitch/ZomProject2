@@ -118,7 +118,17 @@ public class AimStateManager : MonoBehaviour
         {
             actionStateManager.TransitionToReload();
         }
-        
+
+        else if (actionStateManager.CurrentState == actionStateManager.Grenade)
+        {
+            actionStateManager.TransitionToReload();
+        }
+
+        else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Grenade)
+        {
+            TransitionFromMainToShootingLayer();
+        }
+
         else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
         {
             TransitionFromMainToShootingLayer();
@@ -248,7 +258,7 @@ public class AimStateManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(screenCentre);
 
             // rotate when not aiming 
-            if (Physics.Raycast(ray, out RaycastHit hit3, Mathf.Infinity, allMask) && CurrentState == AimIdleState && actionStateManager.CurrentState != actionStateManager.Reload)
+            if (Physics.Raycast(ray, out RaycastHit hit3, Mathf.Infinity, allMask) && CurrentState == AimIdleState && actionStateManager.CurrentState != actionStateManager.Reload && actionStateManager.CurrentState != actionStateManager.Grenade)
             {
                 SwitchToDefaultCamera();
 

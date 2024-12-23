@@ -1,19 +1,28 @@
 using Assets.Scripts.Player.Actions;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Player.Weapon
 {
     public class WeaponManager : MonoBehaviour
     {
+        // Weapon model reference
+        public GameObject rifle;
+        private Transform cachedParent;
+        private Vector3 cachedPosition;
+        private Quaternion cachedRotation;
+
         // ray casting variables 
         [SerializeField] private LayerMask shootMask;
         public Transform GunEndTransform;
         public Transform TargetTransform;
         public Transform weaponTransform;
         public Transform RightHandTransform;
+        public Transform LeftHandTransform;
 
-        //reference to laser 
+        // reference to laser 
         [HideInInspector] public WeaponLaser laser;
 
         // input system
@@ -61,7 +70,11 @@ namespace Assets.Scripts.Player.Weapon
             moveStateManager = GetComponent<MovementStateManager>();
             actionStateManager = GetComponent<ActionStateManager>();
             laser = GetComponent<WeaponLaser>();
-        }
+
+            cachedParent = rifle.transform.parent;
+            cachedPosition = rifle.transform.localPosition;
+            cachedRotation = rifle.transform.localRotation;
+    }
 
         // Update is called once per frame
         void Update()
@@ -70,7 +83,27 @@ namespace Assets.Scripts.Player.Weapon
 
         }
 
+        public void AdjustParentedHand()
+        {
+            if (actionStateManager.CurrentState == actionStateManager.Grenade)
+            {
+                rifle.transform.SetParent(LeftHandTransform);
+            }
 
+            else if (actionStateManager.CurrentState == actionStateManager.Reload)
+            {
+                rifle.transform.SetParent(cachedParent);
+                rifle.transform.localPosition = cachedPosition;
+                rifle.transform.localRotation = cachedRotation;
+            }
+
+            else if (actionStateManager.CurrentState == actionStateManager.Default)
+            {
+                rifle.transform.SetParent(cachedParent);
+                rifle.transform.localPosition = cachedPosition;
+                rifle.transform.localRotation = cachedRotation;
+            }
+        }
 
 
         void Fire()

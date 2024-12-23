@@ -11,7 +11,7 @@ namespace Assets.Scripts.Player.Actions
         // states
         [HideInInspector] public ActionStateBase CurrentState;
         [HideInInspector] public ReloadState Reload = new ReloadState();
-        [HideInInspector] public ThrowGrenade Grenade = new ThrowGrenade();
+        [HideInInspector] public GrenadeState Grenade = new GrenadeState();
         [HideInInspector] public DefaultState Default = new DefaultState();
 
         // animator
@@ -162,11 +162,16 @@ namespace Assets.Scripts.Player.Actions
 
         }
 
-        public void TossGrenade()
+        public void GrenadeToss()
         {
-            Vector3 direction = WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position;
-            GameObject GrenadeClone = Instantiate(GrenadePrefab, this.gameObject.transform.position, Quaternion.identity);
-            GrenadeClone.GetComponent<Rigidbody>().AddForce(direction * 1f, ForceMode.Impulse);
+            Vector3 direction = (WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position).normalized;
+            GameObject GrenadeClone = Instantiate(GrenadePrefab, WeaponManager.RightHandTransform.position, Quaternion.identity);
+            GrenadeClone.GetComponent<Rigidbody>().AddForce(direction  * 100f, ForceMode.Impulse);
+        }
+
+        public void GrenadeTossCompleted()
+        {
+            SwitchState(Default);
         }
 
       

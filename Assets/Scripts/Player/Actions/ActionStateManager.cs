@@ -168,7 +168,8 @@ namespace Assets.Scripts.Player.Actions
         {
             grenadeClone = Instantiate(GrenadePrefab, WeaponManager.GrenadeSpawnTransform.position, Quaternion.identity);
             grenadeClone.transform.SetParent(WeaponManager.GrenadeSpawnTransform);
-            grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(60f, -246.455f, 53.591f));
+            //grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(60f, -246.455f, 53.591f));
+            grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(36f, -20f, -68f));
         }
         public void GrenadeToss()
         {
@@ -176,6 +177,14 @@ namespace Assets.Scripts.Player.Actions
             grenadeClone.transform.SetParent(null);
             grenadeClone.GetComponent<Rigidbody>().isKinematic = false;
             grenadeClone.GetComponent<Rigidbody>().AddForce(direction * 100f, ForceMode.Impulse);
+            grenadeClone.GetComponent<Rigidbody>().AddForce(new Vector3(0, 0.5f, 0) * 50f, ForceMode.Impulse);
+
+            
+        }
+
+        public void LeverRelease()
+        {
+            grenadeClone.GetComponent<Grenade>().ReleaseGrenadeLever();
         }
 
         public void GrenadeTossCompleted()

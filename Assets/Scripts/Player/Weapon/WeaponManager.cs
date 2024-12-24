@@ -39,8 +39,9 @@ namespace Assets.Scripts.Player.Weapon
         public GameObject fleshDecal;
 
         // audio variables
-        public AudioSource audioSource;
+        public AudioSource RifleAudioSource;
         public AudioClip [] gunShots;
+        
 
         // firing variables
         [Header("Fire Rate")]
@@ -111,7 +112,7 @@ namespace Assets.Scripts.Player.Weapon
         {
             anim.SetTrigger("Firing");
             fireRateTimer = 0;
-            audioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
+            RifleAudioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
             //TriggerMuzzleFlash();
 
             Vector3 direction = TargetTransform.position - GunEndTransform.position;

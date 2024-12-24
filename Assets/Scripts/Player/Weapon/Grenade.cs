@@ -5,19 +5,33 @@ using UnityEngine.Animations.Rigging;
 
 public class Grenade : MonoBehaviour
 {
+    // audio variables
+    public AudioSource GrenadeAudioSource;
+    public AudioClip GrenadeReleasePin;
+    public AudioClip GrenadeExplosion;
+
+    // area of effect and detection variables
     public float explosionRadius;
     public LayerMask ZombieLayerMask;
 
+    // game object references
     public GameObject GrenadePin;
     public GameObject GrenadePullPin;
     public GameObject GrenadeLever;
+    public GameObject GrenadeBody;
 
+    // colliders found
     [SerializeField] Collider[] colliders;
 
+    // timer variables
     private float elapsed;
     private float timeToexplode = 5f;
 
+    // zombies in area of effect 
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
+
+    //checks
+    private bool exploded;
     void OnEnable()
     {
       elapsed = 0;
@@ -35,6 +49,16 @@ public class Grenade : MonoBehaviour
         
     }
 
+    public void PlayReleasePinSfx()
+    {
+        GrenadeAudioSource.PlayOneShot(GrenadeReleasePin);
+    }
+
+    public void PlayExplosionSfx()
+    {
+        GrenadeAudioSource.PlayOneShot(GrenadeExplosion);
+    }
+
     public void ReleaseGrenadeLever()
     {
       GrenadeLever.transform.SetParent(null);
@@ -46,18 +70,23 @@ public class Grenade : MonoBehaviour
 
     public void GrenadeTimer()
     {
-        if (elapsed < timeToexplode)
+        if (!exploded)
         {
-            elapsed += Time.deltaTime;
-            Debug.Log(elapsed);
+            if (elapsed < timeToexplode)
+            {
+                elapsed += Time.deltaTime;
+                Debug.Log(elapsed);
+            }
+
+            else
+            {
+                FindEnemies();
+                PlayExplosionSfx();
+                GrenadeBody.SetActive(false);
+                exploded = true;
+            }
         }
-
-        else {
-
-            FindEnemies();
-
-            gameObject.SetActive(false);
-        }
+        
     }
     public void KillEnemiesInBlastRadius()
     {

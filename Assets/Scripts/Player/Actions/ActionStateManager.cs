@@ -178,8 +178,11 @@ namespace Assets.Scripts.Player.Actions
             grenadeClone.GetComponent<Rigidbody>().isKinematic = false;
             grenadeClone.GetComponent<Rigidbody>().AddForce(direction * 100f, ForceMode.Impulse);
             grenadeClone.GetComponent<Rigidbody>().AddForce(new Vector3(0, 0.5f, 0) * 50f, ForceMode.Impulse);
+        }
 
-            
+        public void PlayGrenadeReleasePin()
+        {
+            grenadeClone.GetComponent<Grenade>().PlayReleasePinSfx();
         }
 
         public void LeverRelease()

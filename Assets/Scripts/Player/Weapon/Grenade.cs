@@ -8,6 +8,8 @@ public class Grenade : MonoBehaviour
     public float explosionRadius;
     public LayerMask ZombieLayerMask;
 
+    public GameObject GrenadePin;
+
     [SerializeField] Collider[] colliders;
 
     private float elapsed;

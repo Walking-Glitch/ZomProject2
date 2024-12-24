@@ -1,5 +1,6 @@
 using System.Collections;
 using Assets.Scripts.Player.Weapon;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
@@ -36,6 +37,7 @@ namespace Assets.Scripts.Player.Actions
 
         //Grenades
         public GameObject GrenadePrefab;
+        private GameObject grenadeClone;
 
 
 
@@ -162,11 +164,18 @@ namespace Assets.Scripts.Player.Actions
 
         }
 
+        public void GrenadeInstantiate()
+        {
+            grenadeClone = Instantiate(GrenadePrefab, WeaponManager.GrenadeSpawnTransform.position, Quaternion.identity);
+            grenadeClone.transform.SetParent(WeaponManager.GrenadeSpawnTransform);
+            grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(60f, -246.455f, 53.591f));
+        }
         public void GrenadeToss()
         {
-            Vector3 direction = (WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position).normalized;
-            GameObject GrenadeClone = Instantiate(GrenadePrefab, WeaponManager.RightHandTransform.position, Quaternion.identity);
-            GrenadeClone.GetComponent<Rigidbody>().AddForce(direction  * 100f, ForceMode.Impulse);
+           Vector3 direction = (WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position).normalized;
+            grenadeClone.transform.SetParent(null);
+            grenadeClone.GetComponent<Rigidbody>().isKinematic = false;
+            grenadeClone.GetComponent<Rigidbody>().AddForce(direction * 100f, ForceMode.Impulse);
         }
 
         public void GrenadeTossCompleted()

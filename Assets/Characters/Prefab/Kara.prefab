@@ -186,6 +186,7 @@ Transform:
   - {fileID: 7905550566003219262}
   - {fileID: 146776843664827705}
   - {fileID: 3939061998028090117}
+  - {fileID: 6206644185999555241}
   m_Father: {fileID: 2220230630999051517}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &254387304424791094
@@ -699,6 +700,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &802812425199670530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6206644185999555241}
+  m_Layer: 9
+  m_Name: GrenadeSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6206644185999555241
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802812425199670530}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.106, y: -0.074, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 361872312686858378}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &811033197664134428
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,7 +959,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4662840830555553565
 Transform:
   m_ObjectHideFlags: 0
@@ -1023,7 +1055,7 @@ Cloth:
   m_BendingStiffness: 0
   m_UseTethers: 1
   m_UseGravity: 1
-  m_Damping: 0
+  m_Damping: 0.1
   m_ExternalAcceleration: {x: 0, y: 0, z: 0}
   m_RandomAcceleration: {x: 0, y: 0, z: 0}
   m_WorldVelocityScale: 0.5
@@ -7716,6 +7748,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   AimStateManager: {fileID: 0}
   WeaponManager: {fileID: 0}
+  GrenadePrefab: {fileID: 5267209805920591268, guid: 6883f69c0ca28bf46a7465b554123b2c, type: 3}
 --- !u!114 &3094268648140631281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7818,12 +7851,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00662a6c108e1ee428e8d4f188e386ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rifle: {fileID: 2649814716014432905}
   shootMask:
     serializedVersion: 2
     m_Bits: 6131
   GunEndTransform: {fileID: 6400285457780160504}
   TargetTransform: {fileID: 0}
   weaponTransform: {fileID: 7905550566003219262}
+  RightHandTransform: {fileID: 361872312686858378}
+  LeftHandTransform: {fileID: 1611485695012014655}
+  GrenadeSpawnTransform: {fileID: 6206644185999555241}
   laser: {fileID: 0}
   hitGroundDecal: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
   fleshDecal: {fileID: 0}

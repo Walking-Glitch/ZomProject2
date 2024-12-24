@@ -21,6 +21,7 @@ namespace Assets.Scripts.Player.Weapon
         public Transform weaponTransform;
         public Transform RightHandTransform;
         public Transform LeftHandTransform;
+        public Transform GrenadeSpawnTransform;
 
         // reference to laser 
         [HideInInspector] public WeaponLaser laser;
@@ -205,6 +206,7 @@ namespace Assets.Scripts.Player.Weapon
             //}
             if (moveStateManager.currentState == moveStateManager.Run) return false;
             if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
+            if (actionStateManager.CurrentState == actionStateManager.Grenade) return false;
             if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
             //if (!semiAuto && Input.GetKey(KeyCode.Mouse0)) return true;
             return false;

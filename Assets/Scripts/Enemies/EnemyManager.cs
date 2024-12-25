@@ -80,12 +80,9 @@ public class EnemyManager : MonoBehaviour
 
     Transform GetValidSpawnPoint()
     {
-
         int i = Random.Range(0, spawnPointsList.Count - 1);
         
         return spawnPointsList[i];
-
-        
     }
 
     public void DecreaseEnemyCtr()

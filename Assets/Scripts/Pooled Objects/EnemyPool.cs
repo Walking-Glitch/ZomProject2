@@ -41,13 +41,10 @@ public class EnemyPool : MonoBehaviour
 
     public GameObject RequestEnemy()
     {
-        //for (int i = Random.Range(0, EnemyList.Count - 1); i < EnemyList.Count; i++)
         for (int i = 0; i < enemyList.Count; i++)
         {
             if (!enemyList[i].activeSelf)
             {
-                //EnemyList[i].SetActive(true);
-                //enemyList[i].GetComponent<NavMeshAgent>().enabled = false;
                 return enemyList[i];
             }
 

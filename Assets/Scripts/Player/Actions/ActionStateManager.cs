@@ -1,4 +1,5 @@
 using System.Collections;
+using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Weapon;
 using Unity.Mathematics;
 using UnityEngine;
@@ -39,6 +40,9 @@ namespace Assets.Scripts.Player.Actions
         public GameObject GrenadePrefab;
         private GameObject grenadeClone;
 
+        //game manager
+        private GameManager gameManager;
+
 
 
         void Awake()
@@ -52,6 +56,7 @@ namespace Assets.Scripts.Player.Actions
     
         void Start()
         {
+            gameManager = GameManager.Instance;
             anim = GetComponent<Animator>();
             AimStateManager = GetComponent<AimStateManager>();
             WeaponManager = GetComponent<WeaponManager>();
@@ -166,10 +171,16 @@ namespace Assets.Scripts.Player.Actions
 
         public void GrenadeInstantiate()
         {
-            grenadeClone = Instantiate(GrenadePrefab, WeaponManager.GrenadeSpawnTransform.position, Quaternion.identity);
+            grenadeClone = gameManager.GrenadePool.RequestGrenade();
             grenadeClone.transform.SetParent(WeaponManager.GrenadeSpawnTransform);
-            //grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(60f, -246.455f, 53.591f));
             grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(36f, -20f, -68f));
+            grenadeClone.GetComponent<Grenade>().CodeToRunWhenObjectRequested();
+            //grenadeClone = Instantiate(GrenadePrefab, WeaponManager.GrenadeSpawnTransform.position, Quaternion.identity);
+         
+            grenadeClone.SetActive(true);
+           
+
+            
         }
         public void GrenadeToss()
         {

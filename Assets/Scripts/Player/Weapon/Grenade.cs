@@ -1,7 +1,11 @@
+using Assets.Scripts.Game_Manager;
+using Assets.Scripts.Player.Weapon;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.Audio;
 
 public class Grenade : MonoBehaviour
 {
@@ -32,23 +36,48 @@ public class Grenade : MonoBehaviour
 
     //checks
     private bool exploded;
-    void OnEnable()
-    {
-      elapsed = 0;
-    }
 
-    private void OnDisable()
+    //Rigidbodies
+    [HideInInspector] public Rigidbody GrenadeRb;
+    [HideInInspector] public Rigidbody GrenadeLeverRb;
+
+    //game manager
+    private GameManager gameManager;
+     
+    private void Awake()
     {
-        
+        gameManager = GameManager.Instance;
+        GrenadeRb = GetComponent<Rigidbody>();
+        GrenadeLeverRb = GrenadeLever.GetComponent<Rigidbody>();
+
+        CodeToRunWhenObjectRequested();
+    }
+    private void Start()
+    {
+       
+
     }
     // Update is called once per frame
     void Update()
     {
-     
        GrenadeTimer();
-        
     }
 
+    public void CodeToRunWhenObjectRequested()
+    {
+        elapsed = 0;
+        exploded = false;
+
+        GrenadeRb.isKinematic = true;
+        GrenadeLeverRb.isKinematic = true;
+    }
+
+    public void CodeToRunWhenObjectDisabled()
+    {
+        GrenadeRb.isKinematic = true;
+        GrenadeLeverRb.isKinematic = true;
+        GrenadeBody.SetActive(true);
+    }
     public void PlayReleasePinSfx()
     {
         GrenadeAudioSource.PlayOneShot(GrenadeReleasePin);
@@ -57,6 +86,19 @@ public class Grenade : MonoBehaviour
     public void PlayExplosionSfx()
     {
         GrenadeAudioSource.PlayOneShot(GrenadeExplosion);
+    }
+
+    IEnumerator WaitForAudioToEndAndDisable()
+    {
+        yield return new WaitWhile(() => GrenadeAudioSource.isPlaying);
+        Debug.Log("Audio clip has finished playing.");
+        // Perform your action here
+        GrenadeLever.transform.SetParent(GrenadeBody.transform);
+        GrenadeLever.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0));
+
+        CodeToRunWhenObjectDisabled();
+
+        gameObject.SetActive(false);
     }
 
     public void ReleaseGrenadeLever()
@@ -75,7 +117,7 @@ public class Grenade : MonoBehaviour
             if (elapsed < timeToexplode)
             {
                 elapsed += Time.deltaTime;
-                Debug.Log(elapsed);
+                //Debug.Log(elapsed);
             }
 
             else
@@ -83,6 +125,9 @@ public class Grenade : MonoBehaviour
                 FindEnemies();
                 PlayExplosionSfx();
                 GrenadeBody.SetActive(false);
+                StartCoroutine(WaitForAudioToEndAndDisable());
+                
+
                 exploded = true;
             }
         }
@@ -91,8 +136,6 @@ public class Grenade : MonoBehaviour
     public void KillEnemiesInBlastRadius()
     {
         //ExplosionParticleSystem.Play();
-
-           
 
         foreach (ZombieStateManager zombie in enemies)
         { 

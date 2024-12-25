@@ -1,4 +1,5 @@
 using Assets.Scripts.Player;
+using Assets.Scripts.Player.Weapon;
 using UnityEngine;
 
 namespace Assets.Scripts.Game_Manager
@@ -10,7 +11,9 @@ namespace Assets.Scripts.Game_Manager
         public PlayerStatus PlayerStats;
         public GameObject PlayerGameObject;
         public EnemyPool EnemyPool;
+        public GrenadePool GrenadePool;
         public EnemyManager EnemyManager;
+        public WeaponManager WeaponManager;
         #endregion
 
         #region Singleton

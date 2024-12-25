@@ -111,6 +111,7 @@ namespace Assets.Scripts.Player.Weapon
         void Fire()
         {
             anim.SetTrigger("Firing");
+            rifle.GetComponent<Animation>().Play();
             fireRateTimer = 0;
             RifleAudioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
             //TriggerMuzzleFlash();

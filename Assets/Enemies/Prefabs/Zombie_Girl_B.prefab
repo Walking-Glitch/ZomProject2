@@ -49,14 +49,14 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.075
-  m_Height: 0.3870926
+  m_Height: 0.4
   m_Direction: 0
   m_Center: {x: 0.1935463, y: 0, z: 0}
 --- !u!54 &3261108298940400160
@@ -212,14 +212,14 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.23507103, y: 0.23498505, z: 0.26316}
-  m_Center: {x: -0.117535725, y: 0.015603706, z: 0}
+  m_Size: {x: 0.4, y: 0.23498505, z: 0.26316}
+  m_Center: {x: -0.117535725, y: -0.01560371, z: 0}
 --- !u!54 &4732507172332095837
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2389,7 +2389,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2521260672376690856
 Transform:
   m_ObjectHideFlags: 0
@@ -4456,14 +4456,14 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.23574857, y: 0.22913414, z: 0.26316}
-  m_Center: {x: -0.10485884, y: 0.046626315, z: 0}
+  m_Center: {x: -0.10485884, y: -0.01, z: 0}
 --- !u!54 &8338755656718216550
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4941,14 +4941,14 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.075
-  m_Height: 0.3870926
+  m_Height: 0.4
   m_Direction: 0
   m_Center: {x: -0.1935463, y: 0, z: 0}
 --- !u!54 &2189202240464489013

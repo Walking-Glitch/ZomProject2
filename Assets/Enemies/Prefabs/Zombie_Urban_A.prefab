@@ -431,13 +431,13 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.06
+  m_Radius: 0.065
   m_Height: 0.35
   m_Direction: 1
   m_Center: {x: 0.07, y: -0.07, z: 0}
@@ -2182,14 +2182,14 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.08
-  m_Height: 0.47278154
+  m_Height: 0.5
   m_Direction: 0
   m_Center: {x: 0.23639077, y: 0, z: 0}
 --- !u!54 &1459781615322469558
@@ -3736,13 +3736,13 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.23074359, y: 0.26676518, z: 0.34435052}
+  m_Size: {x: 0.4, y: 0.26676518, z: 0.34435052}
   m_Center: {x: -0.11537212, y: 0.01, z: 0.000000029802322}
 --- !u!54 &782523558305618106
 Rigidbody:
@@ -4064,7 +4064,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -6200,14 +6200,14 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.08
-  m_Height: 0.47278187
+  m_Height: 0.5
   m_Direction: 0
   m_Center: {x: -0.23639093, y: 0, z: 0}
 --- !u!54 &4181095771454197593
@@ -7405,13 +7405,13 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.06
+  m_Radius: 0.065
   m_Height: 0.35
   m_Direction: 1
   m_Center: {x: -0.07, y: 0.07, z: 0}
@@ -7520,7 +7520,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6279075895044046406
 Transform:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Actions;
 using Unity.Mathematics;
 using UnityEngine;
@@ -59,6 +60,9 @@ namespace Assets.Scripts.Player.Weapon
         // zombie reference
         ZombieStateManager zombieStateManager;
 
+        // game manager
+        private GameManager gameManager;
+
         void Awake()
         {
             inputSystemActions = new InputSystem_Actions();
@@ -67,6 +71,7 @@ namespace Assets.Scripts.Player.Weapon
 
         void Start()
         {
+            gameManager = GameManager.Instance;
             anim = GetComponent<Animator>();
             aimStateManager = GetComponent<AimStateManager>();
             moveStateManager = GetComponent<MovementStateManager>();
@@ -112,6 +117,7 @@ namespace Assets.Scripts.Player.Weapon
         {
             anim.SetTrigger("Firing");
             rifle.GetComponent<Animation>().Play();
+            gameManager.CasingManager.SpawnBulletCasing();
             fireRateTimer = 0;
             RifleAudioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
             //TriggerMuzzleFlash();

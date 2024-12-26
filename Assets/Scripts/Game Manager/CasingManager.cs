@@ -7,7 +7,8 @@ public class CasingManager : MonoBehaviour
     public Transform CasingSpawnTransform;
     private GameManager gameManager;
     private float delay = 1f;
-    public float ejectForce;
+    public float MaxEjectForce;
+    public float MinEjectForce;
     public float ejectTorque;
     void Start()
     {
@@ -16,17 +17,21 @@ public class CasingManager : MonoBehaviour
 
     public void SpawnBulletCasing()
     {
-        GameObject casingRight = gameManager.BulletCasingPool.RequestCasing();
-        casingRight.transform.position = CasingSpawnTransform.position;
-        casingRight.transform.rotation = CasingSpawnTransform.rotation;
-        Rigidbody casingRightRigidbody = casingRight.GetComponent<Rigidbody>();
+        GameObject casing = gameManager.BulletCasingPool.RequestCasing();
+        casing.transform.position = CasingSpawnTransform.position;
+        //casing.transform.rotation = CasingSpawnTransform.rotation;
+        //casing.transform.rotation *= Quaternion.Euler(90, 0, 0);
+        casing.transform.rotation = CasingSpawnTransform.rotation * Quaternion.Euler(90, 0, 0);
+        Rigidbody casingRigidbody = casing.GetComponent<Rigidbody>();
 
-        casingRightRigidbody.isKinematic = false;
-        Vector3 rightForce = CasingSpawnTransform.right * 5f + CasingSpawnTransform.forward * 10f + CasingSpawnTransform.up * 10f;
-        casingRightRigidbody.AddForce(rightForce * ejectForce);
-        casingRightRigidbody.AddTorque(casingRight.transform.position * ejectTorque);
+        casingRigidbody.isKinematic = false;
+        
+        casingRigidbody.AddForce(CasingSpawnTransform.right *-1 * Random.Range(MinEjectForce, MaxEjectForce), ForceMode.Impulse);
+        casingRigidbody.AddForce(CasingSpawnTransform.forward  * Random.Range(MinEjectForce, MaxEjectForce), ForceMode.Impulse);
+        //casingRigidbody.AddRelativeTorque(new Vector3(10, 0, 0) * ejectTorque, ForceMode.Impulse);
+        casingRigidbody.AddTorque(new Vector3(10, 0, 0) * ejectTorque, ForceMode.Impulse);
 
-        StartCoroutine(DisableCasing(casingRight));
+        StartCoroutine(DisableCasing(casing));
 
     }
 

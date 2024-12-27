@@ -151,25 +151,25 @@ namespace Assets.Scripts.Player.Weapon
                             zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
                             zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
                         }
-                        else
-                        {
-                            zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                            zombieStateManager.TakeDamage(0, limb.limbName, false, 0);
-                        }
-                        //else if (limb.limbName == "torso" || limb.limbName == "belly")
-                        //{
-                        //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        //    zombieStateManager.TakeDamage(0, limb.limbName);
-                        //}
-
                         //else
                         //{
                         //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        //    zombieStateManager.TakeDamage(0, limb.limbName);
+                        //    zombieStateManager.TakeDamage(0, limb.limbName, false, 0);
                         //}
-                  
+                    else if (limb.limbName == "torso" || limb.limbName == "belly")
+                    {
+                        zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                    }
 
-                        float baseLimbDmg = 100f;
+                    else
+                    {
+                        zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                    }
+
+
+                    float baseLimbDmg = 100f;
                         float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
 
                         limb.LimbTakeDamage((int)finalLimbDmg);

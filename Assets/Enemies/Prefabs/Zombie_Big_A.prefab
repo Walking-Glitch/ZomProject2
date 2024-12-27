@@ -124,7 +124,7 @@ CharacterJoint:
     limit: 0
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -341,7 +341,7 @@ CharacterJoint:
     limit: 0
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -1619,7 +1619,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   limbName: hand
   damageMultiplier: 0.2
-  limbDamageMultiplier: 0.5
+  limbDamageMultiplier: 1
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 1
@@ -3023,7 +3023,7 @@ CharacterJoint:
     limit: 3
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -3997,7 +3997,7 @@ CharacterJoint:
     limit: 0
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -4172,7 +4172,7 @@ CharacterJoint:
     limit: 11.913087
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -4358,7 +4358,7 @@ CharacterJoint:
     limit: 3
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -4574,7 +4574,7 @@ CharacterJoint:
     limit: 3
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -4597,7 +4597,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   limbName: lowerArm
   damageMultiplier: 0.5
-  limbDamageMultiplier: 0.25
+  limbDamageMultiplier: 0.4
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 1
@@ -5070,7 +5070,7 @@ CharacterJoint:
     limit: 8.052145
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -5536,7 +5536,7 @@ CharacterJoint:
     limit: 0
     bounciness: 0
     contactDistance: 0
-  m_EnableProjection: 0
+  m_EnableProjection: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
   m_BreakForce: Infinity
@@ -5559,7 +5559,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   limbName: lowerArm
   damageMultiplier: 0.5
-  limbDamageMultiplier: 0.25
+  limbDamageMultiplier: 0.4
   limbHealth: 0
   limbMaxHealth: 100
   isDestructible: 1
@@ -6250,7 +6250,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7804339059564993295
 Transform:
   m_ObjectHideFlags: 0

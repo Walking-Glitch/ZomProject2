@@ -45,7 +45,7 @@ public class Limbs : MonoBehaviour
         {
             damageMultiplier = 0.8f;
 
-            limbDamageMultiplier = 0.25f;
+            limbDamageMultiplier = 0.4f;
 
             isDestructible = true;
         }
@@ -71,9 +71,26 @@ public class Limbs : MonoBehaviour
         {
             damageMultiplier = 0.5f;
 
-            limbDamageMultiplier = 0.25f;
+            limbDamageMultiplier = 0.4f;
 
             isDestructible = true;
+        }
+        else if(limbName == "torso")
+        {
+            damageMultiplier = 2f;
+
+            limbDamageMultiplier = 0f;
+
+            isDestructible = false;
+        }
+
+        else if (limbName == "belly")
+        {
+            damageMultiplier = 1.5f;
+
+            limbDamageMultiplier = 0f;
+
+            isDestructible = false;
         }
     }
 

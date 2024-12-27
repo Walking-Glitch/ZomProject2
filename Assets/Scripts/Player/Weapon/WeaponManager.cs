@@ -42,7 +42,10 @@ namespace Assets.Scripts.Player.Weapon
         // audio variables
         public AudioSource RifleAudioSource;
         public AudioClip [] gunShots;
+        public AudioClip emptyClip;
         
+        private bool playedEmptySound = false;
+
 
         // firing variables
         [Header("Fire Rate")]
@@ -120,6 +123,7 @@ namespace Assets.Scripts.Player.Weapon
             gameManager.CasingManager.SpawnBulletCasing();
             fireRateTimer = 0;
             RifleAudioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
+            gameManager.WeaponAmmo.currentAmmo--;
             //TriggerMuzzleFlash();
 
             Vector3 direction = TargetTransform.position - GunEndTransform.position;
@@ -150,12 +154,8 @@ namespace Assets.Scripts.Player.Weapon
                         {
                             zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
                             zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
-                        }
-                        //else
-                        //{
-                        //    zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        //    zombieStateManager.TakeDamage(0, limb.limbName, false, 0);
-                        //}
+                        }                       
+                    
                     else if (limb.limbName == "torso" || limb.limbName == "belly")
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
@@ -196,22 +196,19 @@ namespace Assets.Scripts.Player.Weapon
         {
         
             if (fireRateTimer < fireRate) return false;
-            //if (ammo.currentAmmo == 0)
-            //{
-            //    if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKey(KeyCode.Mouse0))
-            //    {
-            //        if (!playedEmptySound)
-            //        {
-            //            EmptyAudioSource.PlayOneShot(emptyClip);
-            //            playedEmptySound = true;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        playedEmptySound = false;
-            //    }
-            //    return false;
-            //}
+            if (gameManager.WeaponAmmo.currentAmmo == 0)
+            {
+                if (!playedEmptySound)
+                 {
+                   RifleAudioSource.PlayOneShot(emptyClip);
+                   playedEmptySound = true;
+                 }         
+                else
+                {
+                    playedEmptySound = false;
+                }
+                return false;
+            }
             if (moveStateManager.currentState == moveStateManager.Run) return false;
             if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
             if (actionStateManager.CurrentState == actionStateManager.Grenade) return false;

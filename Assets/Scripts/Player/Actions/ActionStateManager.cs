@@ -219,24 +219,23 @@ namespace Assets.Scripts.Player.Actions
 
         public void WeaponReloaded()
         {
-            // call reload function *to do
+            gameManager.WeaponAmmo.Reload();
             SwitchState(Default);
+            
        
         }
 
         public void MagOut()
         {
-            // play oneshot
+            audioSource.PlayOneShot(gameManager.WeaponAmmo.magOutClip);
         }
-
         public void MagIn()
         {
-            // play oneshot
+            audioSource.PlayOneShot(gameManager.WeaponAmmo.magInClip);
         }
-
         public void ReleaseSlideSound()
         {
-            // play oneshot
+            audioSource.PlayOneShot(gameManager.WeaponAmmo.releaseSlideClip);
         }
         private void OnEnable()
         {

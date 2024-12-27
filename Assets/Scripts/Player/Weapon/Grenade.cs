@@ -106,7 +106,6 @@ public class Grenade : MonoBehaviour
       GrenadeLever.transform.SetParent(null);
         GrenadeLever.GetComponent<Rigidbody>().isKinematic = false;
         GrenadeLever.GetComponent<Rigidbody>().AddForce(GrenadeLever.transform.up.normalized * 3f, ForceMode.Impulse);
-        //GrenadeLever.GetComponent<Rigidbody>().AddForce(GrenadeLever.transform.forward * 0.2f, ForceMode.Impulse);
         GrenadeLever.GetComponent<Rigidbody>().AddRelativeTorque(new Vector3(10, 0, 0), ForceMode.Impulse);
     }
 

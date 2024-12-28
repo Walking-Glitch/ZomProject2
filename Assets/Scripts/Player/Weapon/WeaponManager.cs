@@ -3,6 +3,7 @@ using Assets.Scripts.Player.Actions;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Player.Weapon
@@ -63,13 +64,20 @@ namespace Assets.Scripts.Player.Weapon
         // zombie reference
         ZombieStateManager zombieStateManager;
 
+        // toggle firing mode
+        [SerializeField] private bool semiAuto;
+        private bool isFiring = false;
+
+
         // game manager
         private GameManager gameManager;
+
 
         void Awake()
         {
             inputSystemActions = new InputSystem_Actions();
             inputSystemActions.Player.Attack.performed += OnFirePerformed;
+            inputSystemActions.Player.Attack.canceled += OnFireCanceled;
         }
 
         void Start()
@@ -89,8 +97,14 @@ namespace Assets.Scripts.Player.Weapon
         // Update is called once per frame
         void Update()
         {
-            fireRateTimer += Time.deltaTime;
+          
+            if (!semiAuto && isFiring && CanFire())
+            {
+                Fire();
+            }
 
+            fireRateTimer += Time.deltaTime;
+            ToogleFireRate();
         }
 
         public void AdjustParentedHand()
@@ -194,32 +208,69 @@ namespace Assets.Scripts.Player.Weapon
 
         bool CanFire()
         {
-        
+            fireRateTimer += Time.deltaTime;
             if (fireRateTimer < fireRate) return false;
             if (gameManager.WeaponAmmo.currentAmmo == 0)
             {
                 if (!playedEmptySound)
-                 {
-                   RifleAudioSource.PlayOneShot(emptyClip);
-                   playedEmptySound = true;
-                 }         
+                {
+                    RifleAudioSource.PlayOneShot(emptyClip);
+                    playedEmptySound = true;
+                }
                 else
                 {
-                    playedEmptySound = false;
+                    if(semiAuto) playedEmptySound = false;
                 }
                 return false;
+
+
             }
             if (moveStateManager.currentState == moveStateManager.Run) return false;
             if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
             if (actionStateManager.CurrentState == actionStateManager.Grenade) return false;
             if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
-            //if (!semiAuto && Input.GetKey(KeyCode.Mouse0)) return true;
+      
             return false;
         }
 
         private void OnFirePerformed(InputAction.CallbackContext context)
         {
-            if(CanFire()) Fire();
+            if (context.interaction is PressInteraction)
+            {
+                if (semiAuto)
+                {
+                    Debug.Log("Semi-Auto: Quick Press Detected");
+                    if (CanFire()) Fire();
+                }
+                else
+                {
+                    Debug.Log("Full-Auto: Button Hold Detected");
+                    if (CanFire()) Fire();
+                    isFiring = true;
+                }
+            }
+          
+        }
+
+        private void OnFireCanceled(InputAction.CallbackContext context)
+        {
+            // Stop firing when the button is released
+            if (!semiAuto)
+            {
+                Debug.Log("Full-Auto: Button Released");
+                isFiring = false;
+                playedEmptySound = false;
+            }
+        }
+
+        private void ToogleFireRate()
+        {
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                semiAuto = !semiAuto;
+            }
+
+            //fireRateText.text = semiAuto ? "SEMI" : "FULL AUTO";
         }
 
         void TriggerMuzzleFlash()

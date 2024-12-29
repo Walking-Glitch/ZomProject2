@@ -42,6 +42,7 @@ namespace Assets.Scripts.Player.Weapon
 
         // audio variables
         public AudioSource RifleAudioSource;
+        public AudioSource ToggleWeaponAudioSource;
         public AudioClip [] gunShots;
         public AudioClip emptyClip;
         
@@ -97,14 +98,15 @@ namespace Assets.Scripts.Player.Weapon
         // Update is called once per frame
         void Update()
         {
-          
+            ToogleFireRate();
+
             if (!semiAuto && isFiring && CanFire())
             {
                 Fire();
             }
 
             fireRateTimer += Time.deltaTime;
-            ToogleFireRate();
+            
         }
 
         public void AdjustParentedHand()
@@ -265,9 +267,10 @@ namespace Assets.Scripts.Player.Weapon
 
         private void ToogleFireRate()
         {
-            if (Input.GetKeyDown(KeyCode.X))
+            if (Input.GetKeyDown(KeyCode.X) && actionStateManager.CurrentState == actionStateManager.Default)
             {
                 semiAuto = !semiAuto;
+                ToggleWeaponAudioSource.PlayOneShot(gameManager.WeaponAmmo.switchFireMode);
             }
 
             //fireRateText.text = semiAuto ? "SEMI" : "FULL AUTO";

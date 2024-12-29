@@ -90053,7 +90053,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 2.3333333
+  - time: 2.2
     functionName: ReleaseSlideSound
     data: 
     objectReferenceParameter: {fileID: 0}

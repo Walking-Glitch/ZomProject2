@@ -209,7 +209,7 @@ namespace Assets.Scripts.Player.Actions
       
         private void OnReloadPerformed(InputAction.CallbackContext context)
         {
-            if (AimStateManager.CurrentState == AimStateManager.AimingState) SwitchState(Reload);
+            if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Reload);
         }
 
         private void OnThrowGrenadePerformed(InputAction.CallbackContext context)

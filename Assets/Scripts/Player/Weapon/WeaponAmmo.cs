@@ -10,6 +10,7 @@ public class WeaponAmmo : MonoBehaviour
     public AudioClip magInClip;
     public AudioClip magOutClip;
     public AudioClip releaseSlideClip;
+    public AudioClip switchFireMode;
 
     private WeaponManager weaponManager;
 

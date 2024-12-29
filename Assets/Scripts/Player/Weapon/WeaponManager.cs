@@ -131,7 +131,14 @@ namespace Assets.Scripts.Player.Weapon
             }
         }
 
-
+        //void AddRecoil()
+        //{
+        //    //TargetTransform.position += new Vector3(10f, 10f, 0);
+        //    float recoilX = Random.Range(-recoilAmount, recoilAmount);
+        //    float recoilY = Random.Range(-recoilAmount, recoilAmount);
+        //    float recoilZ = Random.Range(-recoilAmount / 2, 0); // Optional: minor backward recoil
+        //    recoilOffset += new Vector3(recoilX, recoilY, recoilZ);
+        //}
         void Fire()
         {
             anim.SetTrigger("Firing");
@@ -206,6 +213,8 @@ namespace Assets.Scripts.Player.Weapon
                     Debug.Log(hit.distance);
                 }
             }
+
+            aimStateManager.AddRecoil();
         }
 
         bool CanFire()

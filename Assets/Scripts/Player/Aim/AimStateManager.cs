@@ -12,7 +12,13 @@ using Input = UnityEngine.Input;
 
 public class AimStateManager : MonoBehaviour 
 {
-    
+
+    // recoil test 
+    [SerializeField] private float recoilAmount = 0.1f; // Magnitude of the recoil
+    [SerializeField] private float recoilDecaySpeed = 5f; // Speed at which recoil dissipates
+    private Vector3 recoilOffset; // Current recoil offset
+
+
     // camera rotation
     private Vector2 lookInput;
     private Vector3 direction;
@@ -221,6 +227,14 @@ public class AimStateManager : MonoBehaviour
         isTransitioning = false;  // Reset the flag when done
     }
 
+    public void AddRecoil()
+    {
+        //TargetTransform.position += new Vector3(10f, 10f, 0);
+        float recoilX = Random.Range(-recoilAmount, recoilAmount);
+        float recoilY = Random.Range(0.2f, recoilAmount);
+        float recoilZ = Random.Range(-recoilAmount / 2, 0); // Optional: minor backward recoil
+        recoilOffset += new Vector3(recoilX, recoilY, recoilZ);
+    }
     private void MoveAimReference()
     {
         Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
@@ -228,7 +242,9 @@ public class AimStateManager : MonoBehaviour
         
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, aimMask))
         {
-            aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
+            Vector3 targetPosition = hit.point + recoilOffset; // Apply recoil offset
+            //aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
+            aimPos.position = Vector3.Lerp(aimPos.position, targetPosition, aimSmoothSpeed * Time.deltaTime);
         }
 
         Vector3 laserDirection = (aimPos.position - weaponLaser.laserOrigin.position);
@@ -249,6 +265,9 @@ public class AimStateManager : MonoBehaviour
             laserPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
             IsOnTarget = false;
         }
+
+        // Gradually reduce the recoil offset over time
+        recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, recoilDecaySpeed * Time.deltaTime);
     }
      
     private void CharacterRotation()

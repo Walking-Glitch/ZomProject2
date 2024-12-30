@@ -5,7 +5,7 @@ public class ReloadState : ActionStateBase
 {
     public override void EnterState(ActionStateManager actionStateManager)
     {
-        actionStateManager.WeaponManager.AdjustParentedHand();
+        actionStateManager.WeaponManager.AdjustWeaponParentedHand();
         actionStateManager.anim.SetTrigger("Reload");
         actionStateManager.WeaponManager.laser.DisableLaser();
     }

@@ -8,7 +8,7 @@ public class GrenadeState : ActionStateBase
     public override void EnterState(ActionStateManager actionStateManager)
     {
         //elapsed = 0;
-        actionStateManager.WeaponManager.AdjustParentedHand();
+        actionStateManager.WeaponManager.AdjustWeaponParentedHand();
         actionStateManager.anim.SetTrigger("Grenade");
         actionStateManager.WeaponManager.laser.DisableLaser();
       

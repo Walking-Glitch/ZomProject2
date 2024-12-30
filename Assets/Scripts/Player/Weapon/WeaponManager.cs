@@ -12,14 +12,21 @@ namespace Assets.Scripts.Player.Weapon
     {
         // Weapon model reference
         public GameObject rifle;
-        private Transform cachedParent;
-        private Vector3 cachedPosition;
-        private Quaternion cachedRotation;
+        public GameObject Mag;
+        private Transform cachedWeaponParent;
+        private Vector3 cachedWeaponPosition;
+        private Quaternion cachedWeaponRotation;
+
+        private Transform cachedMagParent;
+        private Vector3 cachedMagPosition;
+        private Quaternion cachedMagRotation;
 
         // ray casting variables 
         [SerializeField] private LayerMask shootMask;
         public Transform GunEndTransform;
         public Transform TargetTransform;
+
+        // position variables
         public Transform weaponTransform;
         public Transform RightHandTransform;
         public Transform LeftHandTransform;
@@ -90,10 +97,14 @@ namespace Assets.Scripts.Player.Weapon
             actionStateManager = GetComponent<ActionStateManager>();
             laser = GetComponent<WeaponLaser>();
 
-            cachedParent = rifle.transform.parent;
-            cachedPosition = rifle.transform.localPosition;
-            cachedRotation = rifle.transform.localRotation;
-    }
+            cachedWeaponParent = rifle.transform.parent;
+            cachedWeaponPosition = rifle.transform.localPosition;
+            cachedWeaponRotation = rifle.transform.localRotation;
+
+            cachedMagParent = Mag.transform.parent;
+            cachedMagPosition = Mag.transform.localPosition;
+            cachedMagRotation = Mag.transform.localRotation;
+        }
 
         // Update is called once per frame
         void Update()
@@ -109,7 +120,29 @@ namespace Assets.Scripts.Player.Weapon
             
         }
 
-        public void AdjustParentedHand()
+        public void RemoveMag()
+        {
+           
+               Mag.transform.SetParent(LeftHandTransform);
+            Mag.transform.SetLocalPositionAndRotation(new Vector3(-0.133599997f, 0.0542000011f, -0.0315999985f), Quaternion.Euler(25.4739895f, 230.443344f, 212.954651f));
+
+            // Quaternion.Euler(324.446472f, 191.102814f, 217.129715f)
+            //-0.118000001f, 0.0410000011f, 0.00400000019f
+
+            //Quaternion.Euler(Vector3(25.4739895f,230.443344f,212.954651f))
+            //Vector3(-0.133599997f,0.0542000011f,-0.0315999985f)
+        }
+
+        public void AttachMag()
+        {
+
+                Mag.transform.SetParent(cachedMagParent);
+                Mag.transform.localPosition = cachedMagPosition;
+                Mag.transform.localRotation = cachedMagRotation;
+            
+        }
+
+        public void AdjustWeaponParentedHand()
         {
             if (actionStateManager.CurrentState == actionStateManager.Grenade)
             {
@@ -118,27 +151,19 @@ namespace Assets.Scripts.Player.Weapon
 
             else if (actionStateManager.CurrentState == actionStateManager.Reload)
             {
-                rifle.transform.SetParent(cachedParent);
-                rifle.transform.localPosition = cachedPosition;
-                rifle.transform.localRotation = cachedRotation;
+                rifle.transform.SetParent(cachedWeaponParent);
+                rifle.transform.localPosition = cachedWeaponPosition;
+                rifle.transform.localRotation = cachedWeaponRotation;
             }
 
             else if (actionStateManager.CurrentState == actionStateManager.Default)
             {
-                rifle.transform.SetParent(cachedParent);
-                rifle.transform.localPosition = cachedPosition;
-                rifle.transform.localRotation = cachedRotation;
+                rifle.transform.SetParent(cachedWeaponParent);
+                rifle.transform.localPosition = cachedWeaponPosition;
+                rifle.transform.localRotation = cachedWeaponRotation;
             }
         }
-
-        //void AddRecoil()
-        //{
-        //    //TargetTransform.position += new Vector3(10f, 10f, 0);
-        //    float recoilX = Random.Range(-recoilAmount, recoilAmount);
-        //    float recoilY = Random.Range(-recoilAmount, recoilAmount);
-        //    float recoilZ = Random.Range(-recoilAmount / 2, 0); // Optional: minor backward recoil
-        //    recoilOffset += new Vector3(recoilX, recoilY, recoilZ);
-        //}
+         
         void Fire()
         {
             anim.SetTrigger("Firing");

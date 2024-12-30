@@ -221,16 +221,16 @@ namespace Assets.Scripts.Player.Actions
         {
             gameManager.WeaponAmmo.Reload();
             SwitchState(Default);
-            
-       
         }
 
         public void MagOut()
         {
+            WeaponManager.RemoveMag();
             audioSource.PlayOneShot(gameManager.WeaponAmmo.magOutClip);
         }
         public void MagIn()
         {
+            WeaponManager.AttachMag();
             audioSource.PlayOneShot(gameManager.WeaponAmmo.magInClip);
         }
         public void ReleaseSlideSound()

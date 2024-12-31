@@ -1086,6 +1086,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 8942317639393987816}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &1876522853832633410
 GameObject:
   m_ObjectHideFlags: 0
@@ -1654,6 +1655,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 0}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &2586861401647518938
 GameObject:
   m_ObjectHideFlags: 0
@@ -1872,6 +1874,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 1463843935440652857}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &3050673471975039138
 GameObject:
   m_ObjectHideFlags: 0
@@ -2219,6 +2222,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 185551196402057640}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &3643269265734804167
 GameObject:
   m_ObjectHideFlags: 0
@@ -2793,6 +2797,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 8889296828698030950}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &4516138627333964687
 GameObject:
   m_ObjectHideFlags: 0
@@ -3225,6 +3230,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 1604369375955918761}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &5845094390438989168
 GameObject:
   m_ObjectHideFlags: 0
@@ -3410,6 +3416,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 4024723097730795766}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &5988311269309450562
 GameObject:
   m_ObjectHideFlags: 0
@@ -3745,6 +3752,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 0}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &6262130761355560433
 GameObject:
   m_ObjectHideFlags: 0
@@ -4376,6 +4384,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 3655984845292884298}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &6875752868344568520
 GameObject:
   m_ObjectHideFlags: 0
@@ -4490,6 +4499,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 3313049391282868324}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &6946186100637776122
 GameObject:
   m_ObjectHideFlags: 0
@@ -6288,3 +6298,4 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 3598621762781841286}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}

@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Game_Manager;
 using Pathfinding;
 using Unity.VisualScripting;
@@ -237,6 +239,23 @@ public class ZombieStateManager : MonoBehaviour
 
     }
 
+    public void DismembermentByExplosion()
+    {
+        foreach (var limbs in zombieLimbs)
+        {
+            bool shouldDmg = Random.Range(0, 2) == 0;
+
+            if (shouldDmg)
+            {
+                limbs.LimbTakeDamage(500);
+            }
+
+           
+        }
+    }
+
+    
+
     public virtual void TakeDamage(int damage, string limbName, bool explosion, float force)
     {
         health -= damage;
@@ -262,7 +281,7 @@ public class ZombieStateManager : MonoBehaviour
 
     public void SetExplosionDirection(Vector3 grenade, Vector3 zombie)
     {
-        Vector3 direction = (zombie - grenade).normalized * 500f;
+        Vector3 direction = (zombie - grenade).normalized;
 
         ExpDirection = direction;   
     }

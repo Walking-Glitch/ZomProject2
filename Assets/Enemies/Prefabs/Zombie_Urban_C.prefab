@@ -280,6 +280,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 2048261148178509244}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &412790702889559697
 GameObject:
   m_ObjectHideFlags: 0
@@ -1139,6 +1140,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 424102320939434076}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &1729400443322452529
 GameObject:
   m_ObjectHideFlags: 0
@@ -2079,6 +2081,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 0}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &2516134925533656952
 GameObject:
   m_ObjectHideFlags: 0
@@ -3287,6 +3290,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 7479839164402088620}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &3766626793552459988
 GameObject:
   m_ObjectHideFlags: 0
@@ -3694,6 +3698,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 2148896970985100943}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &4203148060102426015
 GameObject:
   m_ObjectHideFlags: 0
@@ -4195,6 +4200,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 0}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &4573785982765414973
 GameObject:
   m_ObjectHideFlags: 0
@@ -5112,6 +5118,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 2393533127777488374}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &6095822909709999952
 GameObject:
   m_ObjectHideFlags: 0
@@ -6569,6 +6576,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 3233816010505023848}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &7939084047080797396
 GameObject:
   m_ObjectHideFlags: 0
@@ -6873,6 +6881,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 3175707785437857433}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &8328726054645317969
 GameObject:
   m_ObjectHideFlags: 0
@@ -7062,6 +7071,7 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 7391901489683889953}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}
 --- !u!1 &8579354525825831872
 GameObject:
   m_ObjectHideFlags: 0
@@ -8015,3 +8025,4 @@ MonoBehaviour:
   limbMesh:
   - {fileID: 3960737922058498089}
   NestedLimbs: []
+  limbReplacement: {fileID: 0}

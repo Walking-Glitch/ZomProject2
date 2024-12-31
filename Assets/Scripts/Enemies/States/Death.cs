@@ -15,9 +15,10 @@ public class Death : ZombieBaseState
 
         else if (zombie.IsKilledByExplosion())
         {
-            zombie.RagdollModeOn();
-
-            zombie.rig.GetComponent<Rigidbody>().AddForce(zombie.GetExplosionDirection(), ForceMode.Impulse);
+            
+            zombie.RagdollModeOn();            
+            zombie.rig.GetComponent<Rigidbody>().AddForce(zombie.GetExplosionDirection() *500f, ForceMode.Impulse);
+            zombie.DismembermentByExplosion();
         }
 
 

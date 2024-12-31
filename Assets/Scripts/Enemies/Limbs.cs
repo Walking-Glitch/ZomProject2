@@ -1,3 +1,4 @@
+using Assets.Scripts.Game_Manager;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -20,9 +21,24 @@ public class Limbs : MonoBehaviour
     public bool isDestructible;
     public SkinnedMeshRenderer [] limbMesh;
 
-    [SerializeField] private Limbs[] NestedLimbs; 
+    [SerializeField] private Limbs[] NestedLimbs;
+
+    [Header("Body replacement")]
+    public GameObject limbReplacement;
+    private GameObject limbClone;
+    private Transform limbReplacementTransform;
+    private Vector3 cachedLimbPosition;
+    private Quaternion cachedLimbRotation;
+
+    private GameManager gameManager;
+
+    private ZombieStateManager ZombieStateManager;
     void Start()
     {
+        gameManager = GameManager.Instance;
+
+        ZombieStateManager = GetComponentInParent<ZombieStateManager>();
+
         limbMaxHealth = 100;
         limbHealth = limbMaxHealth;
         limbCollider = GetComponent<Collider>();
@@ -62,7 +78,7 @@ public class Limbs : MonoBehaviour
         {
             damageMultiplier = 0.2f;
 
-            limbDamageMultiplier = 0.5f;
+            limbDamageMultiplier = 1f;
 
             isDestructible = true;
         }
@@ -71,7 +87,7 @@ public class Limbs : MonoBehaviour
         {
             damageMultiplier = 0.5f;
 
-            limbDamageMultiplier = 0.4f;
+            limbDamageMultiplier = 0.5f;
 
             isDestructible = true;
         }
@@ -92,6 +108,21 @@ public class Limbs : MonoBehaviour
 
             isDestructible = false;
         }
+    }
+
+    public void InstantiateReplacementTransform()
+    {
+        cachedLimbPosition = transform.position;
+        cachedLimbRotation = transform.rotation;
+
+        limbClone = Instantiate(limbReplacement, transform.position, transform.rotation);
+
+
+
+        limbClone.transform.position = cachedLimbPosition;
+        limbClone.transform.rotation = cachedLimbRotation;
+
+        //limbReplacement.SetActive(true);
     }
 
     public void LimbTakeDamage(int damage)
@@ -120,9 +151,6 @@ public class Limbs : MonoBehaviour
                 limbMeshRenderer.enabled = false;
             }
         }
-
-        
-
         if (NestedLimbs.Length > 0)
         {
             foreach (Limbs Neslimb in NestedLimbs)
@@ -135,6 +163,18 @@ public class Limbs : MonoBehaviour
                
                
             }
+        }
+
+
+        if (limbReplacement != null)
+        {
+            
+            if (ZombieStateManager.IsKilledByExplosion())
+            {
+                InstantiateReplacementTransform();
+                limbClone.GetComponent<Rigidbody>().AddForce(ZombieStateManager.GetExplosionDirection() * 3000f, ForceMode.Impulse);
+            }
+              
         }
     }
 }

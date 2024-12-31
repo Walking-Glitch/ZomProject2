@@ -229,6 +229,7 @@ public class ZombieStateManager : MonoBehaviour
         foreach (var limb in zombieLimbs)
         {
             limb.limbHealth = limb.limbMaxHealth;
+            limb.ReattachReplacementLimb();
         }
 
         isCrippled = false;
@@ -249,8 +250,6 @@ public class ZombieStateManager : MonoBehaviour
             {
                 limbs.LimbTakeDamage(500);
             }
-
-           
         }
     }
 

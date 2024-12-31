@@ -1,6 +1,7 @@
 using Assets.Scripts.Game_Manager;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.LightAnchor;
 
 public class Limbs : MonoBehaviour
 {
@@ -25,20 +26,28 @@ public class Limbs : MonoBehaviour
 
     [Header("Body replacement")]
     public GameObject limbReplacement;
-    private GameObject limbClone;
-    private Transform limbReplacementTransform;
-    private Vector3 cachedLimbPosition;
-    private Quaternion cachedLimbRotation;
-
+    private Transform limbReplacementParent;
+    private Rigidbody limbReplacementRb;
+    
     private GameManager gameManager;
 
     private ZombieStateManager ZombieStateManager;
+
+    //explosion
+    public Vector3 ExpDirection;
+    private Vector3 grenadePos;
     void Start()
     {
         gameManager = GameManager.Instance;
 
         ZombieStateManager = GetComponentInParent<ZombieStateManager>();
 
+        if(limbReplacement != null)
+        {
+            limbReplacementParent = limbReplacement.transform.parent;
+            limbReplacementRb = limbReplacement.GetComponent<Rigidbody>();
+        }
+            
         limbMaxHealth = 100;
         limbHealth = limbMaxHealth;
         limbCollider = GetComponent<Collider>();
@@ -91,7 +100,7 @@ public class Limbs : MonoBehaviour
 
             isDestructible = true;
         }
-        else if(limbName == "torso")
+        else if (limbName == "torso")
         {
             damageMultiplier = 2f;
 
@@ -110,19 +119,25 @@ public class Limbs : MonoBehaviour
         }
     }
 
-    public void InstantiateReplacementTransform()
+    public void ActivateAndDetachReplacementLimb()
     {
-        cachedLimbPosition = transform.position;
-        cachedLimbRotation = transform.rotation;
+     
+        limbReplacement.SetActive(true);
 
-        limbClone = Instantiate(limbReplacement, transform.position, transform.rotation);
+        limbReplacement.transform.SetParent(null);
+    }
 
+    public void ReattachReplacementLimb()
+    {
+        if(limbReplacement != null)
+        {
+            limbReplacement.transform.SetParent(limbReplacementParent);
 
+            limbReplacement.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.Euler(0, 0, 0));
 
-        limbClone.transform.position = cachedLimbPosition;
-        limbClone.transform.rotation = cachedLimbRotation;
-
-        //limbReplacement.SetActive(true);
+            limbReplacement.SetActive(false);
+        }
+        
     }
 
     public void LimbTakeDamage(int damage)
@@ -168,11 +183,20 @@ public class Limbs : MonoBehaviour
 
         if (limbReplacement != null)
         {
-            
+            ActivateAndDetachReplacementLimb();
+
             if (ZombieStateManager.IsKilledByExplosion())
             {
-                InstantiateReplacementTransform();
-                limbClone.GetComponent<Rigidbody>().AddForce(ZombieStateManager.GetExplosionDirection() * 3000f, ForceMode.Impulse);
+                float randomForceMult = Random.Range(1500f, 2100f);
+                float randomYtMult = Random.Range(0.05f, 0.3f);
+                float randomXMult = Random.Range(-0.1f, 0.1f);
+                limbReplacementRb.AddForce((ZombieStateManager.GetExplosionDirection() + new Vector3(randomXMult, randomYtMult, 0)) * randomForceMult, ForceMode.Impulse);
+            }
+
+            else
+            {
+                float randomForceMult = Random.Range(800f, 1000f);
+                limbReplacementRb.AddForce(gameManager.WeaponManager.ShotForceDir * randomForceMult, ForceMode.Impulse);
             }
               
         }

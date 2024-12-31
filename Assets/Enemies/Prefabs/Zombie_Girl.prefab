@@ -155,6 +155,7 @@ MonoBehaviour:
   - {fileID: 3848241309144751966}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &305799704629261940
 GameObject:
   m_ObjectHideFlags: 0
@@ -310,6 +311,7 @@ MonoBehaviour:
   - {fileID: 8443695772986793445}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &400474590844293723
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,6 +1035,7 @@ MonoBehaviour:
   - {fileID: 7589280335426984764}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &1548232053905234916
 GameObject:
   m_ObjectHideFlags: 0
@@ -1179,6 +1182,7 @@ MonoBehaviour:
   - {fileID: 4987736601728963748}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &2001859168604374058
 GameObject:
   m_ObjectHideFlags: 0
@@ -1611,6 +1615,7 @@ MonoBehaviour:
   - {fileID: 3659452471241850447}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &3156982199067861680
 GameObject:
   m_ObjectHideFlags: 0
@@ -1765,6 +1770,7 @@ MonoBehaviour:
   - {fileID: 5717186212773306346}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &3263113435429014323
 GameObject:
   m_ObjectHideFlags: 0
@@ -2231,6 +2237,7 @@ MonoBehaviour:
   - {fileID: 1341875869781047208}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!136 &6893968982967615627
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2437,6 +2444,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &3971771776183992683
 GameObject:
   m_ObjectHideFlags: 0
@@ -5393,6 +5401,7 @@ MonoBehaviour:
   - {fileID: 2120945350615771531}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!136 &8067880390785997885
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5817,6 +5826,7 @@ MonoBehaviour:
   - {fileID: 5327518918728476964}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &9060401849504848364
 GameObject:
   m_ObjectHideFlags: 0
@@ -5924,6 +5934,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &9094066436664280390
 GameObject:
   m_ObjectHideFlags: 0

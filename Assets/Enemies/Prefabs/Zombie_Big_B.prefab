@@ -281,6 +281,7 @@ MonoBehaviour:
   - {fileID: 2358824857911992347}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &810926428504067840
 GameObject:
   m_ObjectHideFlags: 0
@@ -545,6 +546,7 @@ MonoBehaviour:
   - {fileID: 3387640070954419400}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &1202507384521240389
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,6 +892,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &1531146493883167449
 GameObject:
   m_ObjectHideFlags: 0
@@ -1103,6 +1106,7 @@ MonoBehaviour:
   - {fileID: 1413739022589619263}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!136 &2869252565829204447
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1313,6 +1317,7 @@ MonoBehaviour:
   - {fileID: 2660458259164404940}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &1982997590040931242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1468,6 +1473,7 @@ MonoBehaviour:
   - {fileID: 2460088340108380504}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &2034563476545519892
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,6 +1816,7 @@ MonoBehaviour:
   - {fileID: 7062398182516185483}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &2469161960437291806
 GameObject:
   m_ObjectHideFlags: 0
@@ -2843,6 +2850,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &3678279421391495720
 GameObject:
   m_ObjectHideFlags: 0
@@ -3780,6 +3788,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &4446456984979847150
 GameObject:
   m_ObjectHideFlags: 0
@@ -4053,6 +4062,7 @@ MonoBehaviour:
   - {fileID: 7748143291086698038}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!136 &762223324430250477
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4552,6 +4562,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &5368066128693945109
 GameObject:
   m_ObjectHideFlags: 0
@@ -4994,6 +5005,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &6608525388733824198
 GameObject:
   m_ObjectHideFlags: 0
@@ -5243,6 +5255,7 @@ MonoBehaviour:
   - {fileID: 0}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &6774892732312957533
 GameObject:
   m_ObjectHideFlags: 0
@@ -5483,6 +5496,7 @@ MonoBehaviour:
   - {fileID: 2820780062118345154}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &7816442037183816696
 GameObject:
   m_ObjectHideFlags: 0
@@ -5881,6 +5895,7 @@ MonoBehaviour:
   - {fileID: 4586338924533638040}
   NestedLimbs: []
   limbReplacement: {fileID: 0}
+  ExpDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &8581841963082183436
 GameObject:
   m_ObjectHideFlags: 0

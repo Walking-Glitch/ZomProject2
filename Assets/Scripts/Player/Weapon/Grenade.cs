@@ -43,6 +43,7 @@ public class Grenade : MonoBehaviour
 
     //game manager
     private GameManager gameManager;
+
      
     private void Awake()
     {
@@ -92,7 +93,7 @@ public class Grenade : MonoBehaviour
     {
         yield return new WaitWhile(() => GrenadeAudioSource.isPlaying);
         Debug.Log("Audio clip has finished playing.");
-        // Perform your action here
+      
         GrenadeLever.transform.SetParent(GrenadeBody.transform);
         GrenadeLever.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0));
 
@@ -125,7 +126,6 @@ public class Grenade : MonoBehaviour
                 PlayExplosionSfx();
                 GrenadeBody.SetActive(false);
                 StartCoroutine(WaitForAudioToEndAndDisable());
-                
 
                 exploded = true;
             }
@@ -137,12 +137,14 @@ public class Grenade : MonoBehaviour
         //ExplosionParticleSystem.Play();
 
         foreach (ZombieStateManager zombie in enemies)
-        { 
+        {
+            Limbs[] limbs = zombie.GetComponentsInChildren<Limbs>(); 
 
             if (zombie != null && zombie.health > 0)
             {
                 zombie.SetExplosionDirection(transform.position, zombie.transform.position);
                 zombie.TakeDamage(100, "all", true, 500f);
+
             }
         }
 

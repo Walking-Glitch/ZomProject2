@@ -10,6 +10,8 @@ namespace Assets.Scripts.Player.Weapon
 {
     public class WeaponManager : MonoBehaviour
     {
+        [HideInInspector]public Vector3 ShotForceDir;
+
         // Weapon model reference
         public GameObject rifle;
         public GameObject Mag;
@@ -121,25 +123,16 @@ namespace Assets.Scripts.Player.Weapon
         }
 
         public void RemoveMag()
-        {
-           
-               Mag.transform.SetParent(LeftHandTransform);
+        {           
+            Mag.transform.SetParent(LeftHandTransform);
             Mag.transform.SetLocalPositionAndRotation(new Vector3(-0.133599997f, 0.0542000011f, -0.0315999985f), Quaternion.Euler(25.4739895f, 230.443344f, 212.954651f));
-
-            // Quaternion.Euler(324.446472f, 191.102814f, 217.129715f)
-            //-0.118000001f, 0.0410000011f, 0.00400000019f
-
-            //Quaternion.Euler(Vector3(25.4739895f,230.443344f,212.954651f))
-            //Vector3(-0.133599997f,0.0542000011f,-0.0315999985f)
         }
 
         public void AttachMag()
         {
-
                 Mag.transform.SetParent(cachedMagParent);
                 Mag.transform.localPosition = cachedMagPosition;
                 Mag.transform.localRotation = cachedMagRotation;
-            
         }
 
         public void AdjustWeaponParentedHand()
@@ -190,7 +183,8 @@ namespace Assets.Scripts.Player.Weapon
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
                     Instantiate(hitGroundDecal, hit.point, decalRotation);
 
-                
+                    ShotForceDir = hit.normal * -1;
+
                     Limbs limb = hit.collider.GetComponent<Limbs>();
 
                     if (limb != null)

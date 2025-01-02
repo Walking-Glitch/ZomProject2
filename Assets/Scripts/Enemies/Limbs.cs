@@ -187,9 +187,9 @@ public class Limbs : MonoBehaviour
 
             if (ZombieStateManager.IsKilledByExplosion())
             {
-                float randomForceMult = Random.Range(1500f, 2100f);
+                float randomForceMult = Random.Range(2000f, 5000f);
                 float randomYtMult = Random.Range(0.05f, 0.3f);
-                float randomXMult = Random.Range(-0.1f, 0.1f);
+                float randomXMult = Random.Range(-0.3f, 0.3f);
                 limbReplacementRb.AddForce((ZombieStateManager.GetExplosionDirection() + new Vector3(randomXMult, randomYtMult, 0)) * randomForceMult, ForceMode.Impulse);
             }
 

@@ -8,6 +8,7 @@ public class Chasing : ZombieBaseState
     public override void EnterState(ZombieStateManager zombie)
     {
         elapsed = 0;
+        zombie.SetIsAlerted(true);
         zombie.destinationSetter.enabled = true;
         zombie.destinationSetter.target = zombie.PlayerTransform;
         zombie.aiPath.canMove = true;

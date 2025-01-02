@@ -4,7 +4,7 @@ public class Idle : ZombieBaseState
 {
     public override void EnterState(ZombieStateManager zombie)
     {
-        zombie.SetIsAlerted(false); 
+        zombie.SetIsAlerted(true); 
 
         float[] idleValues = { 0f, 1f };
 
@@ -19,6 +19,11 @@ public class Idle : ZombieBaseState
         //{
         //    zombie.SwitchState(zombie.roaming);
         //}
+        if (zombie.IsZombieAlerted())
+        {
+            zombie.SwitchState(zombie.chasing);
+        }
+       
 
         if (zombie.IsPlayerInAttackArea())
         {

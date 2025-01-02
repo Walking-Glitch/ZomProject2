@@ -88,10 +88,8 @@ namespace Assets.Scripts.Player.Weapon
             inputSystemActions = new InputSystem_Actions();
             inputSystemActions.Player.Attack.performed += OnFirePerformed;
             inputSystemActions.Player.Attack.canceled += OnFireCanceled;
-        }
 
-        void Start()
-        {
+
             gameManager = GameManager.Instance;
             anim = GetComponent<Animator>();
             aimStateManager = GetComponent<AimStateManager>();
@@ -106,6 +104,11 @@ namespace Assets.Scripts.Player.Weapon
             cachedMagParent = Mag.transform.parent;
             cachedMagPosition = Mag.transform.localPosition;
             cachedMagRotation = Mag.transform.localRotation;
+        }
+
+        void Start()
+        {
+          
         }
 
         // Update is called once per frame
@@ -151,9 +154,11 @@ namespace Assets.Scripts.Player.Weapon
 
             else if (actionStateManager.CurrentState == actionStateManager.Default)
             {
-                rifle.transform.SetParent(cachedWeaponParent);
-                rifle.transform.localPosition = cachedWeaponPosition;
-                rifle.transform.localRotation = cachedWeaponRotation;
+           
+                    rifle.transform.SetParent(cachedWeaponParent);
+                    rifle.transform.localPosition = cachedWeaponPosition;
+                    rifle.transform.localRotation = cachedWeaponRotation;
+                
             }
         }
          
@@ -215,12 +220,17 @@ namespace Assets.Scripts.Player.Weapon
                         float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
 
                         limb.LimbTakeDamage((int)finalLimbDmg);
-
-                        Rigidbody rb = hit.collider.GetComponentInParent<Rigidbody>();
-
-                        if (rb != null)
+                         
+                        if (limb.limbReplacement != null && limb.limbHealth <= 0)
                         {
-                            rb.AddForce(hit.normal * -1 * 100f, ForceMode.Impulse); 
+                            
+                            Rigidbody rb = limb.limbReplacement.GetComponent<Rigidbody>();
+                            Transform trans = limb.limbReplacement.transform;
+                            Vector3 backwardForce = direction * 10f;
+                            rb.AddForce(backwardForce, ForceMode.Impulse);
+                            Debug.Log("force added");
+                            Debug.Log("Force direction: " + direction);
+                            Debug.DrawRay(trans.position, direction, Color.red, 2f);
                         }
                         Debug.Log(limb.limbName);
                     }

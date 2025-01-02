@@ -67,7 +67,7 @@ namespace Assets.Scripts.Player.Actions
         // Update is called once per frame
         void Update()
         {
-            //Debug.Log(CurrentState);
+            Debug.Log(CurrentState);
             CurrentState.UpdateState(this);
         }
 

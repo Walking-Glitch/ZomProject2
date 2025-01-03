@@ -6,6 +6,7 @@ public class RunState : MovementBaseState
     {
         movementStateManager.anim.SetBool("IsRunning", true);
         movementStateManager.currentSpeed = movementStateManager.runSpeed;
+        movementStateManager.actionStateManager.WeaponManager.laser.DisableLaser();
     }
 
     public override void UpdateState(MovementStateManager movementStateManager)

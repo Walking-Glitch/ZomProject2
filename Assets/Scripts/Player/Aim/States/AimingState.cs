@@ -11,11 +11,10 @@ public class AimingState : AimStateBase
     {
         if (aimStateManager.movementStateManager.currentState == aimStateManager.movementStateManager.Run)
         {
-            aimStateManager.SwitchState(aimStateManager.AimIdleState);
+            aimStateManager.SwitchState(aimStateManager.AimIdleState);             
         }
 
-        if (aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Reload 
-            && aimStateManager.actionStateManager.CurrentState != aimStateManager.actionStateManager.Grenade)
+        if (aimStateManager.actionStateManager.CurrentState == aimStateManager.actionStateManager.Default && aimStateManager.movementStateManager.currentState != aimStateManager.movementStateManager.Run)
         {
             aimStateManager.WeaponManager.laser.DisplayLaser(aimStateManager.IsOnTarget);
         }

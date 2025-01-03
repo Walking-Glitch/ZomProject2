@@ -1,3 +1,4 @@
+using Assets.Scripts.Player.Actions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -44,8 +45,9 @@ public class MovementStateManager : MonoBehaviour
     public RunState Run = new RunState();
     public JumpState Jump = new JumpState();
 
-    // reference to aim manager
+    // reference to other managers
     [HideInInspector] public AimStateManager aimStateManager;
+    [HideInInspector] public ActionStateManager actionStateManager;
 
     void Awake()
     {
@@ -74,6 +76,7 @@ public class MovementStateManager : MonoBehaviour
     {
         currentSpeed = walkSpeed;
         aimStateManager = GetComponent<AimStateManager>();
+        actionStateManager = GetComponent<ActionStateManager>();
         anim = GetComponent<Animator>();
 
         SwitchState(Idle);
@@ -106,6 +109,7 @@ public class MovementStateManager : MonoBehaviour
 
     public void OnRunPerformed(InputAction.CallbackContext context)
     {
+        if(actionStateManager.CurrentState == actionStateManager.Default)
         SwitchState(Run);
     }
 

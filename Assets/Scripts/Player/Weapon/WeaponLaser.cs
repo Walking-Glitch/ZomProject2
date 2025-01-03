@@ -40,7 +40,7 @@ public class WeaponLaser : MonoBehaviour
 
     private void CheckAnimationProgress()
     {
-        laserReady = anim.GetLayerWeight(1) > 0.65f;
+        laserReady = anim.GetLayerWeight(1) > 0.85f;
     }
 
    

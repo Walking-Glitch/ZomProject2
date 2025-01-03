@@ -112,7 +112,7 @@ public class ZombieStateManager : MonoBehaviour
     {
         UpdateCurrentSpeed();
         currentState.UpdateState(this);
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
          
         CheckIfCrippled();
     }

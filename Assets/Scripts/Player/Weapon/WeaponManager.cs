@@ -266,8 +266,9 @@ namespace Assets.Scripts.Player.Weapon
 
             }
             if (moveStateManager.currentState == moveStateManager.Run) return false;
-            if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
-            if (actionStateManager.CurrentState == actionStateManager.Grenade) return false;
+            //if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
+            //if (actionStateManager.CurrentState == actionStateManager.Grenade) return false;
+            if (actionStateManager.CurrentState != actionStateManager.Default) return false;
             if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
       
             return false;

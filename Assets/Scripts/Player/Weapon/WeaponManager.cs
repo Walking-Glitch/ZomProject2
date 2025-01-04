@@ -63,9 +63,11 @@ namespace Assets.Scripts.Player.Weapon
         [SerializeField] float fireRate;
         private float fireRateTimer;
 
-        private Light muzzleFlashLight;
+        [SerializeField] private Light muzzleFlashLight;
         ParticleSystem muzzleFlashParticleSystem;
         private float lightIntensity;
+        [SerializeField] private float maxLightIntensity;
+        [SerializeField] private float minLightIntensity;
         [SerializeField] private float lightReturnSpeed = 20;
 
         // animator
@@ -108,7 +110,8 @@ namespace Assets.Scripts.Player.Weapon
 
         void Start()
         {
-          
+            lightIntensity = muzzleFlashLight.intensity;
+            muzzleFlashLight.intensity = 0;
         }
 
         // Update is called once per frame
@@ -122,7 +125,9 @@ namespace Assets.Scripts.Player.Weapon
             }
 
             fireRateTimer += Time.deltaTime;
-            
+
+            muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
+
         }
 
         public void RemoveMag()
@@ -170,7 +175,7 @@ namespace Assets.Scripts.Player.Weapon
             fireRateTimer = 0;
             RifleAudioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
             gameManager.WeaponAmmo.currentAmmo--;
-            //TriggerMuzzleFlash();
+            TriggerMuzzleFlash();
 
             Vector3 direction = TargetTransform.position - GunEndTransform.position;
             if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
@@ -317,7 +322,8 @@ namespace Assets.Scripts.Player.Weapon
 
         void TriggerMuzzleFlash()
         {
-            muzzleFlashParticleSystem.Play();
+            //muzzleFlashParticleSystem.Play();
+            lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
             muzzleFlashLight.intensity = lightIntensity;
         }
 

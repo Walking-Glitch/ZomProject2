@@ -167,7 +167,7 @@ public class BZ_CharCustomizeBP : MonoBehaviour
 
 
             SkinMaterials[body].EnableKeyword("_EMISSION");
-            SkinMaterials[body].SetFloat("_EmissiveExposureWeight", 0);
+            SkinMaterials[body].SetFloat("_EmissiveExposureWeight", 1);
 
         }
 

@@ -1538,6 +1538,7 @@ MonoBehaviour:
   - {fileID: 3664685915141613903}
   SkinRig: {fileID: 4783293465957108421}
   ExpDirection: {x: 0, y: 0, z: 0}
+  face: {fileID: 1927544540574423451}
 --- !u!1 &1757581863636649126
 GameObject:
   m_ObjectHideFlags: 0

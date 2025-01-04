@@ -17,6 +17,7 @@ namespace Assets.Scripts.Game_Manager
         public CasingManager CasingManager;
         public BulletCasingPool BulletCasingPool;
         public WeaponAmmo WeaponAmmo;
+        public DayCycle DayCycle;
         #endregion
 
         #region Singleton

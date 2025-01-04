@@ -2519,6 +2519,7 @@ MonoBehaviour:
   - {fileID: 1952264261281041862}
   SkinRig: {fileID: 8595082302738959122}
   ExpDirection: {x: 0, y: 0, z: 0}
+  face: {fileID: 8845115099116878690}
 --- !u!1 &2949754663608350983
 GameObject:
   m_ObjectHideFlags: 0
@@ -8573,7 +8574,9 @@ SkinnedMeshRenderer:
   - {fileID: 1686880404948963159}
   - {fileID: 7792866455006939838}
   - {fileID: 5379018274814162879}
-  m_BlendShapeWeights: []
+  m_BlendShapeWeights:
+  - 0
+  - 0
   m_RootBone: {fileID: 123946821526756965}
   m_AABB:
     m_Center: {x: -0.85729694, y: -0.08563776, z: 0.0051369295}

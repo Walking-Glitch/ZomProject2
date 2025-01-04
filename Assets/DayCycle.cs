@@ -24,6 +24,7 @@ public class DayCycle : MonoBehaviour
 
     public float startHour = 8f;
 
+    public bool IsNightTime;
     void Start()
     {
    
@@ -38,8 +39,15 @@ public class DayCycle : MonoBehaviour
             ? daySpeedMultiplier
             : nightSpeedMultiplier;
 
+        IsNightTime = (currentHour >= dayStartHour && currentHour < nightStartHour) ? false : true;  
+
         // Increment time based on the multiplier
         timeOfDay += Time.deltaTime / dayDuration * timeSpeedMultiplier;
+
+        if (timeOfDay >= 1f)
+        {
+            timeOfDay -= 1f;
+        }
 
         // Update the light's rotation
         float sunAngle = Mathf.Lerp(-90f, 270f, timeOfDay); // Map 0-1 time to -90° (sunrise) to 270° (next sunrise)

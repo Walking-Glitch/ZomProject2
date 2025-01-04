@@ -41,7 +41,7 @@ public class Attack : ZombieBaseState
             zombie.SwitchState(zombie.attack);
 
 
-            Debug.Log(elapsed);
+            //Debug.Log(elapsed);
 
         }
 

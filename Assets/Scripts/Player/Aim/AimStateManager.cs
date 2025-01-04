@@ -108,7 +108,7 @@ public class AimStateManager : MonoBehaviour
         CharacterRotation();
         CurrentState.UpdateState(this);
         AdjustConstraintWeight();
-        Debug.Log(CurrentState);
+        //Debug.Log(CurrentState);
     }
 
     public void SwitchState(AimStateBase state)

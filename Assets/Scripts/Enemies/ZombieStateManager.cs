@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using Assets.Scripts.Game_Manager;
 using Pathfinding;
 using Unity.VisualScripting;
@@ -46,7 +47,6 @@ public class ZombieStateManager : MonoBehaviour
 
     // ragdoll
     public GameObject rig;
-    //public Collider mainCollider;
     protected Collider[] ragdollColliders;
     protected Rigidbody[] ragdollRigidbodies;
 
@@ -74,10 +74,13 @@ public class ZombieStateManager : MonoBehaviour
     //explosion
     public Vector3 ExpDirection;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    // zombie mesh customization
+
+    public SkinnedMeshRenderer face;
+
     void Start()
     {
-       
+        
 
         gameManager = GameManager.Instance;
 
@@ -101,6 +104,8 @@ public class ZombieStateManager : MonoBehaviour
         RagdollModeOff();
 
         SwitchState(chasing);
+
+
     }
 
     
@@ -115,6 +120,8 @@ public class ZombieStateManager : MonoBehaviour
         //Debug.Log(currentState);
          
         CheckIfCrippled();
+
+        NightTimeMode();
     }
 
     public void SwitchState(ZombieBaseState state)
@@ -140,6 +147,35 @@ public class ZombieStateManager : MonoBehaviour
                 isCrippled = true;
             }
         }
+    }
+
+    public void NightTimeMode()
+    {
+        if (gameManager.DayCycle.IsNightTime)
+        {
+            if (face.material != null && face.materials.Length > 0)
+            {
+                if (face.material.IsKeywordEnabled("_EMISSION"))
+                {
+                    Debug.Log("Keyword _EMISSION enabled");
+                }
+                else
+                {
+                    Debug.Log("Keyword _EMISSION disabled");
+                    face.material.EnableKeyword("_EMISSION");
+
+                }
+            }
+            else
+            {
+                Debug.Log("Material is null or no materials assigned.");
+            }
+        }
+        else
+        {
+            if (face.material != null && face.materials.Length > 0) face.material.DisableKeyword("_EMISSION");
+        }
+        
     }
     protected void GetRagdollBits()
     {

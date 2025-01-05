@@ -2,6 +2,7 @@ using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Weapon;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -44,7 +45,12 @@ public class Grenade : MonoBehaviour
     //game manager
     private GameManager gameManager;
 
-     
+    // flash
+    private Light grenadeFlash;
+    [SerializeField] private float flashIntensity;
+    [SerializeField] private float lightReturnSpeed = 50;
+
+
     private void Awake()
     {
         gameManager = GameManager.Instance;
@@ -55,13 +61,26 @@ public class Grenade : MonoBehaviour
     }
     private void Start()
     {
-       
-
+        grenadeFlash = GetComponentInChildren<Light>();
+        flashIntensity = grenadeFlash.intensity;
+        grenadeFlash.intensity = 0;
     }
     // Update is called once per frame
     void Update()
     {
-       GrenadeTimer();
+        GrenadeTimer();
+
+        if (grenadeFlash != null)
+        {
+            Debug.Log("WE HAVE LIGHT" + flashIntensity);
+        }
+        else
+        {
+            Debug.Log("NULL LIGHT");
+        }
+
+        grenadeFlash.intensity = Mathf.Lerp(grenadeFlash.intensity, 0, lightReturnSpeed * Time.deltaTime);
+        
     }
 
     public void CodeToRunWhenObjectRequested()
@@ -78,6 +97,7 @@ public class Grenade : MonoBehaviour
         GrenadeRb.isKinematic = true;
         GrenadeLeverRb.isKinematic = true;
         GrenadeBody.SetActive(true);
+        
     }
     public void PlayReleasePinSfx()
     {
@@ -87,6 +107,21 @@ public class Grenade : MonoBehaviour
     public void PlayExplosionSfx()
     {
         GrenadeAudioSource.PlayOneShot(GrenadeExplosion);
+       
+    }
+
+    public void PlayExplosionVfx()
+    {
+
+        if (grenadeFlash != null)
+        {
+            grenadeFlash.intensity = flashIntensity;
+            Debug.Log("WE HAVE LIGHT" + flashIntensity);
+        }
+        else
+        {
+            Debug.Log("NULL LIGHT");
+        }
     }
 
     IEnumerator WaitForAudioToEndAndDisable()
@@ -123,11 +158,14 @@ public class Grenade : MonoBehaviour
             else
             {
                 FindEnemies();
-                PlayExplosionSfx();
+                PlayExplosionVfx();
+                PlayExplosionSfx();                
                 GrenadeBody.SetActive(false);
                 StartCoroutine(WaitForAudioToEndAndDisable());
 
                 exploded = true;
+
+                
             }
         }
         
@@ -146,8 +184,7 @@ public class Grenade : MonoBehaviour
                 zombie.TakeDamage(100, "all", true, 500f);
 
             }
-        }
-
+        }      
     }
 
     protected virtual void FindEnemies()

@@ -157,18 +157,18 @@ public class ZombieStateManager : MonoBehaviour
             {
                 if (face.material.IsKeywordEnabled("_EMISSION"))
                 {
-                    Debug.Log("Keyword _EMISSION enabled");
+                    //Debug.Log("Keyword _EMISSION enabled");
                 }
                 else
                 {
-                    Debug.Log("Keyword _EMISSION disabled");
+                    //Debug.Log("Keyword _EMISSION disabled");
                     face.material.EnableKeyword("_EMISSION");
 
                 }
             }
             else
             {
-                Debug.Log("Material is null or no materials assigned.");
+                //Debug.Log("Material is null or no materials assigned.");
             }
         }
         else

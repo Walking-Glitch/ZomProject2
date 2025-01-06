@@ -8,10 +8,14 @@ public class Hurt : ZombieBaseState
         zombie.SetIsAlerted(true);
         zombie.aiPath.canMove = false;
         zombie.anim.SetTrigger("IsHit");
+
+        zombie.zombieAudioSource.Stop();
+        zombie.PlayZombieHurtSfx();
     }
 
     public override void UpdateState(ZombieStateManager zombie)
     {
+       
         if (zombie.isCrippled)
         {
             zombie.SwitchState(zombie.chasing);

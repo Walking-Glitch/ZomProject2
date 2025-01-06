@@ -8,10 +8,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
+[RequireComponent(typeof(AudioSource))]
 public class ZombieStateManager : MonoBehaviour
 {
-    // player reference
-    
+    // player reference    
     [SerializeField] public Transform PlayerTransform;
 
     //Zombie parent obj reference
@@ -75,8 +75,13 @@ public class ZombieStateManager : MonoBehaviour
     public Vector3 ExpDirection;
 
     // zombie mesh customization
-
     public SkinnedMeshRenderer face;
+
+    //zombie sfx    
+    public AudioClip[] zombieChasingClips;
+    public AudioClip[] zombieHurtClips;
+    public AudioClip[] zombieAttackClips;
+    [HideInInspector] public AudioSource zombieAudioSource;
 
     void Start()
     {
@@ -97,7 +102,9 @@ public class ZombieStateManager : MonoBehaviour
         patrol = GetComponentInParent<Patrol>();
         agent = GetComponentInParent<IAstarAI>();
 
-        
+        zombieAudioSource = GetComponent<AudioSource>();
+
+
         GetSkinMeshBits();
         GetZombieLimbs();
         GetRagdollBits();
@@ -116,6 +123,7 @@ public class ZombieStateManager : MonoBehaviour
     void Update()
     {
         UpdateCurrentSpeed();
+
         currentState.UpdateState(this);
         //Debug.Log(currentState);
          
@@ -194,11 +202,7 @@ public class ZombieStateManager : MonoBehaviour
     }
     public void RagdollModeOn()
     {
-        //foreach (Collider col in ragdollColliders)
-        //{
-        //    col.enabled = true;
-        //}
-
+     
         foreach (Rigidbody rigid in ragdollRigidbodies)
         {
             rigid.isKinematic = false;
@@ -206,21 +210,11 @@ public class ZombieStateManager : MonoBehaviour
 
         anim.enabled = false;
 
-         
-
     }
 
     public void RagdollModeOff()
     {
-        
         isDead = false;
-
-        //health = maxHealth;
-
-        //foreach (Collider col in ragdollColliders)
-        //{
-        //   // col.enabled = false;
-        //}
 
         foreach (Rigidbody rigid in ragdollRigidbodies)
         {
@@ -229,10 +223,7 @@ public class ZombieStateManager : MonoBehaviour
 
         anim.enabled = true;
 
-         
-
         //bloodVisualEffect.enabled = false;
-
     }
 
     public void PlayerDestroyZombie()
@@ -344,6 +335,52 @@ public class ZombieStateManager : MonoBehaviour
             }
         }
     }
+
+    public void PlayZombieChasingSfx()
+    {
+       
+        if (!zombieAudioSource.isPlaying && zombieChasingClips.Length > 0)
+        {
+            if (currentState == chasing)
+            {
+                int randomIndex = Random.Range(0, zombieChasingClips.Length);
+
+                zombieAudioSource.clip = zombieChasingClips[randomIndex];
+                zombieAudioSource.Play();
+            }
+        }
+    }
+
+    public void PlayZombieHurtSfx()
+    {
+
+        if (!zombieAudioSource.isPlaying && zombieHurtClips.Length > 0)
+        {
+            if (currentState == hurt)
+            {
+                int randomIndex = Random.Range(0, zombieHurtClips.Length);
+
+                zombieAudioSource.clip = zombieHurtClips[randomIndex];
+                zombieAudioSource.Play();
+            }
+        }
+    }
+
+    public void PlayZombieAttackSfx()
+    {
+
+        if (!zombieAudioSource.isPlaying && zombieAttackClips.Length > 0)
+        {
+            if (currentState == attack)
+            {
+                int randomIndex = Random.Range(0, zombieAttackClips.Length);
+
+                zombieAudioSource.clip = zombieAttackClips[randomIndex];
+                zombieAudioSource.Play();
+            }
+        }
+    }
+
 
     private void UpdateCurrentSpeed()
     {

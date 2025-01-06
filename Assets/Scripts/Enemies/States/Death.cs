@@ -8,6 +8,8 @@ public class Death : ZombieBaseState
         zombie.isDead = true;
         zombie.aiPath.canMove = false;
 
+        zombie.zombieAudioSource.Stop();
+
         if (!zombie.IsZombieAlerted())
         {
             zombie.RagdollModeOn();

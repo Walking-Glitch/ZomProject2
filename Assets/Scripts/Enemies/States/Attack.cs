@@ -13,10 +13,13 @@ public class Attack : ZombieBaseState
 
         zombie.aiPath.maxSpeed = 0f;
         zombie.anim.SetTrigger("IsAttacking");
+
+        zombie.zombieAudioSource.Stop();
     }
 
     public override void UpdateState(ZombieStateManager zombie)
     {
+        zombie.PlayZombieAttackSfx();
 
         if (!zombie.IsPlayerInAttackArea())
         {

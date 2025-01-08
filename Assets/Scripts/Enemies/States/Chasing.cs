@@ -9,9 +9,9 @@ public class Chasing : ZombieBaseState
         zombie.SetIsAlerted(true);
         zombie.destinationSetter.enabled = true;
         zombie.destinationSetter.target = zombie.PlayerTransform;
-        zombie.aiPath.canMove = true;
+        zombie.SetCanMove(true);
 
-        zombie.aiPath.maxSpeed = 0.3f;
+        //zombie.aiPath.maxSpeed = 0.3f;
 
         zombie.SetIsAlerted(true);
     }

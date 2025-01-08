@@ -6,7 +6,7 @@ public class Hurt : ZombieBaseState
     public override void EnterState(ZombieStateManager zombie)
     {
         zombie.SetIsAlerted(true);
-        zombie.aiPath.canMove = false;
+        zombie.SetCanMove(false);
         zombie.anim.SetTrigger("IsHit");
 
         zombie.zombieAudioSource.Stop();
@@ -24,7 +24,7 @@ public class Hurt : ZombieBaseState
         {
             float progress = zombie.anim.GetCurrentAnimatorStateInfo(0).normalizedTime % 1;
       
-            if (progress > 0.9f)
+            if (progress > 0.95f)
             {
                 zombie.SwitchState(zombie.chasing);
             }

@@ -23,7 +23,9 @@ public class ZombieStateManager : MonoBehaviour
     [HideInInspector] public Patrol patrol;
     [HideInInspector] public IAstarAI agent;
 
-    public float currentSpeed; 
+    public float currentSpeed;
+    private float walkSpeed = 1;
+    private float runSpeed = 3;
 
     // animator
     [HideInInspector] public Animator anim;
@@ -83,6 +85,27 @@ public class ZombieStateManager : MonoBehaviour
     public AudioClip[] zombieAttackClips;
     [HideInInspector] public AudioSource zombieAudioSource;
 
+    // private reference to night just for initialization
+    [SerializeField]private bool night;
+
+    private void OnEnable()
+    {
+        DayCycle.OnNightTimeChanged += NightTimeMode;
+      
+    }
+    private void OnDisable()
+    {
+        DayCycle.OnNightTimeChanged -= NightTimeMode;
+    }
+
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+        aiPath = GetComponentInParent<AIPath>();
+        destinationSetter = GetComponentInParent<AIDestinationSetter>();
+        patrol = GetComponentInParent<Patrol>();
+        agent = GetComponentInParent<IAstarAI>();
+    }
     void Start()
     {
         
@@ -95,12 +118,10 @@ public class ZombieStateManager : MonoBehaviour
 
         zombieParent = transform.parent.gameObject;
 
-        anim = GetComponent<Animator>();
+        night = gameManager.DayCycle.IsNightTime;
+        NightTimeMode(night);
 
-        aiPath = GetComponentInParent<AIPath>();
-        destinationSetter = GetComponentInParent<AIDestinationSetter>();
-        patrol = GetComponentInParent<Patrol>();
-        agent = GetComponentInParent<IAstarAI>();
+        
 
         zombieAudioSource = GetComponent<AudioSource>();
 
@@ -115,21 +136,18 @@ public class ZombieStateManager : MonoBehaviour
 
     }
 
-    
-
 
 
     // Update is called once per frame
     void Update()
     {
-        UpdateCurrentSpeed();
 
         currentState.UpdateState(this);
-        //Debug.Log(currentState);
+       
          
         CheckIfCrippled();
 
-        NightTimeMode();
+        Debug.Log(currentState);
     }
 
     public void SwitchState(ZombieBaseState state)
@@ -157,10 +175,14 @@ public class ZombieStateManager : MonoBehaviour
         }
     }
 
-    public void NightTimeMode()
+    public void NightTimeMode(bool isNight)
     {
-        if (gameManager.DayCycle.IsNightTime)
+        anim.SetBool("IsNightTime", isNight);
+
+        if (isNight)
         {
+            aiPath.maxSpeed = runSpeed;
+
             if (face.material != null && face.materials.Length > 0)
             {
                 if (face.material.IsKeywordEnabled("_EMISSION"))
@@ -182,6 +204,8 @@ public class ZombieStateManager : MonoBehaviour
         else
         {
             if (face.material != null && face.materials.Length > 0) face.material.DisableKeyword("_EMISSION");
+
+            aiPath.maxSpeed = walkSpeed;
         }
         
     }
@@ -382,15 +406,16 @@ public class ZombieStateManager : MonoBehaviour
     }
 
 
-    private void UpdateCurrentSpeed()
-    {
-        currentSpeed = agent.velocity.magnitude;
-        anim.SetFloat("Speed", currentSpeed);
+    public void SetCanMove(bool canMove)
+    { 
+        aiPath.canMove = canMove;
+        anim.SetBool("CanMove", canMove);
     }
 
     public void SetPlayerAttackStatus(bool isInAttackArea)
     {
         AttackPlayer = isInAttackArea;
+        anim.SetBool("IsAttacking", isInAttackArea);
     }
 
     public bool IsPlayerInAttackArea()

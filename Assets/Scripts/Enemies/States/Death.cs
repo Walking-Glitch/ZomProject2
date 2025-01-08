@@ -6,7 +6,7 @@ public class Death : ZombieBaseState
      public override void EnterState(ZombieStateManager zombie)
     {
         zombie.isDead = true;
-        zombie.aiPath.canMove = false;
+        zombie.SetCanMove(false); ;
 
         zombie.zombieAudioSource.Stop();
 

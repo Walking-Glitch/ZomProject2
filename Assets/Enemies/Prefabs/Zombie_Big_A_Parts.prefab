@@ -4582,14 +4582,14 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 4100
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0.5}
 --- !u!114 &1906871700439067664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5520,6 +5520,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 96d42be5facca5043bef657a0d4ae3b5, type: 3}
   - {fileID: 8300000, guid: e7f7ab74bfb71e24ebfdd29a4e122fae, type: 3}
   zombieAudioSource: {fileID: 0}
+  night: 0
 --- !u!82 &6473546209321448041
 AudioSource:
   m_ObjectHideFlags: 0

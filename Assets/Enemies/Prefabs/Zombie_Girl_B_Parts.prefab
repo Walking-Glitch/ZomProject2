@@ -4983,8 +4983,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0.5}
 --- !u!114 &2752016681808005934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5182,7 +5182,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 9b3fe5e7a93d3cb4fb6dbc3122c4bb54, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_AnimatePhysics: 0
@@ -5261,6 +5261,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 96d42be5facca5043bef657a0d4ae3b5, type: 3}
   - {fileID: 8300000, guid: e7f7ab74bfb71e24ebfdd29a4e122fae, type: 3}
   zombieAudioSource: {fileID: 0}
+  night: 0
 --- !u!82 &1387841123363721871
 AudioSource:
   m_ObjectHideFlags: 0

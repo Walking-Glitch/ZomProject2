@@ -24,10 +24,12 @@ public class DayCycle : MonoBehaviour
 
     public float startHour = 8f;
 
-    public bool IsNightTime;
+
+    public delegate void NightTimeChanged(bool isNight);
+    public static event NightTimeChanged OnNightTimeChanged;
+    public bool IsNightTime { get; private set; }
     void Start()
     {
-   
         timeOfDay = startHour / 24f;
     }
     void Update()
@@ -39,7 +41,15 @@ public class DayCycle : MonoBehaviour
             ? daySpeedMultiplier
             : nightSpeedMultiplier;
 
-        IsNightTime = (currentHour >= dayStartHour && currentHour < nightStartHour) ? false : true;  
+        bool newNightTimeState = DetermineIfNightTime(currentHour);
+
+        if(newNightTimeState != IsNightTime)
+        {
+            IsNightTime = newNightTimeState;
+            OnNightTimeChanged?.Invoke(IsNightTime);
+        }
+
+       
 
         // Increment time based on the multiplier
         timeOfDay += Time.deltaTime / dayDuration * timeSpeedMultiplier;
@@ -71,5 +81,10 @@ public class DayCycle : MonoBehaviour
 
         // Update the UI text
         timeText.text = timeString;
+    }
+
+    private bool DetermineIfNightTime(float currentHour)
+    {
+        return currentHour < dayStartHour || currentHour >= nightStartHour;
     }
 }

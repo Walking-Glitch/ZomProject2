@@ -6,11 +6,11 @@ public class Idle : ZombieBaseState
     {
         zombie.SetIsAlerted(true); 
 
-        float[] idleValues = { 0f, 1f };
+        //float[] idleValues = { 0f, 1f };
 
-        float randomValue = idleValues[Random.Range(0, idleValues.Length)];
+        //float randomValue = idleValues[Random.Range(0, idleValues.Length)];
  
-        zombie.anim.SetFloat("IdleVariant", randomValue);
+        //zombie.anim.SetFloat("IdleVariant", 0);
     }
 
     public override void UpdateState(ZombieStateManager zombie)

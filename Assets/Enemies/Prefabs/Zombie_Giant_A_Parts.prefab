@@ -4972,7 +4972,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1073741824
-  radius: 0.5
+  radius: 0.3
   height: 0.1
   canMove: 1
   maxSpeed: 0.3
@@ -4983,7 +4983,7 @@ MonoBehaviour:
   endReachedDistance: 1
   whenCloseToDestination: 0
   rvoDensityBehavior:
-    enabled: 1
+    enabled: 0
     densityThreshold: 0.5
     returnAfterBeingPushedAway: 0
     progressAverage: 0
@@ -5060,7 +5060,7 @@ MonoBehaviour:
   lockWhenNotMoving: 0
   agentTimeHorizon: 2
   obstacleTimeHorizon: 0.5
-  maxNeighbours: 10
+  maxNeighbours: 15
   layer: 1
   collidesWith: -1
   wallAvoidForce: 1
@@ -8440,7 +8440,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1259640721791683038}
-  m_Layer: 0
+  - component: {fileID: 1829558336148175855}
+  m_Layer: 2
   m_Name: BODYPARTS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8486,6 +8487,29 @@ Transform:
   - {fileID: 5881427268363545447}
   m_Father: {fileID: 7725523084172249249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1829558336148175855
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8595082302738959122}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4096
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8598763096250098804
 GameObject:
   m_ObjectHideFlags: 0

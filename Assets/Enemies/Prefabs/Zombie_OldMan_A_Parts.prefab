@@ -2811,7 +2811,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.2
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
@@ -5299,7 +5299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1073741824
-  radius: 0.5
+  radius: 0.3
   height: 0.1
   canMove: 1
   maxSpeed: 0.3
@@ -5310,7 +5310,7 @@ MonoBehaviour:
   endReachedDistance: 1
   whenCloseToDestination: 0
   rvoDensityBehavior:
-    enabled: 1
+    enabled: 0
     densityThreshold: 0.5
     returnAfterBeingPushedAway: 0
     progressAverage: 0
@@ -5387,7 +5387,7 @@ MonoBehaviour:
   lockWhenNotMoving: 0
   agentTimeHorizon: 2
   obstacleTimeHorizon: 0.5
-  maxNeighbours: 10
+  maxNeighbours: 15
   layer: 1
   collidesWith: -1
   wallAvoidForce: 1

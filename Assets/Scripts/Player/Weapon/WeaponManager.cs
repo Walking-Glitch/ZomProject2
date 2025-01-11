@@ -199,7 +199,7 @@ namespace Assets.Scripts.Player.Weapon
 
                     if (limb != null)
                     {
-                        float baseDamage = 30;
+                        float baseDamage = 40;
                         float finalDamage = baseDamage * limb.damageMultiplier;
 
                         if (limb.limbName == "head")

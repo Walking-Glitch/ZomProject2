@@ -48,7 +48,7 @@ public class Grenade : MonoBehaviour
     // flash
     private Light grenadeFlash;
     [SerializeField] private float flashIntensity;
-    [SerializeField] private float lightReturnSpeed = 50;
+    [SerializeField] private float lightReturnSpeed = 30;
 
 
     private void Awake()

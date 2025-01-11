@@ -91,11 +91,13 @@ public class ZombieStateManager : MonoBehaviour
     private void OnEnable()
     {
         DayCycle.OnNightTimeChanged += NightTimeMode;
-      
+        NightTimeMode(night);
+
     }
     private void OnDisable()
     {
         DayCycle.OnNightTimeChanged -= NightTimeMode;
+        NightTimeMode(night);
     }
 
     private void Awake()

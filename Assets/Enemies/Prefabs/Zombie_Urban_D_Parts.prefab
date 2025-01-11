@@ -139,7 +139,7 @@ MonoBehaviour:
     visualizeSensitivity: 0
   maxAcceleration: -2.5
   rotationSpeed: 400
-  slowdownDistance: 0.6
+  slowdownDistance: 2
   pickNextWaypointDist: 2
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 1
@@ -3108,7 +3108,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.35
-  m_Center: {x: 0, y: 1.33, z: 0.54}
+  m_Center: {x: 0, y: 1.33, z: 0.6}
 --- !u!114 &4072501069169273774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8154,7 +8154,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0.7}
 --- !u!114 &5330334088537874609
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cb8ef9ac8a6cfc84ba9a17bdd3a5be53
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Prefabs/TurretVulcan.prefab
+  uploadId: 351743

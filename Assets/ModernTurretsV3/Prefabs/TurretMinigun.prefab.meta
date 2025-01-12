@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9593328ae7bfdd84999f4e11de11a233
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Prefabs/TurretMinigun.prefab
+  uploadId: 351743

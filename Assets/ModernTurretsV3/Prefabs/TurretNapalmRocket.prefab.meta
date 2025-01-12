@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 324a7fe04df736e478fe7b16289cff86
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Prefabs/TurretNapalmRocket.prefab
+  uploadId: 351743

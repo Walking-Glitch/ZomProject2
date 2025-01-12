@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e81263a77dff9d14a965435a45c8dbde
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Materials/TurretSAM.mat
+  uploadId: 351743

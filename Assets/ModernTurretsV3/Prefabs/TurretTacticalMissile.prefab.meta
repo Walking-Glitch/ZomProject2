@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 75e9d0a916a35dd42985c7af24aa6267
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Prefabs/TurretTacticalMissile.prefab
+  uploadId: 351743

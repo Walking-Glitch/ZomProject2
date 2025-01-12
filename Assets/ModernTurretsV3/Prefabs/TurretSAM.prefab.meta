@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 87d180c9293294a499d327ecbfc970a1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Prefabs/TurretSAM.prefab
+  uploadId: 351743

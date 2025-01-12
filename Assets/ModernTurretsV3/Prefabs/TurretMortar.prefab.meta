@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6e91850910af89346b0891c67e3f35a9
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Prefabs/TurretMortar.prefab
+  uploadId: 351743

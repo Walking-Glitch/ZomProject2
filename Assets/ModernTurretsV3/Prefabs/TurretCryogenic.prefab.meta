@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cdb7bc21f366c1349afaa2342989bd48
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Prefabs/TurretCryogenic.prefab
+  uploadId: 351743

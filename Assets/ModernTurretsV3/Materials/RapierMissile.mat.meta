@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c31aa9538bbf8fc4fbf847c281040763
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Materials/RapierMissile.mat
+  uploadId: 351743

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dc4d7480d61ac9d4ba3583ad82a0f732
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 112000000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Demo/Demo/LightingData.asset
+  uploadId: 351743

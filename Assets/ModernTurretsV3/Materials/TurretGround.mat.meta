@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 128458e9dab99874dac0780508eae3a1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Materials/TurretGround.mat
+  uploadId: 351743

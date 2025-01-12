@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 47712730cf1e5854a86654606734ee18
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 162587
+  packageName: Modern Unmanned Turrets v3
+  packageVersion: 1.0
+  assetPath: Assets/ModernTurretsV3/Materials/TurretMinigun.mat
+  uploadId: 351743

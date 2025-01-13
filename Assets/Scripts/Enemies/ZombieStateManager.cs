@@ -149,7 +149,7 @@ public class ZombieStateManager : MonoBehaviour
          
         CheckIfCrippled();
 
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
     }
 
     public void SwitchState(ZombieBaseState state)

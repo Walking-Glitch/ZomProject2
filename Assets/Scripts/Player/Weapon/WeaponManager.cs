@@ -270,9 +270,7 @@ namespace Assets.Scripts.Player.Weapon
 
 
             }
-            if (moveStateManager.currentState == moveStateManager.Run) return false;
-            //if (actionStateManager.CurrentState == actionStateManager.Reload) return false;
-            //if (actionStateManager.CurrentState == actionStateManager.Grenade) return false;
+            if (moveStateManager.currentState == moveStateManager.Run) return false;            
             if (actionStateManager.CurrentState != actionStateManager.Default) return false;
             if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
       
@@ -285,12 +283,12 @@ namespace Assets.Scripts.Player.Weapon
             {
                 if (semiAuto)
                 {
-                    Debug.Log("Semi-Auto: Quick Press Detected");
+                    //Debug.Log("Semi-Auto: Quick Press Detected");
                     if (CanFire()) Fire();
                 }
                 else
                 {
-                    Debug.Log("Full-Auto: Button Hold Detected");
+                    //Debug.Log("Full-Auto: Button Hold Detected");
                     if (CanFire()) Fire();
                     isFiring = true;
                 }
@@ -303,7 +301,7 @@ namespace Assets.Scripts.Player.Weapon
             // Stop firing when the button is released
             if (!semiAuto)
             {
-                Debug.Log("Full-Auto: Button Released");
+                //Debug.Log("Full-Auto: Button Released");
                 isFiring = false;
                 playedEmptySound = false;
             }

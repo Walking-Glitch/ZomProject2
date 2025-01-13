@@ -1,6 +1,7 @@
 using Assets.Scripts.Game_Manager;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class TurretBase : MonoBehaviour
@@ -24,6 +25,7 @@ public class TurretBase : MonoBehaviour
     // turret transforms  
     public Transform PitchTransform;
     public Transform PanTransform;
+    public Transform BarrelTransform;
     public Transform GunEndTransform;
     public float RotationSpeed;
 
@@ -38,12 +40,33 @@ public class TurretBase : MonoBehaviour
     public LineRenderer laserLine;
     public Transform laserOrigin;
 
+    // firing variables
+    [Header("Fire Rate")]
+    [SerializeField] float fireRate;
+    private float fireRateTimer;
+
+    // muzzle flash 
+    [SerializeField] private Light muzzleFlashLight;
+    ParticleSystem muzzleFlashParticleSystem;
+    private float lightIntensity;
+    [SerializeField] private float maxLightIntensity;
+    [SerializeField] private float minLightIntensity;
+    [SerializeField] private float lightReturnSpeed = 20;
     public float range;
 
+    // audio
+    private AudioSource turretAudioSource;
+    public AudioClip fireSound;
+     
 
     void Start()
     {
         gameManager = GameManager.Instance;
+
+        turretAudioSource = GetComponent<AudioSource>();
+
+        lightIntensity = muzzleFlashLight.intensity;
+        muzzleFlashLight.intensity = 0;
 
     }
 
@@ -56,11 +79,25 @@ public class TurretBase : MonoBehaviour
 
         RotateToDefaultPosition();
 
+        CanFire();
+
+        RotateBarrel();
+
+        muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
+
+        fireRateTimer += Time.deltaTime;
+
+         
+
         if (currentEnemy != null)
         {
             laserLine.enabled = true;
             laserLine.SetPosition(0, laserOrigin.position);
-            laserLine.SetPosition(1, currentEnemy.transform.position);
+            laserLine.SetPosition(1, currentEnemy.transform.position + Vector3.up * 1f);
+        }
+        else
+        {
+            laserLine.enabled = false;
         }
     }
 
@@ -95,7 +132,7 @@ public class TurretBase : MonoBehaviour
                 currentEnemy = enemies[0];
             }
 
-            Vector3 direction = currentEnemy.transform.position - transform.position;
+            Vector3 direction = (currentEnemy.transform.position - transform.position).normalized;
 
             Vector3 horizontalDirection = new Vector3(direction.x, 0, direction.z);
 
@@ -110,7 +147,7 @@ public class TurretBase : MonoBehaviour
 
             if (PitchTransform != null)
             {
-                Vector3 targetPosition = currentEnemy.transform.position;
+                Vector3 targetPosition = currentEnemy.transform.parent.position + Vector3.up * 1f;
                 Vector3 barrelDirection = targetPosition - PitchTransform.position;
 
                 Quaternion verticalRotation = Quaternion.LookRotation(barrelDirection);
@@ -125,10 +162,16 @@ public class TurretBase : MonoBehaviour
             float horizontalAlignment = Vector3.Dot(PanTransform.forward, horizontalDirection);
             float verticalAlignment = Vector3.Dot(PitchTransform.up, verticalDirection);
 
-            if (horizontalAlignment >= 0.99f && verticalAlignment >= 0.99f)
+         
+            if (horizontalAlignment >= 0.7f && CanFire())
             {
                 Fire();
                 Debug.Log("FIRING");
+            }
+            else
+            {
+                Debug.Log("NOT ALIGNED");
+                Debug.Log(horizontalAlignment + " " + verticalAlignment);
             }
         }
 
@@ -155,20 +198,30 @@ public class TurretBase : MonoBehaviour
         }
     }
 
-    //protected virtual bool CanTurretFire()
-    //{
-    //    if(currentEnemy == null) return false;
-    //}
+    protected virtual bool CanFire()
+    {
+        fireRateTimer += Time.deltaTime;
+        if (fireRateTimer < fireRate) return false;
+
+        if (currentEnemy != null) return true;
+
+        return false;       
+    }
     void Fire()
     {
-        
-         
-        Vector3 direction = currentEnemy.transform.position - GunEndTransform.position;
+        TriggerMuzzleFlash();
+
+        PlaySfx();
+
+        fireRateTimer = 0;
+
+        Vector3 enemyMediumHeight = currentEnemy.transform.parent.position + Vector3.up * 1f;
+        Vector3 direction = (enemyMediumHeight - GunEndTransform.position).normalized;
 
         if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
                 ShootMask))
         {
-            if (hit.collider.CompareTag("Ground"))
+            if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("Environment"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
@@ -188,7 +241,7 @@ public class TurretBase : MonoBehaviour
 
                 if (limb != null)
                 {
-                    float baseDamage = 40;
+                    float baseDamage = 10;
                     float finalDamage = baseDamage * limb.damageMultiplier;
 
                     if (limb.limbName == "head")
@@ -240,7 +293,23 @@ public class TurretBase : MonoBehaviour
         //aimStateManager.AddRecoil();
     }
 
-    
+    void RotateBarrel()
+    {
+        float rotationSpeed = 100f;
+        BarrelTransform.Rotate(0,0, rotationSpeed * Time.deltaTime) ; 
+    }
+    void TriggerMuzzleFlash()
+    {
+        //muzzleFlashParticleSystem.Play();
+        lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
+        muzzleFlashLight.intensity = lightIntensity;
+    }
+
+    void PlaySfx()
+    {
+        turretAudioSource.PlayOneShot(fireSound);
+    }
+
 
     private void OnDrawGizmosSelected()
     {

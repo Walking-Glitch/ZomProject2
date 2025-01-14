@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class TurretSniper : TurretBase
 {
+    private float barrelRecoil; 
     protected override void Start()
     {
         gameManager = GameManager.Instance;
@@ -11,10 +12,12 @@ public class TurretSniper : TurretBase
 
         lightIntensity = muzzleFlashLight.intensity;
         muzzleFlashLight.intensity = 0;
-
-        rotatoryBarrel = false;
     }
 
+    protected override void Fire(bool hasRecoil)
+    {
+        base.Fire(true);
+    }
     protected override void DisplayLaser()
     {
         if (currentEnemy != null)

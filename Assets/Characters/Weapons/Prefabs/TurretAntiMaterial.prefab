@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4104018517110414734}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.7513309, y: 100.0646, z: 19.979395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -243,8 +243,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WeaponDamage: 100
-  WeaponFireRate: 2
   WeaponRange: 150
+  WeaponFireRate: 10
+  AimingSpeed: 3
   ZombieLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -257,7 +258,6 @@ MonoBehaviour:
   PanTransform: {fileID: 8379528949852188419}
   BarrelTransform: {fileID: 0}
   GunEndTransform: {fileID: 6056073318228395934}
-  RotationSpeed: 3
   hitGroundDecal: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
   ShotForceDir: {x: 0, y: 0, z: 0}
   laserReady: 0
@@ -265,7 +265,6 @@ MonoBehaviour:
   laserOrigin: {fileID: 5047640014004512596}
   LaserAimTransform: {fileID: 8408059541371266591}
   WeaponSpotLight: {fileID: 0}
-  fireRate: 10
   muzzleFlashLight: {fileID: 5168922279622490088}
   maxLightIntensity: 100
   minLightIntensity: 30

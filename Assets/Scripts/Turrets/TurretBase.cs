@@ -22,6 +22,8 @@ public class TurretBase : MonoBehaviour
     // list of enemies in firing area
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
 
+    public ZombieStateManager currentEnemy;
+
     // turret transforms  
     public Transform PitchTransform;
     public Transform PanTransform;
@@ -29,8 +31,6 @@ public class TurretBase : MonoBehaviour
     public Transform GunEndTransform;
   
     public float RotationSpeed;
-
-    public ZombieStateManager currentEnemy;
 
     // hit decals
     public GameObject hitGroundDecal;
@@ -51,21 +51,24 @@ public class TurretBase : MonoBehaviour
     private float fireRateTimer;
 
     // muzzle flash 
-    [SerializeField] private Light muzzleFlashLight;
+    [SerializeField] protected Light muzzleFlashLight;
     ParticleSystem muzzleFlashParticleSystem;
-    private float lightIntensity;
+    protected float lightIntensity;
     [SerializeField] private float maxLightIntensity;
     [SerializeField] private float minLightIntensity;
     [SerializeField] private float lightReturnSpeed = 20;
-    public float range;
+    //public float range;
 
     // audio
-    private AudioSource turretAudioSource;
+    protected AudioSource turretAudioSource;
     public AudioClip [] fireSound;
+
+    // barral rotation variables
+    protected bool rotatoryBarrel;
    
      
 
-    void Start()
+    protected virtual void Start()
     {
         gameManager = GameManager.Instance;
 
@@ -73,6 +76,8 @@ public class TurretBase : MonoBehaviour
 
         lightIntensity = muzzleFlashLight.intensity;
         muzzleFlashLight.intensity = 0;
+
+        rotatoryBarrel = true;
 
     }
 
@@ -91,12 +96,12 @@ public class TurretBase : MonoBehaviour
 
         CanFire();
 
-        RotateBarrel();
+        RotateBarrel(rotatoryBarrel);
 
         DisplayLaser();
     }
 
-    private void DisplayLaser()
+    protected virtual void DisplayLaser()
     {
         if (currentEnemy != null)
         {
@@ -118,19 +123,19 @@ public class TurretBase : MonoBehaviour
             laserLine.SetPosition(0, laserOrigin.position);
             laserLine.SetPosition(1, LaserAimTransform.position);
 
-            WeaponSpotLight.gameObject.SetActive(true);
-
-            Vector3 SpotLightDirection = (LaserAimTransform.position - WeaponSpotLight.transform.position).normalized; 
-            WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
-
-
-
+            if (WeaponSpotLight != null)
+            {
+                WeaponSpotLight.gameObject.SetActive(true);
+                WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
+            }
+            
         }
         else
         {
             LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
             laserLine.enabled = false;
-            WeaponSpotLight.gameObject.SetActive(false);
+
+            if (WeaponSpotLight != null) WeaponSpotLight.gameObject.SetActive(false);
         }
     }
 
@@ -226,8 +231,12 @@ public class TurretBase : MonoBehaviour
         {
             ZombieStateManager zombie = col.gameObject.GetComponentInParent<ZombieStateManager>();
 
-            if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
-                enemies.Add(col.GetComponentInParent<ZombieStateManager>());
+            if (zombie != null)
+            {
+                if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
+                    enemies.Add(col.GetComponentInParent<ZombieStateManager>());
+            }
+            
         }
     }
 
@@ -326,10 +335,14 @@ public class TurretBase : MonoBehaviour
         //aimStateManager.AddRecoil();
     }
 
-    void RotateBarrel()
+    protected virtual void RotateBarrel(bool rotatoryBarrel)
     {
-        float rotationSpeed = 100f;
-        BarrelTransform.Rotate(0,0, rotationSpeed * Time.deltaTime) ; 
+        if (rotatoryBarrel)
+        {
+            float rotationSpeed = 100f;
+            BarrelTransform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+        }
+       
     }
     void TriggerMuzzleFlash()
     {

@@ -27,6 +27,7 @@ public class TurretBase : MonoBehaviour
     public Transform PanTransform;
     public Transform BarrelTransform;
     public Transform GunEndTransform;
+  
     public float RotationSpeed;
 
     public ZombieStateManager currentEnemy;
@@ -39,6 +40,10 @@ public class TurretBase : MonoBehaviour
     [SerializeField] private bool laserReady;
     public LineRenderer laserLine;
     public Transform laserOrigin;
+    public Transform LaserAimTransform;
+
+    // spot light 
+    public Light WeaponSpotLight;
 
     // firing variables
     [Header("Fire Rate")]
@@ -56,7 +61,8 @@ public class TurretBase : MonoBehaviour
 
     // audio
     private AudioSource turretAudioSource;
-    public AudioClip fireSound;
+    public AudioClip [] fireSound;
+   
      
 
     void Start()
@@ -73,6 +79,10 @@ public class TurretBase : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        fireRateTimer += Time.deltaTime;
+
+        muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
+
         FindEnemiesInRange();
 
         AimAtTarget();
@@ -83,21 +93,44 @@ public class TurretBase : MonoBehaviour
 
         RotateBarrel();
 
-        muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
+        DisplayLaser();
+    }
 
-        fireRateTimer += Time.deltaTime;
-
-         
-
+    private void DisplayLaser()
+    {
         if (currentEnemy != null)
         {
+            
+
+            Vector3 laserDirection = ((laserOrigin.position + laserOrigin.forward * WeaponRange) - laserOrigin.position).normalized;
+           
+             
+            Ray ray = new Ray(laserOrigin.position, laserDirection);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ShootMask))
+            {
+                LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                LaserAimTransform.position = hit.point;
+                
+            }
+
             laserLine.enabled = true;
             laserLine.SetPosition(0, laserOrigin.position);
-            laserLine.SetPosition(1, currentEnemy.transform.position + Vector3.up * 1f);
+            laserLine.SetPosition(1, LaserAimTransform.position);
+
+            WeaponSpotLight.gameObject.SetActive(true);
+
+            Vector3 SpotLightDirection = (LaserAimTransform.position - WeaponSpotLight.transform.position).normalized; 
+            WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
+
+
+
         }
         else
         {
+            LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
             laserLine.enabled = false;
+            WeaponSpotLight.gameObject.SetActive(false);
         }
     }
 
@@ -147,8 +180,8 @@ public class TurretBase : MonoBehaviour
 
             if (PitchTransform != null)
             {
-                Vector3 targetPosition = currentEnemy.transform.parent.position + Vector3.up * 1f;
-                Vector3 barrelDirection = targetPosition - PitchTransform.position;
+                Vector3 targetPosition = currentEnemy.transform.parent.position + Vector3.up * 1.25f;
+                Vector3 barrelDirection = (targetPosition - PitchTransform.position).normalized;
 
                 Quaternion verticalRotation = Quaternion.LookRotation(barrelDirection);
                 PitchTransform.rotation = Quaternion.Slerp(PitchTransform.rotation, verticalRotation, Time.deltaTime * RotationSpeed);
@@ -163,7 +196,7 @@ public class TurretBase : MonoBehaviour
             float verticalAlignment = Vector3.Dot(PitchTransform.up, verticalDirection);
 
          
-            if (horizontalAlignment >= 0.7f && CanFire())
+            if (horizontalAlignment >= 0.95f && CanFire())
             {
                 Fire();
                 Debug.Log("FIRING");
@@ -215,7 +248,7 @@ public class TurretBase : MonoBehaviour
 
         fireRateTimer = 0;
 
-        Vector3 enemyMediumHeight = currentEnemy.transform.parent.position + Vector3.up * 1f;
+        Vector3 enemyMediumHeight = currentEnemy.transform.parent.position + Vector3.up * Random.Range(1f, 2f) + Vector3.right * Random.Range(-0.5f, 0.5f);
         Vector3 direction = (enemyMediumHeight - GunEndTransform.position).normalized;
 
         if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
@@ -241,8 +274,8 @@ public class TurretBase : MonoBehaviour
 
                 if (limb != null)
                 {
-                    float baseDamage = 10;
-                    float finalDamage = baseDamage * limb.damageMultiplier;
+                    
+                    float finalDamage = WeaponDamage * limb.damageMultiplier;
 
                     if (limb.limbName == "head")
                     {
@@ -307,7 +340,8 @@ public class TurretBase : MonoBehaviour
 
     void PlaySfx()
     {
-        turretAudioSource.PlayOneShot(fireSound);
+        int index = Random.Range(0, fireSound.Length);
+        turretAudioSource.PlayOneShot(fireSound[index]);
     }
 
 

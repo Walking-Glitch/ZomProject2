@@ -307,14 +307,13 @@ protected virtual void AddRecoil()
             if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("Environment"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-
-                Instantiate(hitGroundDecal, hit.point, decalRotation);
+                gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
             }
 
             else if (hit.collider.CompareTag("Zombie"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                Instantiate(hitGroundDecal, hit.point, decalRotation);
+                gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
 
                 ZombieStateManager zombieStateManager;
 
@@ -330,19 +329,19 @@ protected virtual void AddRecoil()
                     if (limb.limbName == "head")
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, true ,0);
                     }
 
                     else if (limb.limbName == "torso" || limb.limbName == "belly")
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, true, 0);
                     }
 
                     else
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, true, 0);
                     }
 
 

@@ -10,7 +10,7 @@ public class Death : ZombieBaseState
 
         zombie.zombieAudioSource.Stop();
 
-        if (!zombie.IsZombieAlerted())
+        if (zombie.IsKilledByTurret())
         {
             zombie.RagdollModeOn();
         }
@@ -22,8 +22,6 @@ public class Death : ZombieBaseState
             zombie.rig.GetComponent<Rigidbody>().AddForce(zombie.GetExplosionDirection() *500f, ForceMode.Impulse);
             zombie.DismembermentByExplosion();
         }
-
-
 
         else if (zombie.isCrippled)
         {

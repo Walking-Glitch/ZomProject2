@@ -19,8 +19,6 @@ public class CasingManager : MonoBehaviour
     {
         GameObject casing = gameManager.BulletCasingPool.RequestCasing();
         casing.transform.position = CasingSpawnTransform.position;
-        //casing.transform.rotation = CasingSpawnTransform.rotation;
-        //casing.transform.rotation *= Quaternion.Euler(90, 0, 0);
         casing.transform.rotation = CasingSpawnTransform.rotation * Quaternion.Euler(90, 0, 0);
         Rigidbody casingRigidbody = casing.GetComponent<Rigidbody>();
 
@@ -28,7 +26,6 @@ public class CasingManager : MonoBehaviour
         
         casingRigidbody.AddForce(CasingSpawnTransform.right *-1 * Random.Range(MinEjectForce, MaxEjectForce), ForceMode.Impulse);
         casingRigidbody.AddForce(CasingSpawnTransform.forward  * Random.Range(MinEjectForce, MaxEjectForce), ForceMode.Impulse);
-        //casingRigidbody.AddRelativeTorque(new Vector3(10, 0, 0) * ejectTorque, ForceMode.Impulse);
         casingRigidbody.AddTorque(new Vector3(10, 0, 0) * ejectTorque, ForceMode.Impulse);
 
         StartCoroutine(DisableCasing(casing));

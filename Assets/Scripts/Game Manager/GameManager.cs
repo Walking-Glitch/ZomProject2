@@ -10,12 +10,18 @@ namespace Assets.Scripts.Game_Manager
 
         public PlayerStatus PlayerStats;
         public GameObject PlayerGameObject;
+
         public EnemyPool EnemyPool;
         public GrenadePool GrenadePool;
+        public DecalPool DecalPool;
+        public BulletCasingPool BulletCasingPool;
+
         public EnemyManager EnemyManager;
         public WeaponManager WeaponManager;
         public CasingManager CasingManager;
-        public BulletCasingPool BulletCasingPool;
+        public DecalManager DecalManager;
+
+       
         public WeaponAmmo WeaponAmmo;
         public DayCycle DayCycle;
         #endregion

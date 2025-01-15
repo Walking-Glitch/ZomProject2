@@ -181,7 +181,7 @@ public class Grenade : MonoBehaviour
             if (zombie != null && zombie.health > 0)
             {
                 zombie.SetExplosionDirection(transform.position, zombie.transform.position);
-                zombie.TakeDamage(100, "all", true, 500f);
+                zombie.TakeDamage(100, "all", true, false, 500f);
 
             }
         }      

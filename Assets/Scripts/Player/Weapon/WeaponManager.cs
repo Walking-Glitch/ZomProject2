@@ -185,13 +185,16 @@ namespace Assets.Scripts.Player.Weapon
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    Instantiate(hitGroundDecal, hit.point, decalRotation);
+                    gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Zombie"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                    Instantiate(hitGroundDecal, hit.point, decalRotation);
+                     
+                    gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
+                     
+
 
                     ShotForceDir = hit.normal * -1;
 
@@ -205,19 +208,19 @@ namespace Assets.Scripts.Player.Weapon
                         if (limb.limbName == "head")
                         {
                             zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                            zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                            zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, false, 0);
                         }                       
                     
                     else if (limb.limbName == "torso" || limb.limbName == "belly")
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, false, 0);
                     }
 
                     else
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, 0);
+                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, false, 0);
                     }
 
 

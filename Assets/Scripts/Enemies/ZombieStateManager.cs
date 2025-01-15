@@ -46,7 +46,7 @@ public class ZombieStateManager : MonoBehaviour
     private bool AttackPlayer;
     private bool CanDamagePlayer;
     private bool HurtByExplosion;
-
+    private bool HurtByTurret;
     // ragdoll
     public GameObject rig;
     protected Collider[] ragdollColliders;
@@ -312,12 +312,11 @@ public class ZombieStateManager : MonoBehaviour
 
     
 
-    public virtual void TakeDamage(int damage, string limbName, bool explosion, float force)
+    public virtual void TakeDamage(int damage, string limbName, bool explosion, bool turret , float force)
     {
         health -= damage;
 
-        SetKilledByExplosion(explosion);
-
+       
         if (health > 0)
         {
             if (limbName == "torso" || limbName == "belly" && !isDead)
@@ -331,6 +330,8 @@ public class ZombieStateManager : MonoBehaviour
         }
         else
         {
+            SetKilledByExplosion(explosion);
+            SetKilledByTurret(turret);
             SwitchState(Death);
         }
     }
@@ -463,5 +464,15 @@ public class ZombieStateManager : MonoBehaviour
     public bool IsKilledByExplosion()
     {
         return HurtByExplosion;
+    }
+
+    public void SetKilledByTurret(bool isHurtByTurret)
+    {
+        HurtByTurret = isHurtByTurret;
+    }
+
+    public bool IsKilledByTurret()
+    {
+        return HurtByTurret;
     }
 }

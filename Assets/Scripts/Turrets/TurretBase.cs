@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using static UnityEditor.Rendering.CameraUI;
 
 public class TurretBase : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class TurretBase : MonoBehaviour
     public float AimingSpeed;
 
     // firing variables    
-    private float fireRateTimer;
+    protected float fireRateTimer;
 
 
     //  layers
@@ -50,6 +51,7 @@ public class TurretBase : MonoBehaviour
     public LineRenderer laserLine;
     public Transform laserOrigin;
     public Transform LaserAimTransform;
+    private bool isOnTarget;
 
     // spot light 
     [Header("Weapon VFX")]
@@ -115,7 +117,6 @@ public class TurretBase : MonoBehaviour
         if (currentEnemy != null)
         {
 
-
             Vector3 laserDirection = GunEndTransform.forward;
 
 
@@ -125,7 +126,6 @@ public class TurretBase : MonoBehaviour
             {
                 LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
                 LaserAimTransform.position = hit.point;
-
             }
 
             laserLine.enabled = true;
@@ -137,6 +137,18 @@ public class TurretBase : MonoBehaviour
                 WeaponSpotLight.gameObject.SetActive(true);
                 WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
             }
+
+            //Ray ray2 = new Ray(laserOrigin.position, laserDirection);
+
+            //if (Physics.Raycast(ray2, out RaycastHit hit2, Mathf.Infinity, ZombieLayer)) 
+            //{
+            //    isOnTarget = true;
+            //}
+            //else
+            //{
+            //    isOnTarget = false;
+            //}
+
 
         }
         else
@@ -201,7 +213,7 @@ protected virtual void AddRecoil()
 
             if (PitchTransform != null)
             {
-                Vector3 targetPosition = currentEnemy.transform.parent.position + Vector3.up * 1.25f;
+                Vector3 targetPosition = currentEnemy.transform.parent.position + Vector3.up * 1.1f;
                 Vector3 barrelDirection = (targetPosition - PitchTransform.position).normalized;
 
                 Quaternion verticalRotation = Quaternion.LookRotation(barrelDirection);
@@ -267,7 +279,7 @@ protected virtual void AddRecoil()
     {
         fireRateTimer += Time.deltaTime;
         if (fireRateTimer < WeaponFireRate) return false;
-
+        //if (!isOnTarget) return false;  
         if (currentEnemy != null) return true;
 
         return false;       
@@ -361,7 +373,7 @@ protected virtual void AddRecoil()
             }
         }
 
-        //aimStateManager.AddRecoil();
+         
     }
 
     protected virtual void RotateBarrel(bool rotatoryBarrel)
@@ -373,14 +385,14 @@ protected virtual void AddRecoil()
         }
        
     }
-    void TriggerMuzzleFlash()
+    protected void TriggerMuzzleFlash()
     {
         //muzzleFlashParticleSystem.Play();
         lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
         muzzleFlashLight.intensity = lightIntensity;
     }
 
-    void PlaySfx()
+    protected void PlaySfx()
     {
         int index = Random.Range(0, fireSound.Length);
         turretAudioSource.PlayOneShot(fireSound[index]);

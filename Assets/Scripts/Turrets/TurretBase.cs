@@ -9,7 +9,8 @@ public class TurretBase : MonoBehaviour
     // weapon stats
     [Header("Weapon Stats")]
     public int WeaponDamage;
-    public float WeaponRange;
+    public float MinWeaponRange;  
+    public float MaxWeaponRange;  
     public float WeaponFireRate;
     public float AimingSpeed;
 
@@ -65,8 +66,9 @@ public class TurretBase : MonoBehaviour
 
     // audio
     [Header("Weapon SFX")]
-    protected AudioSource turretAudioSource;
+    protected AudioSource turretAudioSource;  
     public AudioClip [] fireSound;
+    
 
     // barral rotation variables
     protected bool rotatoryBarrel;
@@ -109,20 +111,21 @@ public class TurretBase : MonoBehaviour
     
     protected virtual void DisplayLaser()
     {
+       
         if (currentEnemy != null)
         {
-            
 
-            Vector3 laserDirection = ((laserOrigin.position + laserOrigin.forward * WeaponRange) - laserOrigin.position).normalized;
-           
-             
-            Ray ray = new Ray(laserOrigin.position, laserDirection);
+
+            Vector3 laserDirection = GunEndTransform.forward;
+
+
+            Ray ray = new Ray(GunEndTransform.position, laserDirection);
 
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ShootMask))
             {
                 LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
                 LaserAimTransform.position = hit.point;
-                
+
             }
 
             laserLine.enabled = true;
@@ -134,7 +137,7 @@ public class TurretBase : MonoBehaviour
                 WeaponSpotLight.gameObject.SetActive(true);
                 WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
             }
-            
+
         }
         else
         {
@@ -143,11 +146,13 @@ public class TurretBase : MonoBehaviour
 
             if (WeaponSpotLight != null) WeaponSpotLight.gameObject.SetActive(false);
         }
-    }
+    
 
-    protected virtual void AddRecoil()
+}
+
+protected virtual void AddRecoil()
     {
-        PitchTransform.Rotate(-30, 0, 0);
+        PitchTransform.Rotate(-25, 0, 0);
     }
 
     protected virtual void RotateToDefaultPosition()
@@ -212,7 +217,7 @@ public class TurretBase : MonoBehaviour
             float verticalAlignment = Vector3.Dot(PitchTransform.up, verticalDirection);
 
          
-            if (horizontalAlignment >= 0.95f && CanFire())
+            if (horizontalAlignment >= 0.98f && CanFire())
             {
                 Fire(false);
                 Debug.Log("FIRING");
@@ -236,17 +241,24 @@ public class TurretBase : MonoBehaviour
     {
         enemies.Clear();
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, WeaponRange, ZombieLayer);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, MaxWeaponRange, ZombieLayer);
 
         foreach (Collider col in colliders)
         {
-            ZombieStateManager zombie = col.gameObject.GetComponentInParent<ZombieStateManager>();
+            float distance = Vector3.Distance(transform.position, col.transform.position);
 
-            if (zombie != null)
+            if (distance >= MinWeaponRange && distance <= MaxWeaponRange)
             {
-                if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
-                    enemies.Add(col.GetComponentInParent<ZombieStateManager>());
+                ZombieStateManager zombie = col.gameObject.GetComponentInParent<ZombieStateManager>();
+
+                if (zombie != null)
+                {
+                    if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
+                        enemies.Add(col.GetComponentInParent<ZombieStateManager>());
+                }
             }
+
+                
             
         }
     }
@@ -377,9 +389,13 @@ public class TurretBase : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        // Draw a wire sphere in the editor to visualize the detection radius
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, WeaponRange);
+        // Draw the max range in red
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, MaxWeaponRange);
+
+        // Draw the min range in yellow
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, MinWeaponRange);
     }
 
 }

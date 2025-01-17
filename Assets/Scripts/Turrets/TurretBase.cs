@@ -28,9 +28,10 @@ public class TurretBase : MonoBehaviour
     protected GameManager gameManager;
 
     // list of enemies in firing area
-    [Header("Enemy Tracker")]    
-    [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
+    [Header("Enemy Tracker")]
     public ZombieStateManager currentEnemy;
+    [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
+    
 
     // turret transforms  
     [Header("Weapon Transforms")] 
@@ -91,7 +92,7 @@ public class TurretBase : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         fireRateTimer += Time.deltaTime;
 
@@ -137,18 +138,6 @@ public class TurretBase : MonoBehaviour
                 WeaponSpotLight.gameObject.SetActive(true);
                 WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
             }
-
-            //Ray ray2 = new Ray(laserOrigin.position, laserDirection);
-
-            //if (Physics.Raycast(ray2, out RaycastHit hit2, Mathf.Infinity, ZombieLayer)) 
-            //{
-            //    isOnTarget = true;
-            //}
-            //else
-            //{
-            //    isOnTarget = false;
-            //}
-
 
         }
         else
@@ -278,8 +267,7 @@ protected virtual void AddRecoil()
     protected virtual bool CanFire()
     {
         fireRateTimer += Time.deltaTime;
-        if (fireRateTimer < WeaponFireRate) return false;
-        //if (!isOnTarget) return false;  
+        if (fireRateTimer < WeaponFireRate) return false;         
         if (currentEnemy != null) return true;
 
         return false;       
@@ -377,7 +365,7 @@ protected virtual void AddRecoil()
 
     protected virtual void RotateBarrel(bool rotatoryBarrel)
     {
-        if (rotatoryBarrel)
+        if (rotatoryBarrel && BarrelTransform != null)
         {
             float rotationSpeed = 100f;
             BarrelTransform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
@@ -387,14 +375,22 @@ protected virtual void AddRecoil()
     protected void TriggerMuzzleFlash()
     {
         //muzzleFlashParticleSystem.Play();
-        lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
-        muzzleFlashLight.intensity = lightIntensity;
+        if(muzzleFlashLight != null)
+        {
+            lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
+            muzzleFlashLight.intensity = lightIntensity;
+        }
+       
     }
 
     protected void PlaySfx()
     {
-        int index = Random.Range(0, fireSound.Length);
-        turretAudioSource.PlayOneShot(fireSound[index]);
+        if(fireSound.Length > 0)
+        {
+            int index = Random.Range(0, fireSound.Length);
+            turretAudioSource.PlayOneShot(fireSound[index]);
+        }
+       
     }
 
 

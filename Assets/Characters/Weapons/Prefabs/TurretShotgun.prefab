@@ -58,7 +58,7 @@ Transform:
   m_GameObject: {fileID: 1761017358337836205}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.278669, y: 0, z: -12.960604}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -279,7 +279,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2578714790109156629}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -356,15 +356,15 @@ MonoBehaviour:
   MinWeaponRange: 5
   MaxWeaponRange: 30
   WeaponFireRate: 4
-  AimingSpeed: 3
+  AimingSpeed: 3.5
   ZombieLayer:
     serializedVersion: 2
     m_Bits: 4096
   ShootMask:
     serializedVersion: 2
     m_Bits: 5184
-  enemies: []
   currentEnemy: {fileID: 0}
+  enemies: []
   PitchTransform: {fileID: 3327211992434834450}
   PanTransform: {fileID: 984044520833022865}
   BarrelTransform: {fileID: 0}
@@ -633,7 +633,7 @@ Transform:
   m_GameObject: {fileID: 5368316190388477111}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.278669, y: 0, z: -12.960604}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1108,7 +1108,7 @@ Transform:
   m_GameObject: {fileID: 9023281403723239110}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.278669, y: 0, z: -12.960604}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

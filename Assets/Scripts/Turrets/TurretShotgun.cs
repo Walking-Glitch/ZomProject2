@@ -44,13 +44,13 @@ public class TurretShotgun : TurretBase
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
+                    gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Zombie"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                    gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
+                    gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
 
                     ZombieStateManager zombieStateManager;
 

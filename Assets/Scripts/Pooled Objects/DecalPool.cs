@@ -3,34 +3,68 @@ using UnityEngine;
 
 public class DecalPool : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> decalPrefabs;
+    [SerializeField] private List<GameObject> groundDecalPrefabs;
+    [SerializeField] private List<GameObject> bloodDecalPrefabs;
     [SerializeField] private int poolSize;
-    [SerializeField] private List<GameObject> decalList;
+    [SerializeField] private List<GameObject> groundDecalList;
+    [SerializeField] private List<GameObject> bloodDecalList;
+
+    public Transform GroundDecalPool;
+    public Transform BloodDecalPool;
+
     void Start()
     {
-        AddDecalToPool(poolSize);
+        AddGroundDecalToPool(poolSize);
+        AddBloodDecalToPool(poolSize);
     }
 
-    private void AddDecalToPool(int amount)
+    private void AddGroundDecalToPool(int amount)
     {
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject decalPrefab = decalPrefabs[0];
+            GameObject decalPrefab = groundDecalPrefabs[0];
             GameObject decal = Instantiate(decalPrefab);
             decal.SetActive(false);
-            decalList.Add(decal);
-            decal.transform.parent = transform;
+            groundDecalList.Add(decal);
+            decal.transform.parent = GroundDecalPool;
         }
     }
 
-    public GameObject RequestDecal()
+    private void AddBloodDecalToPool(int amount)
     {
-        for (int i = 0; i < decalList.Count; i++)
+        for (int i = 0; i < poolSize; i++)
         {
-            if (!decalList[i].activeSelf)
+            int index = Random.Range(0, bloodDecalPrefabs.Count) ;
+            GameObject bloodDecalPrefab = bloodDecalPrefabs[index];
+            GameObject bloodDecal = Instantiate(bloodDecalPrefab);
+            bloodDecal.SetActive(false);
+            bloodDecalList.Add(bloodDecal);
+            bloodDecal.transform.parent = BloodDecalPool;
+        }
+    }
+
+    public GameObject RequestGroundDecal()
+    {
+        for (int i = 0; i < groundDecalList.Count; i++)
+        {
+            if (!groundDecalList[i].activeSelf)
             {
-                decalList[i].gameObject.SetActive(true);
-                return decalList[i];
+                groundDecalList[i].gameObject.SetActive(true);
+                return groundDecalList[i];
+            }
+        }
+
+        return null;
+    }
+
+    public GameObject RequestBloodDecal()
+    {
+        for (int i = 0; i < bloodDecalList.Count; i++)
+        {
+            if (!bloodDecalList[i].activeSelf)
+            {
+                bloodDecalList[i].gameObject.SetActive(true);
+                return bloodDecalList[i];
             }
         }
 

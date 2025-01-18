@@ -23,7 +23,6 @@ public class TurretAntiTank : TurretBase
     {
         base.Start();
         
-
     }
     protected override void Update()
     {
@@ -80,12 +79,12 @@ public class TurretAntiTank : TurretBase
                      
                     CurrentMissileTarget = currentEnemy.transform;
                     Fire(); 
-                    Debug.Log("FIRING");                  
+                    //Debug.Log("FIRING");                  
                 }
                 else
                 {
-                    Debug.Log("NOT ALIGNED");
-                    Debug.Log(horizontalAlignment + " " + verticalAlignment);
+                   // Debug.Log("NOT ALIGNED");
+                    //Debug.Log(horizontalAlignment + " " + verticalAlignment);
        
                 }
             

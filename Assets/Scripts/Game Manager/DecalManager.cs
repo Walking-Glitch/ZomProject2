@@ -12,16 +12,25 @@ public class DecalManager : MonoBehaviour
         gameManager = GameManager.Instance;
     }
 
-    public void SpawnDecal(Vector3 position, Quaternion rotation)
+    public void SpawnGroundHitDecal(Vector3 position, Quaternion rotation)
     {
-        GameObject decal = gameManager.DecalPool.RequestDecal();
+        GameObject decal = gameManager.DecalPool.RequestGroundDecal();
         decal.transform.position = position;
         decal.transform.rotation = rotation;
 
-        StartCoroutine(DisableCasing(decal));
+        StartCoroutine(DisableGroundDecal(decal));
     }
 
-    private IEnumerator DisableCasing(GameObject decal)
+    public void SpawnBloodHitDecal(Vector3 position, Quaternion rotation)
+    {
+        GameObject decal = gameManager.DecalPool.RequestBloodDecal();
+        decal.transform.position = position;
+        decal.transform.rotation = rotation;
+
+        StartCoroutine(DisableGroundDecal(decal));
+    }
+
+    private IEnumerator DisableGroundDecal(GameObject decal)
     {
         yield return new WaitForSeconds(delay);
         decal.SetActive(false);

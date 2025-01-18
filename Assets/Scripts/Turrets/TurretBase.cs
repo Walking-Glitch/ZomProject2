@@ -75,8 +75,10 @@ public class TurretBase : MonoBehaviour
 
     // barral rotation variables
     protected bool rotatoryBarrel;
-   
-     
+
+    // optimization attempts
+    private float checkInterval = 0.2f;
+    private float checkTimer;
 
     protected virtual void Start()
     {
@@ -98,7 +100,13 @@ public class TurretBase : MonoBehaviour
 
         muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
 
-        FindEnemiesInRange();
+        checkTimer += Time.deltaTime;
+
+        if (checkTimer >= checkInterval)
+        {
+            checkTimer = 0;
+            FindEnemiesInRange();
+        }
 
         AimAtTarget();
 
@@ -221,12 +229,12 @@ protected virtual void AddRecoil()
             if (horizontalAlignment >= 0.98f && CanFire())
             {
                 Fire(false);
-                Debug.Log("FIRING");
+                //Debug.Log("FIRING");
             }
             else
             {
-                Debug.Log("NOT ALIGNED");
-                Debug.Log(horizontalAlignment + " " + verticalAlignment);
+                //Debug.Log("NOT ALIGNED");
+                //Debug.Log(horizontalAlignment + " " + verticalAlignment);
             }
         }
 
@@ -295,13 +303,13 @@ protected virtual void AddRecoil()
             if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("Environment"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
+                gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
             }
 
             else if (hit.collider.CompareTag("Zombie"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
+                gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
 
                 ZombieStateManager zombieStateManager;
 
@@ -345,18 +353,18 @@ protected virtual void AddRecoil()
                         Transform trans = limb.limbReplacement.transform;
                         Vector3 backwardForce = direction * 10f;
                         rb.AddForce(backwardForce, ForceMode.Impulse);
-                        Debug.Log("force added");
-                        Debug.Log("Force direction: " + direction);
-                        Debug.DrawRay(trans.position, direction, Color.red, 2f);
+                        //Debug.Log("force added");
+                        //Debug.Log("Force direction: " + direction);
+                        //Debug.DrawRay(trans.position, direction, Color.red, 2f);
                     }
-                    Debug.Log(limb.limbName);
+                    //Debug.Log(limb.limbName);
                 }
 
             }
 
             else
             {
-                Debug.Log(hit.distance);
+                //Debug.Log(hit.distance);
             }
         }
 

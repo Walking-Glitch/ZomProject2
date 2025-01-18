@@ -172,7 +172,7 @@ public class Limbs : MonoBehaviour
             {
                 if (Neslimb != NestedLimbs[0])
                 {
-                    Debug.Log(Neslimb.limbName);
+                    //Debug.Log(Neslimb.limbName);
                     Neslimb.LimbTakeDamage(100);
                 }
                

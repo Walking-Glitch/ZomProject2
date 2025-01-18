@@ -185,14 +185,14 @@ namespace Assets.Scripts.Player.Weapon
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
+                    gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Zombie"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
                      
-                    gameManager.DecalManager.SpawnDecal(hit.point, decalRotation);
+                    gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
                      
 
 
@@ -240,14 +240,14 @@ namespace Assets.Scripts.Player.Weapon
                             Debug.Log("Force direction: " + direction);
                             Debug.DrawRay(trans.position, direction, Color.red, 2f);
                         }
-                        Debug.Log(limb.limbName);
+                        //Debug.Log(limb.limbName);
                     }
                
                 }
 
                 else
                 {
-                    Debug.Log(hit.distance);
+                    //Debug.Log(hit.distance);
                 }
             }
 

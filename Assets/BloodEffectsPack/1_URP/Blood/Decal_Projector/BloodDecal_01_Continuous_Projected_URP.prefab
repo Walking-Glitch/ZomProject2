@@ -52,7 +52,6 @@ MonoBehaviour:
   lifetime_min: 1
   lifetime_max: 1
   startPosOffset: {x: 0, y: 0, z: 0}
-  startPosRandomScale: 0
   startSize_min: 2
   startSize_max: 2
   startRotation_min: -15

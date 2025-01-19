@@ -56,11 +56,15 @@ public class TurretBase : MonoBehaviour
 
     // spot light 
     [Header("Weapon VFX")]
-    public Light WeaponSpotLight;   
+    public Light WeaponSpotLight;
 
     // muzzle flash 
-    [SerializeField] protected Light muzzleFlashLight;
-    ParticleSystem muzzleFlashParticleSystem;
+    public Transform ParentMuzzleVFX;
+
+    [SerializeField] private List<Transform> muzzleFlashList = new List<Transform>();
+
+    //[SerializeField] protected Light muzzleFlashLight;
+    //[SerializeField] protected GameObject [] muzzleFlashParticleObject;
     protected float lightIntensity;
     [SerializeField] private float maxLightIntensity;
     [SerializeField] private float minLightIntensity;
@@ -86,8 +90,9 @@ public class TurretBase : MonoBehaviour
 
         turretAudioSource = GetComponent<AudioSource>();
 
-        lightIntensity = muzzleFlashLight.intensity;
-        muzzleFlashLight.intensity = 0;
+        CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
+        //lightIntensity = muzzleFlashLight.intensity;
+        //muzzleFlashLight.intensity = 0;
 
         rotatoryBarrel = true;
 
@@ -98,7 +103,7 @@ public class TurretBase : MonoBehaviour
     {
         fireRateTimer += Time.deltaTime;
 
-        muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
+        //muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
 
         checkTimer += Time.deltaTime;
 
@@ -380,15 +385,37 @@ protected virtual void AddRecoil()
         }
        
     }
+
+    protected void CollectMuzzleFlashChildObjects(Transform parentMuzzleFlash)
+    {
+        // Iterate through each child of the parent
+        foreach (Transform muzzle in parentMuzzleFlash)
+        {
+            // Add the child object to the list
+            muzzleFlashList.Add(muzzle.transform);
+        }
+    }
     protected void TriggerMuzzleFlash()
     {
-        //muzzleFlashParticleSystem.Play();
-        if(muzzleFlashLight != null)
+        int index = Random.Range(0, muzzleFlashList.Count);
+        muzzleFlashList[index].gameObject.SetActive(true);
+
+        lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
+
+        FPSLightCurves lightCurves = GetComponentInChildren<FPSLightCurves>();
+
+        if (lightCurves != null)
         {
-            lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
-            muzzleFlashLight.intensity = lightIntensity;
+            lightCurves.GraphIntensityMultiplier = lightIntensity;
         }
-       
+
+
+        //if(muzzleFlashLight != null)
+        //{
+        //    lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
+        //    muzzleFlashLight.intensity = lightIntensity;
+        //}
+
     }
 
     protected void PlaySfx()

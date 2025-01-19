@@ -10,8 +10,7 @@ public class TurretSniper : TurretBase
 
         turretAudioSource = GetComponent<AudioSource>();
 
-        lightIntensity = muzzleFlashLight.intensity;
-        muzzleFlashLight.intensity = 0;
+        CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
     }
 
     protected override void Fire(bool hasRecoil)

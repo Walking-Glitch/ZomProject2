@@ -323,7 +323,7 @@ namespace Assets.Scripts.Player.Weapon
 
         void TriggerMuzzleFlash()
         {
-            //muzzleFlashParticleSystem.Play();
+            //muzzleFlashParticleObject.Play();
             lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
             muzzleFlashLight.intensity = lightIntensity;
         }

@@ -60,7 +60,6 @@ public class TurretBase : MonoBehaviour
 
     // muzzle flash 
     public Transform ParentMuzzleVFX;
-
     [SerializeField] private List<Transform> muzzleFlashList = new List<Transform>();
 
     //[SerializeField] protected Light muzzleFlashLight;
@@ -388,10 +387,8 @@ protected virtual void AddRecoil()
 
     protected void CollectMuzzleFlashChildObjects(Transform parentMuzzleFlash)
     {
-        // Iterate through each child of the parent
         foreach (Transform muzzle in parentMuzzleFlash)
         {
-            // Add the child object to the list
             muzzleFlashList.Add(muzzle.transform);
         }
     }

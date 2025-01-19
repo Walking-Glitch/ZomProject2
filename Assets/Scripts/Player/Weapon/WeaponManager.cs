@@ -1,5 +1,6 @@
 using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Actions;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -63,12 +64,16 @@ namespace Assets.Scripts.Player.Weapon
         [SerializeField] float fireRate;
         private float fireRateTimer;
 
-        [SerializeField] private Light muzzleFlashLight;
-        ParticleSystem muzzleFlashParticleSystem;
+        
+
+        public Transform ParentMuzzleVFX;
+        [SerializeField] private List<Transform> muzzleFlashList = new List<Transform>();
+
+        
         private float lightIntensity;
         [SerializeField] private float maxLightIntensity;
         [SerializeField] private float minLightIntensity;
-        [SerializeField] private float lightReturnSpeed = 20;
+         
 
         // animator
         private Animator anim;
@@ -110,8 +115,9 @@ namespace Assets.Scripts.Player.Weapon
 
         void Start()
         {
-            lightIntensity = muzzleFlashLight.intensity;
-            muzzleFlashLight.intensity = 0;
+            CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
+            //lightIntensity = muzzleFlashLight.intensity;
+            //muzzleFlashLight.intensity = 0;
         }
 
         // Update is called once per frame
@@ -126,7 +132,7 @@ namespace Assets.Scripts.Player.Weapon
 
             fireRateTimer += Time.deltaTime;
 
-            muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
+            //muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
 
         }
 
@@ -321,14 +327,30 @@ namespace Assets.Scripts.Player.Weapon
             //fireRateText.text = semiAuto ? "SEMI" : "FULL AUTO";
         }
 
+        protected void CollectMuzzleFlashChildObjects(Transform parentMuzzleFlash)
+        {
+            foreach (Transform muzzle in parentMuzzleFlash)
+            {
+                muzzleFlashList.Add(muzzle.transform);
+            }
+        }
         void TriggerMuzzleFlash()
         {
-            //muzzleFlashParticleObject.Play();
+            int index = Random.Range(0, muzzleFlashList.Count);
+            muzzleFlashList[index].gameObject.SetActive(true);
+
             lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
-            muzzleFlashLight.intensity = lightIntensity;
+
+            FPSLightCurves lightCurves = muzzleFlashList[index].GetComponentInChildren<FPSLightCurves>();
+
+            if (lightCurves != null)
+            {
+                lightCurves.GraphIntensityMultiplier = lightIntensity;
+            }
         }
 
-        void OnEnable()
+
+            void OnEnable()
         {
             inputSystemActions.Enable();
         }

@@ -53,6 +53,7 @@ namespace Assets.Scripts.Player.Actions
             inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
             inputSystemActions.Player.Inventory.performed += OnInventoryPerformed;
             inputSystemActions.Player.Attack.performed += OnFirePerformed;
+            inputSystemActions.Player.Scroll.performed += OnScrollPerformed;
 
 
         }
@@ -222,6 +223,13 @@ namespace Assets.Scripts.Player.Actions
         {
             if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Build);
             else if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Build) SwitchState(Default);
+        }
+
+        private void OnScrollPerformed(InputAction.CallbackContext context)
+        {
+            float scrollDelta = context.ReadValue<Vector2>().y;
+
+            CurrentState?.OnScroll(this, scrollDelta);
         }
 
         private void OnFirePerformed(InputAction.CallbackContext context)

@@ -18,20 +18,15 @@ public class BuildManager : MonoBehaviour
 
     private GameManager gameManager;
 
-    //public LineRenderer Lazer;
-    
+    private int currentIndex = 0;
+    private GameObject tempPrefab;
+
 
     private void Start()
     {
         gameManager = GameManager.Instance;
     }
-    void Update()
-    {
-      
-
-
-    }
-
+   
     public void CheckIfOnValidPlacement()
     {
        
@@ -58,12 +53,38 @@ public class BuildManager : MonoBehaviour
     {
         if (!isPlacing)
         {
-            currentPreview = Instantiate(turretPrefabs[0], AimTransform.position, Quaternion.identity);
+            
+            currentPreview = Instantiate(turretPrefabs[currentIndex], AimTransform.position, Quaternion.identity);
             currentPreview.transform.SetParent(AimTransform);
             isPlacing = true;
         }
         
     } 
+
+    public void SwitchSelectedPrefab(float scrollDelta)
+    {
+        
+        if (scrollDelta > 0)
+        {
+            currentIndex++;
+            if(currentIndex >= turretPrefabs.Length)
+            {
+                currentIndex = 0;               
+            }
+            
+        }
+        else if (scrollDelta < 0)
+        {
+            currentIndex--;
+            if(currentIndex < 0)
+            {
+                currentIndex = turretPrefabs.Length -1;
+            }
+        }
+
+        isPlacing = false;
+
+    }
 
     public void PlacePrefab()
     {

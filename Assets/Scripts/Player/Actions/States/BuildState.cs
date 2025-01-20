@@ -23,6 +23,11 @@ public class BuildState : ActionStateBase
         actionStateManager.gameManager.BuildManager.PlacePrefab();
     }
 
+    public override void OnScroll(ActionStateManager actionStateManager, float scrollDelta)
+    {
+        actionStateManager.gameManager.BuildManager.SwitchSelectedPrefab(scrollDelta);  
+    }
+
 
 }
 

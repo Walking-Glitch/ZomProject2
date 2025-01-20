@@ -90,8 +90,7 @@ public class TurretBase : MonoBehaviour
         turretAudioSource = GetComponent<AudioSource>();
 
         CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
-        //lightIntensity = muzzleFlashLight.intensity;
-        //muzzleFlashLight.intensity = 0;
+         
 
         rotatoryBarrel = true;
 

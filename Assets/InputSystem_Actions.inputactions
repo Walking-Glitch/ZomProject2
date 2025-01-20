@@ -121,6 +121,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Scroll",
+                    "type": "Value",
+                    "id": "e939d26e-d919-48d9-8d71-bf5a0345b165",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -550,6 +559,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "86ed1a92-8b98-4e59-bea6-44c1b8da2729",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Scroll",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

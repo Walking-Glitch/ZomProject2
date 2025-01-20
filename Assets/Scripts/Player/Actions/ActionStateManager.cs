@@ -15,6 +15,7 @@ namespace Assets.Scripts.Player.Actions
         [HideInInspector] public ReloadState Reload = new ReloadState();
         [HideInInspector] public GrenadeState Grenade = new GrenadeState();
         [HideInInspector] public DefaultState Default = new DefaultState();
+        [HideInInspector] public BuildState Build = new BuildState();
 
         // animator
         [HideInInspector] public Animator anim;
@@ -41,7 +42,7 @@ namespace Assets.Scripts.Player.Actions
         private GameObject grenadeClone;
 
         //game manager
-        private GameManager gameManager;
+        public GameManager gameManager;
 
 
 
@@ -50,6 +51,8 @@ namespace Assets.Scripts.Player.Actions
             inputSystemActions = new InputSystem_Actions();
             inputSystemActions.Player.Reload.performed += OnReloadPerformed;
             inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
+            inputSystemActions.Player.Inventory.performed += OnInventoryPerformed;
+            inputSystemActions.Player.Attack.performed += OnFirePerformed;
 
 
         }
@@ -179,8 +182,6 @@ namespace Assets.Scripts.Player.Actions
          
             grenadeClone.SetActive(true);
            
-
-            
         }
         public void GrenadeToss()
         {
@@ -215,6 +216,17 @@ namespace Assets.Scripts.Player.Actions
         private void OnThrowGrenadePerformed(InputAction.CallbackContext context)
         {
             if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Grenade); 
+        }
+
+        private void OnInventoryPerformed(InputAction.CallbackContext context)
+        {
+            if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Build);
+            else if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Build) SwitchState(Default);
+        }
+
+        private void OnFirePerformed(InputAction.CallbackContext context)
+        {
+            CurrentState?.OnFire(this);
         }
 
         public void WeaponReloaded()

@@ -8,21 +8,28 @@ namespace Assets.Scripts.Game_Manager
     {
         #region References
 
+        [Header("Player references")]
         public PlayerStatus PlayerStats;
         public GameObject PlayerGameObject;
 
+        [Header("Pooled objects references")]
         public EnemyPool EnemyPool;
         public GrenadePool GrenadePool;
         public DecalPool DecalPool;
         public BulletCasingPool BulletCasingPool;
 
+        [Header("Manager references")]
         public EnemyManager EnemyManager;
         public WeaponManager WeaponManager;
         public CasingManager CasingManager;
         public DecalManager DecalManager;
+        public BuildManager BuildManager;
 
-       
+        [Header("Weapon related references")]
         public WeaponAmmo WeaponAmmo;
+        public WeaponLaser WeaponLaser;
+
+        [Header("Difficulty references")]
         public DayCycle DayCycle;
         #endregion
 

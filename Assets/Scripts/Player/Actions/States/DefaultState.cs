@@ -5,6 +5,7 @@ public class DefaultState : ActionStateBase
 {
     public override void EnterState(ActionStateManager actionStateManager)
     {
+        actionStateManager.gameManager.WeaponLaser.ChangeLazerColorDefault();
         actionStateManager.WeaponManager.AdjustWeaponParentedHand();
     }
 

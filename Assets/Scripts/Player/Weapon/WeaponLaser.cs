@@ -11,6 +11,7 @@ public class WeaponLaser : MonoBehaviour
     public float range;
 
     public LineRenderer laserLine;
+    public Material[] LaserMaterial;
     [SerializeField]private bool laserReady;
 
     private Animator anim;
@@ -43,5 +44,15 @@ public class WeaponLaser : MonoBehaviour
         laserReady = anim.GetLayerWeight(1) > 0.85f;
     }
 
-   
+    public void ChangeLazerColorInventory()
+    {
+        laserLine.material = LaserMaterial[1];
+    }
+
+    public void ChangeLazerColorDefault()
+    {
+        laserLine.material = LaserMaterial[0];
+    }
+
+
 }

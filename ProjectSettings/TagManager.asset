@@ -8,6 +8,7 @@ TagManager:
   - Ground
   - Zombie
   - Environment
+  - Laser
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Environment
   - Obstacles
   - Zombie
-  - 
+  - Turret
   - 
   - 
   - 

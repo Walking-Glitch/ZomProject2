@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8408059541371266591}
   - component: {fileID: 4669360149980847116}
   - component: {fileID: 2645133968311179651}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: LaserAimPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8756814412165919796}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: 'MuzzleHolder '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6056073318228395934}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: 'GunEndTransform '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,7 +174,7 @@ GameObject:
   - component: {fileID: 2182128170650806364}
   - component: {fileID: 1572033907995915609}
   - component: {fileID: 6395358193265613016}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: TurretAntiMaterial
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -269,7 +269,7 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 8210119501060539841, guid: bf2c4962ff9d2d34b99ef312eeadc150, type: 3}
 --- !u!114 &2182128170650806364
@@ -438,7 +438,8 @@ GameObject:
   - component: {fileID: 5793314675731261772}
   - component: {fileID: 7208847133160579046}
   - component: {fileID: 8922598017780786976}
-  m_Layer: 0
+  - component: {fileID: 8697160469584997226}
+  m_Layer: 13
   m_Name: TurretGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -515,6 +516,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &8697160469584997226
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5264521443043944577}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 5707569352014732317, guid: dce9a4eed5d29e248933acf9da8cb6cb, type: 3}
 --- !u!1 &5561881413112351770
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,7 +548,7 @@ GameObject:
   m_Component:
   - component: {fileID: 828514616815279606}
   - component: {fileID: 3553307917905485974}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: 'Audio Stop  '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -654,7 +677,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6482794437842249039}
   - component: {fileID: 3093643797710779795}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: 'Audio Loop  '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -783,7 +806,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5047640014004512596}
   - component: {fileID: 854386119667046335}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: LaserOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -931,7 +954,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5947344029894363827}
   - component: {fileID: 7856634921753145239}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: 'Audio Start  '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1061,7 +1084,8 @@ GameObject:
   - component: {fileID: 8379528949852188419}
   - component: {fileID: 489263048616987599}
   - component: {fileID: 2516941895710750904}
-  m_Layer: 0
+  - component: {fileID: 4692505042729628301}
+  m_Layer: 13
   m_Name: TurretAntiMaterial
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1141,6 +1165,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4692505042729628301
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8769304176882406797}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1586618626508867998, guid: dce9a4eed5d29e248933acf9da8cb6cb, type: 3}
 --- !u!1001 &528232930837660760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1149,9 +1195,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 183878, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 183882, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 183886, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 183896, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 183908, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash5
+      objectReference: {fileID: 0}
+    - target: {fileID: 183908, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 183908, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
       propertyPath: m_IsActive
@@ -1200,6 +1266,18 @@ PrefabInstance:
     - target: {fileID: 10883922, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1323532139449280, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1949892267809700, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8332291000959563557, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4162171668334044351, guid: fa6d29df930056640bf15fb9b6a54e4a, type: 3}
@@ -1273,13 +1351,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 128424, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 146984, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 146986, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 146988, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 146990, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 146992, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash2
       objectReference: {fileID: 0}
     - target: {fileID: 146992, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 146992, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 146994, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 146996, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 446992, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1324,6 +1434,14 @@ PrefabInstance:
     - target: {fileID: 10846998, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1492815019973170, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5283649319892761439, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7427388292706576444, guid: 24bc114e4759e464eab5d9664127a034, type: 3}
@@ -1397,13 +1515,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 136492, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 136494, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 136506, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 136518, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash9
       objectReference: {fileID: 0}
     - target: {fileID: 136518, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 136518, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 136520, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 136538, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 436518, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1444,6 +1586,18 @@ PrefabInstance:
     - target: {fileID: 436518, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1878225386226800, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1915167299477230, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 322983589646338417, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2434611364889527442, guid: 35277ee4b65d54d4199c4e0e48053745, type: 3}
@@ -1517,13 +1671,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 124010, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 124012, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 124014, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 124016, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 124018, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash1
       objectReference: {fileID: 0}
     - target: {fileID: 124018, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 124018, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 124022, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 126652, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 424018, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1568,6 +1750,10 @@ PrefabInstance:
     - target: {fileID: 10824008, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258836205045950985, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1302723880887633755, guid: 1f389bb139e76154582cf3c5e4f9214b, type: 3}
@@ -1641,9 +1827,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 160572, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 160576, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 160578, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 160580, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 160582, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash4
+      objectReference: {fileID: 0}
+    - target: {fileID: 160582, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 160582, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
       propertyPath: m_IsActive
@@ -1692,6 +1898,18 @@ PrefabInstance:
     - target: {fileID: 10860582, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1489121314249600, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1627320920727442, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2455103494427157505, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6020498872022305438, guid: 8ff371e17619a504b9822fc6a2facdb2, type: 3}
@@ -1765,9 +1983,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 160998, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 161000, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 161002, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash10
+      objectReference: {fileID: 0}
+    - target: {fileID: 161002, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 161006, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 161008, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 161010, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 461002, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1809,6 +2051,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1236676616030490, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1469009352283008, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5399012178270175581, guid: 489aba68c9dfe9342accb1f3a0be4e5b, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1827,13 +2081,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 179836, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 179840, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 179842, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 179844, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 179846, guid: a7730127594a3ad46a512f70521a6446, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash7
       objectReference: {fileID: 0}
     - target: {fileID: 179846, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 179846, guid: a7730127594a3ad46a512f70521a6446, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 179848, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 479846, guid: a7730127594a3ad46a512f70521a6446, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1878,6 +2156,18 @@ PrefabInstance:
     - target: {fileID: 10879848, guid: a7730127594a3ad46a512f70521a6446, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1376087194193966, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1432747829899558, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 3657261858190400671, guid: a7730127594a3ad46a512f70521a6446, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 686730530884677768, guid: a7730127594a3ad46a512f70521a6446, type: 3}
@@ -1956,8 +2246,28 @@ PrefabInstance:
       value: MuzzleFlash8
       objectReference: {fileID: 0}
     - target: {fileID: 141106, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 141106, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 141108, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 141110, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 141114, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 141116, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 441106, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2002,6 +2312,18 @@ PrefabInstance:
     - target: {fileID: 10841116, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1049973696997182, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1065334912760162, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8280965818880233707, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5807135277818223283, guid: c69a6f3b834888c468f57ec885c39db3, type: 3}
@@ -2075,13 +2397,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 146760, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 153266, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash3
       objectReference: {fileID: 0}
     - target: {fileID: 153266, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 153266, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 153268, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 153274, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 153276, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 153278, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 453266, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2126,6 +2472,14 @@ PrefabInstance:
     - target: {fileID: 10853266, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148996845200514, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8856029111922095314, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3271491378200419357, guid: 39b2a3d1ecfa5614b97e75a9b5561f21, type: 3}
@@ -2199,13 +2553,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8756814412165919796}
     m_Modifications:
+    - target: {fileID: 110054, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 110058, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 110060, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 110062, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
       propertyPath: m_Name
       value: MuzzleFlash6
       objectReference: {fileID: 0}
     - target: {fileID: 110062, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 110062, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 110064, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 110066, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 410062, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2250,6 +2628,18 @@ PrefabInstance:
     - target: {fileID: 10810066, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
       propertyPath: m_Range
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070267255751690, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 1286570003987672, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 5367825117766642401, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3731787498664345082, guid: 30902f8af10daa04cabd79e9ef258f08, type: 3}

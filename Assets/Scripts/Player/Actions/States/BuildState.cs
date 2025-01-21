@@ -10,10 +10,15 @@ public class BuildState : ActionStateBase
 
     public override void UpdateState(ActionStateManager actionStateManager)
     {
-        actionStateManager.gameManager.BuildManager.CheckIfOnValidPlacement();
+        //if (actionStateManager.gameManager.BuildManager.isPlacing)
+        //{
+            actionStateManager.gameManager.BuildManager.CheckIfOnValidPlacement();
+        //}
+      
 
        if (actionStateManager.AimStateManager.CurrentState == actionStateManager.AimStateManager.AimIdleState)
         {
+             
             actionStateManager.SwitchState(actionStateManager.Default);
         }
     }
@@ -27,6 +32,8 @@ public class BuildState : ActionStateBase
     {
         actionStateManager.gameManager.BuildManager.SwitchSelectedPrefab(scrollDelta);  
     }
+
+   
 
 
 }

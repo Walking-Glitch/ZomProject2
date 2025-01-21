@@ -187,7 +187,7 @@ namespace Assets.Scripts.Player.Weapon
             if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
                     shootMask))
             {
-                if (hit.collider.CompareTag("Ground"))
+                if (hit.collider.CompareTag("Ground")|| hit.collider.CompareTag("Environment"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 

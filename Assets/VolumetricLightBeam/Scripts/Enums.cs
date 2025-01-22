@@ -3,7 +3,7 @@
     public enum FeatureEnabledColorGradient
     {
         Off,        // Do not support having a gradient as color
-        HighOnly,   // Support gradient color only for devices with Shader Level = 35 or higher
+        HighOnly,   // Support gradient color only for devices with Shader Day = 35 or higher
         HighAndLow  // Support gradient color for all devices
     };
 

@@ -88,6 +88,9 @@ public class ZombieStateManager : MonoBehaviour
     // private reference to night just for initialization
     [SerializeField]private bool night;
 
+    // reward 
+    [HideInInspector] public int Reward;
+
     private void OnEnable()
     {
         DayCycle.OnNightTimeChanged += NightTimeMode;
@@ -123,9 +126,9 @@ public class ZombieStateManager : MonoBehaviour
         night = gameManager.DayCycle.IsNightTime;
         NightTimeMode(night);
 
-        
-
         zombieAudioSource = GetComponent<AudioSource>();
+
+        Reward = 50;
 
 
         GetSkinMeshBits();
@@ -264,6 +267,8 @@ public class ZombieStateManager : MonoBehaviour
         yield return new WaitForSeconds(delay);
        
         RagdollModeOff();
+
+        gameManager.EconomyManager.CollectMoney(Reward);
 
         gameManager.EnemyManager.DecreaseEnemyCtr(); 
        

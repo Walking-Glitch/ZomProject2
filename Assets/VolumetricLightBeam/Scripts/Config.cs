@@ -288,7 +288,7 @@ namespace VLB
 
         /// <summary>
         /// Off: do not support having a gradient as color.
-        /// High Only: support gradient color only for devices with Shader Level = 35 or higher.
+        /// High Only: support gradient color only for devices with Shader Day = 35 or higher.
         /// High and Low: support gradient color for all devices.
         /// </summary>
         public FeatureEnabledColorGradient featureEnabledColorGradient = Consts.Config.FeatureEnabledColorGradientDefault;
@@ -866,7 +866,7 @@ namespace VLB
             + "\nVLB version: " + Version.Current
             + "\nPlatform: " + Application.platform
             + "\nOS: " + SystemInfo.operatingSystem
-            + "\nShader Level: " + SystemInfo.graphicsShaderLevel
+            + "\nShader Day: " + SystemInfo.graphicsShaderLevel
             + "\nGraphics API: " + SystemInfo.graphicsDeviceType
             + "\nUses Reversed ZBuffer: " + SystemInfo.usesReversedZBuffer
             + "\nScripting Define Symbols: " + scriptingDefineSymbols

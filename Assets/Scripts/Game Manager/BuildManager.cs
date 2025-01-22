@@ -68,7 +68,10 @@ public class BuildManager : MonoBehaviour
                         Debug.Log($"Collider Name: {collider.name}, Tag: {collider.tag}, Layer: {LayerMask.LayerToName(collider.gameObject.layer)}");
                     }
                 }
-                else { SetIsValidPlacement(true); }
+                else { 
+
+                    SetIsValidPlacement(true); 
+                }
                
             }
             else

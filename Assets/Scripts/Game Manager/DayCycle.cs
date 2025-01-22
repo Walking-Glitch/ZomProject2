@@ -1,3 +1,4 @@
+using Assets.Scripts.Game_Manager;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
@@ -28,8 +29,15 @@ public class DayCycle : MonoBehaviour
     public delegate void NightTimeChanged(bool isNight);
     public static event NightTimeChanged OnNightTimeChanged;
     public bool IsNightTime { get; private set; }
+
+    //public int currentDay = 1;  
+    private bool hasPassed6AM = false; // 
+
+    private GameManager gameManager;
+
     void Start()
     {
+        gameManager = GameManager.Instance;
         timeOfDay = startHour / 24f;
     }
     void Update()
@@ -49,8 +57,19 @@ public class DayCycle : MonoBehaviour
             OnNightTimeChanged?.Invoke(IsNightTime);
         }
 
-       
+        // Check for day cycle completion (crossing 6 AM)
+        if (timeOfDay >= 0.25f && !hasPassed6AM)
+        {
+            hasPassed6AM = true; // Prevent multiple increments
+            gameManager.DifficultyManager.IncreaseLevel();
+          
+        }
 
+        if(timeOfDay < 0.25f)
+        {
+            hasPassed6AM = false;
+        }
+         
         // Increment time based on the multiplier
         timeOfDay += Time.deltaTime / dayDuration * timeSpeedMultiplier;
 

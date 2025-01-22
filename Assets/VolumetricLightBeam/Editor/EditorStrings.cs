@@ -380,7 +380,7 @@ namespace VLB
             public static readonly GUIContent ResetToDefaultButton = new GUIContent("Default values", "Reset properties to their default values.");
             public static readonly GUIContent ResetInternalDataButton = new GUIContent("Reset internal data", "Reset internal data to their default values.");
 
-            public static readonly GUIContent FeatureEnabledColorGradient = new GUIContent("Color Gradient", "- Off: do not support having a gradient as color.\n- High Only: support gradient color only for devices with Shader Level = 35 or higher.\n- High and Low: support gradient color for all devices");
+            public static readonly GUIContent FeatureEnabledColorGradient = new GUIContent("Color Gradient", "- Off: do not support having a gradient as color.\n- High Only: support gradient color only for devices with Shader Day = 35 or higher.\n- High and Low: support gradient color for all devices");
             public static readonly GUIContent FeatureEnabledNoise3D = new GUIContent("Noise 3D", "Support 'Noise 3D' feature or not.");
 
             public static readonly string[] GeometryRenderPipelineEnumDescriptions = new string[]
@@ -463,7 +463,7 @@ namespace VLB
         public static class LOD
         {
             public const string Info = "Use the Unity's 'LODGroup' component to handle LODs count and bounds, but not the Renderers.\nUse this component to specify which beam is associated to each LOD.";
-            public static readonly GUIContent TitleLODArray = new GUIContent("Volumetric Light Beam per LOD", "Specify which Volumetric Light Beam will be chosen for each Level Of Detail.");
+            public static readonly GUIContent TitleLODArray = new GUIContent("Volumetric Light Beam per LOD", "Specify which Volumetric Light Beam will be chosen for each Day Of Detail.");
             public static readonly GUIContent ResetAllLODsLocalTransform = new GUIContent("Reset all LODs local transforms", "Force all the Volumetric Light Beams LODs to be recentered according to their parent.\nUseful if all LODs are children of the LODGroup GameObject.");
             public static readonly GUIContent LOD0PropsToCopy = new GUIContent("LOD0 props to copy", "List of props to copy from the Volumetric Light Beam LOD0 to the other Volumetric Light Beams LODs");
             public static readonly GUIContent CopyLOD0PropsEachFrame = new GUIContent("Copy LOD0 props each frame", "- False: the LOD0 Beam's props will be copied only once on start (enough if the LOD0 beam doesn't change during playtime).\n- True: the LOD0 Beam's props will be copied every frame (useful if the LOD0 is supposed to change during playtime).");

@@ -1,3 +1,4 @@
+using Assets.Scripts.Game_Manager;
 using UnityEngine;
 
 namespace Assets.Scripts.Player
@@ -5,8 +6,9 @@ namespace Assets.Scripts.Player
     public class PlayerStatus : MonoBehaviour
     {
         public int MaxHealth;
-        public int Health;
-        public UIManager UiManager;
+        public int Health;       
+
+        private GameManager gameManager;
 
         //torso light 
         public Light TorsoLight;
@@ -25,7 +27,7 @@ namespace Assets.Scripts.Player
         }
         void Start()
         {
-        
+            gameManager = GameManager.Instance;
         }
 
         // Update is called once per frame
@@ -41,7 +43,7 @@ namespace Assets.Scripts.Player
         {
             Health -= damage;
             Health = Mathf.Clamp(Health, 0, MaxHealth);
-            UiManager.UpdateHealthUI();
+            gameManager.UIManager.UpdateHealthUI();
         }
 
         private void ToggleLight(bool isNight)

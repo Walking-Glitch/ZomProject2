@@ -24,6 +24,8 @@ namespace Assets.Scripts.Game_Manager
         public CasingManager CasingManager;
         public DecalManager DecalManager;
         public BuildManager BuildManager;
+        public UIManager UIManager;
+        public EconomyManager EconomyManager;
 
         [Header("Weapon related references")]
         public WeaponAmmo WeaponAmmo;
@@ -31,6 +33,7 @@ namespace Assets.Scripts.Game_Manager
 
         [Header("Difficulty references")]
         public DayCycle DayCycle;
+        public DifficultyManager DifficultyManager;
         #endregion
 
         #region Singleton

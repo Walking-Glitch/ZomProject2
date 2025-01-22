@@ -4552,6 +4552,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e7f7ab74bfb71e24ebfdd29a4e122fae, type: 3}
   zombieAudioSource: {fileID: 0}
   night: 0
+  Reward: 0
 --- !u!82 &8373106505906584807
 AudioSource:
   m_ObjectHideFlags: 0

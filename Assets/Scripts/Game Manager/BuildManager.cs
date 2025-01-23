@@ -15,14 +15,14 @@ public class BuildManager : MonoBehaviour
 
     private GameObject currentPreview;
     private GameObject selectedTurret;
-    private bool isPlacing = false;
+    [SerializeField] public bool isPlacing = false;
     [SerializeField] private bool isPlacementValid;
 
     private GameManager gameManager;
 
     private int currentIndex = 0;
 
-
+    [SerializeField] private float radius;
 
     private void Start()
     {
@@ -49,12 +49,14 @@ public class BuildManager : MonoBehaviour
 
                 DisplaySelectedPrefab();
 
-                //if (Physics.CheckSphere(currentPreview.transform.position, 10f, placementObstacle))
-                //{
-                //    SetIsValidPlacement(false);
-                //}
+                 radius = GetPrefabRadius(currentPreview);
 
-                Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, 10f, placementObstacle);
+                if (currentPreview == null) return;
+
+                
+                Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, radius, placementObstacle);             
+
+                
 
                 if (colliders.Length > 0)
                 {
@@ -169,6 +171,23 @@ public class BuildManager : MonoBehaviour
 
     }
 
+    private float GetPrefabRadius(GameObject prefab)
+    {
+        if (prefab == null)
+            return 10f; // Default radius if no prefab exists
+
+        Bounds bounds = new Bounds(prefab.transform.position, Vector3.zero);
+
+        // Combine bounds of all child MeshRenderers
+        foreach (var meshRenderer in prefab.GetComponentsInChildren<MeshRenderer>())
+        {
+            bounds.Encapsulate(meshRenderer.bounds);
+        }
+
+        // Use the largest dimension of the bounds as the radius
+        return bounds.extents.magnitude*0.7f;
+    }
+
     public void DestroyPreview()
     {
         currentIndex = 0;
@@ -195,7 +214,7 @@ public class BuildManager : MonoBehaviour
         // Draw the max range in red
         Gizmos.color = Color.red;
         if(currentPreview != null)
-        Gizmos.DrawWireSphere(currentPreview.transform.position, 10f);
+        Gizmos.DrawWireSphere(currentPreview.transform.position, radius);
 
 
     }

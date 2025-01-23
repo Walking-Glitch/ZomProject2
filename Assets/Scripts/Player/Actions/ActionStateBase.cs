@@ -10,7 +10,8 @@ public abstract class ActionStateBase
     public virtual void OnFire(ActionStateManager actionStateManager)
     {}
     public virtual void OnScroll(ActionStateManager actionStateManager, float scrollDelta)
-    {
+    {}
 
-    }
+    public virtual void OnInventory(ActionStateManager actionStateManager)
+    { }
 }

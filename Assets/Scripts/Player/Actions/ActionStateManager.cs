@@ -222,7 +222,8 @@ namespace Assets.Scripts.Player.Actions
         private void OnInventoryPerformed(InputAction.CallbackContext context)
         {
             if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Build);
-            else if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Build) SwitchState(Default);
+            else if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Build)       
+            CurrentState?.OnInventory(this);
         }
 
         private void OnScrollPerformed(InputAction.CallbackContext context)

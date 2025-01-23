@@ -6,19 +6,16 @@ public class BuildState : ActionStateBase
     public override void EnterState(ActionStateManager actionStateManager)
     {
         actionStateManager.gameManager.WeaponLaser.ChangeLazerColorInventory();
+        actionStateManager.gameManager.BuildManager.isPlacing = false;
     }
 
     public override void UpdateState(ActionStateManager actionStateManager)
-    {
-        //if (actionStateManager.gameManager.BuildManager.isPlacing)
-        //{
-            actionStateManager.gameManager.BuildManager.CheckIfOnValidPlacement();
-        //}
-      
-
+    { 
+       actionStateManager.gameManager.BuildManager.CheckIfOnValidPlacement();
+  
        if (actionStateManager.AimStateManager.CurrentState == actionStateManager.AimStateManager.AimIdleState)
         {
-             
+            actionStateManager.gameManager.BuildManager.DestroyPreview();
             actionStateManager.SwitchState(actionStateManager.Default);
         }
     }
@@ -33,7 +30,14 @@ public class BuildState : ActionStateBase
         actionStateManager.gameManager.BuildManager.SwitchSelectedPrefab(scrollDelta);  
     }
 
-   
+    public override void OnInventory(ActionStateManager actionStateManager)
+    {
+        actionStateManager.gameManager.BuildManager.DestroyPreview();
+        actionStateManager.SwitchState(actionStateManager.Default);
+        //Debug.Log("ASDFADADADA");
+    }
+
+
 
 
 }

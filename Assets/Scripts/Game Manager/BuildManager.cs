@@ -1,5 +1,6 @@
 using Assets.Scripts.Game_Manager;
 using UnityEngine;
+using UnityEngine.UI;
 using static Pathfinding.Drawing.Palette;
 
 public class BuildManager : MonoBehaviour
@@ -18,6 +19,7 @@ public class BuildManager : MonoBehaviour
     [SerializeField] public bool isPlacing = false;
     [SerializeField] private bool isPlacementValid;
 
+    public GameObject BuildCanvas;
     private GameManager gameManager;
 
     private int currentIndex = 0;
@@ -100,6 +102,16 @@ public class BuildManager : MonoBehaviour
             currentPreview = Instantiate(fakeTurretPrefabs[currentIndex], AimTransform.position, Quaternion.identity);
             currentPreview.transform.SetParent(AimTransform);
 
+            if(currentPreview != null)
+            {
+                EnableCanvas();
+                BuildCanvas.transform.SetParent(currentPreview.transform);               
+                BuildCanvas.transform.localPosition = Vector3.zero;
+
+                
+            }
+            
+
             isPlacing = true;
         }
 
@@ -153,6 +165,30 @@ public class BuildManager : MonoBehaviour
         Destroy(currentPreview);
         isPlacing = false;
 
+        DisplaySelectedPrefab();
+    }
+
+    void EnableCanvas()
+    {
+        Canvas canvas = BuildCanvas.GetComponent<Canvas>();
+        CanvasScaler canvasScaler = BuildCanvas.GetComponent<CanvasScaler>();
+        GraphicRaycaster graphicRaycaster = BuildCanvas.GetComponent<GraphicRaycaster>();
+
+        if (canvas != null) canvas.enabled = true;
+        if (canvasScaler != null) canvasScaler.enabled = true;
+        if (graphicRaycaster != null) graphicRaycaster.enabled = true;
+
+        // If you are using any custom scripts like RotateBuildCanvas
+        RotateBuildCanvas rotateScript = BuildCanvas.GetComponent<RotateBuildCanvas>();
+        if (rotateScript != null) rotateScript.enabled = true;
+
+        BuildCanvas.SetActive(true); // Ensure the GameObject itself is active
+    }
+
+    void DisableCanvas()
+    {
+        BuildCanvas.transform.SetParent(null);
+        //BuildCanvas.SetActive(false);
     }
 
     public void PlacePrefab()
@@ -164,6 +200,7 @@ public class BuildManager : MonoBehaviour
             selectedTurret.transform.SetParent(AimTransform);
 
             selectedTurret.transform.SetParent(null);
+
             DestroyPreview();
             isPlacing = false;
         }
@@ -190,7 +227,11 @@ public class BuildManager : MonoBehaviour
 
     public void DestroyPreview()
     {
+      
         currentIndex = 0;
+
+        DisableCanvas();
+
         Destroy(currentPreview);
     }
 

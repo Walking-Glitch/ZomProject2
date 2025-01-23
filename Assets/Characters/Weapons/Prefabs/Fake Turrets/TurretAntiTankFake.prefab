@@ -184,8 +184,6 @@ GameObject:
   - component: {fileID: 8844296729874775934}
   - component: {fileID: 858623726989903031}
   - component: {fileID: 1319924732167631863}
-  - component: {fileID: 4498649606905893847}
-  - component: {fileID: -5370324975821585540}
   m_Layer: 0
   m_Name: TurretAntiTankFake
   m_TagString: Untagged
@@ -262,36 +260,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4498649606905893847
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6855494531447223186}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6.4799995, y: 8, z: 6.7999997}
-  m_Center: {x: 0.00000023841858, y: 4.5, z: 0}
---- !u!114 &-5370324975821585540
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6855494531447223186}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf8b1c3820c0c1b439ab9b9e3a01257c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

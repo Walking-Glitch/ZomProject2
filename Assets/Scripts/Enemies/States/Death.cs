@@ -19,7 +19,7 @@ public class Death : ZombieBaseState
         {
             
             zombie.RagdollModeOn();            
-            zombie.rig.GetComponent<Rigidbody>().AddForce(zombie.GetExplosionDirection() *500f, ForceMode.Impulse);
+            zombie.rig.GetComponent<Rigidbody>().AddForce(zombie.GetExplosionDirection() *700f, ForceMode.Impulse);
             zombie.DismembermentByExplosion();
         }
 

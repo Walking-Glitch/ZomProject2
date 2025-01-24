@@ -201,6 +201,8 @@ public class BuildManager : MonoBehaviour
 
             selectedTurret.transform.SetParent(null);
 
+            gameManager.EconomyManager.AddTurretToEconomyManager(selectedTurret);
+
             DestroyPreview();
             isPlacing = false;
         }

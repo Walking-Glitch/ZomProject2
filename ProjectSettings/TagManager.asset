@@ -9,6 +9,10 @@ TagManager:
   - Zombie
   - Environment
   - Laser
+  - Dirt
+  - Concrete
+  - Wood
+  - Metal
   layers:
   - Default
   - TransparentFX

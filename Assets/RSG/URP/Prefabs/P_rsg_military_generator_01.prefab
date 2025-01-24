@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5111932591275369442}
   m_Layer: 0
   m_Name: P_rsg_military_generator_01
-  m_TagString: Untagged
+  m_TagString: Metal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

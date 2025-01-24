@@ -30,6 +30,33 @@ public class DecalManager : MonoBehaviour
         StartCoroutine(DisableGroundDecal(decal));
     }
 
+    public void SpawnMetalHitDecal(Vector3 position, Quaternion rotation)
+    {
+        GameObject decal = gameManager.DecalPool.RequestMetalDecal();
+        decal.transform.position = position;
+        decal.transform.rotation = rotation;
+
+        StartCoroutine(DisableGroundDecal(decal));
+    }
+
+    public void SpawnWoodHitDecal(Vector3 position, Quaternion rotation)
+    {
+        GameObject decal = gameManager.DecalPool.RequestWoodDecal();
+        decal.transform.position = position;
+        decal.transform.rotation = rotation;
+
+        StartCoroutine(DisableGroundDecal(decal));
+    }
+
+    public void SpawnConcreteHitDecal(Vector3 position, Quaternion rotation)
+    {
+        GameObject decal = gameManager.DecalPool.RequestConcreteDecal();
+        decal.transform.position = position;
+        decal.transform.rotation = rotation;
+
+        StartCoroutine(DisableGroundDecal(decal));
+    }
+
     private IEnumerator DisableGroundDecal(GameObject decal)
     {
         yield return new WaitForSeconds(delay);

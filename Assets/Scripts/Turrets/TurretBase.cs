@@ -278,7 +278,8 @@ protected virtual void AddRecoil()
     protected virtual bool CanFire()
     {
         fireRateTimer += Time.deltaTime;
-        if (fireRateTimer < WeaponFireRate) return false;         
+        if (fireRateTimer < WeaponFireRate) return false;   
+        if(!gameManager.EconomyManager.CheckEnoughAmmo()) return false;
         if (currentEnemy != null) return true;
 
         return false;       
@@ -291,6 +292,8 @@ protected virtual void AddRecoil()
         TriggerMuzzleFlash();
 
         PlaySfx();
+
+        gameManager.EconomyManager.SpendAmmoFromPooledResources(1);
 
         if (hasRecoil)
         {
@@ -307,6 +310,27 @@ protected virtual void AddRecoil()
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
                 gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+            }
+
+            else if (hit.collider.CompareTag("Metal"))
+            {
+                Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+            }
+
+            else if (hit.collider.CompareTag("Wood"))
+            {
+                Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+            }
+
+            else if (hit.collider.CompareTag("Concrete"))
+            {
+                Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
             }
 
             else if (hit.collider.CompareTag("Zombie"))

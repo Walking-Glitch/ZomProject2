@@ -28,8 +28,11 @@ public class TurretShotgun : TurretBase
         int pelletCount = 8; // Number of pellets per shot
         float spreadAngle = 5f; // Spread angle in degrees
 
+        gameManager.EconomyManager.SpendAmmoFromPooledResources(pelletCount);
+
         for (int i = 0; i < pelletCount; i++)
         {
+            gameManager.EconomyManager.SpendAmmoFromPooledResources(8);
             // Calculate random spread
             Vector3 randomOffset = Random.insideUnitCircle * Mathf.Tan(spreadAngle * Mathf.Deg2Rad);
             Vector3 pelletDirection = ((currentEnemy.transform.position + Vector3.up * Random.Range(0.8f, 1.8f)) - GunEndTransform.position).normalized;
@@ -44,6 +47,27 @@ public class TurretShotgun : TurretBase
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
                     gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+                }
+
+                else if (hit.collider.CompareTag("Metal"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                    gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+                }
+
+                else if (hit.collider.CompareTag("Wood"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                    gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+                }
+
+                else if (hit.collider.CompareTag("Concrete"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                    gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Zombie"))

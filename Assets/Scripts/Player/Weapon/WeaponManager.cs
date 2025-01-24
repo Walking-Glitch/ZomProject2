@@ -194,6 +194,27 @@ namespace Assets.Scripts.Player.Weapon
                     gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
                 }
 
+                else if (hit.collider.CompareTag("Metal"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                    gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+                }
+
+                else if (hit.collider.CompareTag("Wood"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                    gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+                }
+
+                else if (hit.collider.CompareTag("Concrete"))
+                {
+                    Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
+
+                    gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
+                }
+
                 else if (hit.collider.CompareTag("Zombie"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);

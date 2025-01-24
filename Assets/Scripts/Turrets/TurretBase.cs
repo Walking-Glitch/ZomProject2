@@ -100,8 +100,7 @@ public class TurretBase : MonoBehaviour
     protected virtual void Update()
     {
         fireRateTimer += Time.deltaTime;
-
-        //muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
+        
 
         checkTimer += Time.deltaTime;
 
@@ -191,7 +190,7 @@ protected virtual void AddRecoil()
     }
     protected virtual void AimAtTarget()
     {
-        if(enemies.Count > 0)
+        if(enemies.Count > 0 && gameManager.EconomyManager.CheckEnoughFuel())
         {
             if (currentEnemy == null || !enemies.Contains(currentEnemy))
             {
@@ -280,6 +279,7 @@ protected virtual void AddRecoil()
         fireRateTimer += Time.deltaTime;
         if (fireRateTimer < WeaponFireRate) return false;   
         if(!gameManager.EconomyManager.CheckEnoughAmmo()) return false;
+        if(!gameManager.EconomyManager.CheckEnoughFuel()) return false;
         if (currentEnemy != null) return true;
 
         return false;       

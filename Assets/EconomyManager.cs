@@ -94,7 +94,15 @@ public class EconomyManager : MonoBehaviour
             }
 
             Fuel -= fuelToSubtract * Time.deltaTime;
+
+            CheckEnoughFuel();
         }
+    }
+
+    public bool CheckEnoughFuel()
+    {
+        if (Fuel > 0) return true;
+        return false;
     }
     public void SpendAmmoFromPooledResources(int shots)
     {

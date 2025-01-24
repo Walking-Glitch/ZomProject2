@@ -121,14 +121,14 @@ public class TurretShotgun : TurretBase
                             Debug.Log("Force direction: " + pelletDirection);
                             Debug.DrawRay(trans.position, pelletDirection, Color.red, 2f);
                         }
-                        Debug.Log(limb.limbName);
+                       // Debug.Log(limb.limbName);
                     }
 
                 }
 
                 else
                 {
-                    Debug.Log(hit.distance);
+                   // Debug.Log(hit.distance);
                 }
             }
         }

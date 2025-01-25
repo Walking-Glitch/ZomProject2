@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 7344539797678608641}
   - component: {fileID: 540433558964868269}
   - component: {fileID: 8020305864879660801}
+  - component: {fileID: 1738693302876329502}
   m_Layer: 0
   m_Name: TurretShotgunFake
   m_TagString: Untagged
@@ -173,6 +174,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1738693302876329502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2578714790109156629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd28cd4be9507774e96f407eec80ba9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PrefabName: Shotgun Turret
 --- !u!1 &3475035749726213509
 GameObject:
   m_ObjectHideFlags: 0

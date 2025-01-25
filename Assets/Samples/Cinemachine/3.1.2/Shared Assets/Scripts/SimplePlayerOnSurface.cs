@@ -65,7 +65,7 @@ namespace Unity.Cinemachine.Samples
             var originOffset = 0.25f * PlayerHeight * desiredUp;
             var downRaycastOrigin = tr.position + originOffset;
             var fwdRaycastOrigin = tr.position + 2 * originOffset;
-            var playerRadius = 0.25f * PlayerHeight; // Approximate player radius - can convert to a parameter if needed
+            var playerRadius = 0.25f * PlayerHeight; // Approximate player dimensions - can convert to a parameter if needed
 
             if (!PreviousSateIsValid)
             {

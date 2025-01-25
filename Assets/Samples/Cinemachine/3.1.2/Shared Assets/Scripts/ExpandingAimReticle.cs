@@ -9,7 +9,7 @@ namespace Unity.Cinemachine.Samples
     /// </summary>
     public class ExpandingAimReticle : MonoBehaviour
     {
-        [Tooltip("Maximum radius of the aim reticle, when aiming is inaccurate. ")]
+        [Tooltip("Maximum dimensions of the aim reticle, when aiming is inaccurate. ")]
         [Vector2AsRange]
         public Vector2 RadiusRange;
 

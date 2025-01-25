@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 8844296729874775934}
   - component: {fileID: 858623726989903031}
   - component: {fileID: 1319924732167631863}
+  - component: {fileID: -4957115311802899193}
   m_Layer: 0
   m_Name: TurretAntiTankFake
   m_TagString: Untagged
@@ -260,3 +261,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-4957115311802899193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6855494531447223186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd28cd4be9507774e96f407eec80ba9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PrefabName: Anti Tank turret

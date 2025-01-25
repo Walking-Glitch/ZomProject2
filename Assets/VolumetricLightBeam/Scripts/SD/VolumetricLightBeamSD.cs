@@ -181,14 +181,14 @@ namespace VLB
         public float coneAngle { get { return Mathf.Atan2(coneRadiusEnd - coneRadiusStart, maxGeometryDistance) * Mathf.Rad2Deg * 2f; } }
 
         /// <summary>
-        /// Start radius of the cone geometry.
+        /// Start dimensions of the cone geometry.
         /// 0 will generate a perfect cone geometry. Higher values will generate truncated cones.
         /// </summary>
         [FormerlySerializedAs("radiusStart")]
         public float coneRadiusStart = Consts.Beam.ConeRadiusStart;
 
         /// <summary>
-        /// End radius of the cone geometry
+        /// End dimensions of the cone geometry
         /// </summary>
         public float coneRadiusEnd {
             get { return Utils.ComputeConeRadiusEnd(maxGeometryDistance, spotAngle); }
@@ -201,8 +201,8 @@ namespace VLB
         public float coneVolume { get { float r1 = coneRadiusStart, r2 = coneRadiusEnd; return (Mathf.PI / 3) * (r1 * r1 + r1 * r2 + r2 * r2) * fallOffEnd; } }
 
         /// <summary>
-        /// Apex distance of the truncated radius
-        /// If coneRadiusStart = 0, the apex is the at the truncated radius, so coneApexOffsetZ = 0
+        /// Apex distance of the truncated dimensions
+        /// If coneRadiusStart = 0, the apex is the at the truncated dimensions, so coneApexOffsetZ = 0
         /// Otherwise, coneApexOffsetZ > 0 and represents the local position Z offset
         /// </summary>
         public float coneApexOffsetZ {

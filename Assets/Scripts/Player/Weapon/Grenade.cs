@@ -209,7 +209,7 @@ public class Grenade : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        // Draw a wire sphere in the editor to visualize the detection radius
+        // Draw a wire sphere in the editor to visualize the detection dimensions
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, explosionRadius); //* Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z));
     }

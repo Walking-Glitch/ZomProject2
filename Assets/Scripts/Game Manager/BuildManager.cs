@@ -1,34 +1,60 @@
 using Assets.Scripts.Game_Manager;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using static Pathfinding.Drawing.Palette;
 
 public class BuildManager : MonoBehaviour
 {
-    public GameObject[] turretPrefabs; // Array of turret prefabs
-    public GameObject[] fakeTurretPrefabs;
+    // actual list to return
+    private List<GameObject> currentFakeList;
+    private List<GameObject> currentRealList;
+
+    // list of functional objects to spawn 
+    public List<GameObject> turretPrefabs;
+    public List<GameObject> barriersPrefabs;
+
+    //list of dummy objects to display when selecting a placement
+    public List<GameObject> fakeTurretPrefabs;
+    public List<GameObject> fakeBarriersPrefabs;
+
+    //valid layers for placement
     public LayerMask placementLayer;
-    public LayerMask placementObstacle;// Define valid layers for placement
+    public LayerMask placementObstacle; 
+
+    //materials to switch depending on availability  
     public Material validMaterial;
     public Material invalidMaterial;
 
+    //transform to parent the instantiated objects
     public Transform AimTransform;
 
     private GameObject currentPreview;
-    private GameObject selectedTurret;
+    private GameObject selectedPrefab;
     [SerializeField] public bool isPlacing = false;
     [SerializeField] private bool isPlacementValid;
 
+    //secondary canvas that is attached to the dummy object
     public GameObject BuildCanvas;
+    private RotateBuildCanvas buildCanvasX;
+    //game manager for references
     private GameManager gameManager;
 
+    // index to iterate through the different lists. 
     private int currentIndex = 0;
 
-    [SerializeField] private float radius;
+    [SerializeField] private float dimensions;
+    private Vector3 Center;
+    private Vector3 HalfExtents;
 
     private void Start()
     {
         gameManager = GameManager.Instance;
+
+        currentFakeList = fakeTurretPrefabs;
+        currentRealList = turretPrefabs;
+
+        buildCanvasX = BuildCanvas.GetComponent<RotateBuildCanvas>();   
     }
 
     private void Update()
@@ -49,16 +75,14 @@ public class BuildManager : MonoBehaviour
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
             {
 
-                DisplaySelectedPrefab();
+                DisplaySelectedPrefab(AlternateBetweenFakeLists());
 
-                 radius = GetPrefabRadius(currentPreview);
+                dimensions = GetPrefabDimensions(currentPreview);
 
                 if (currentPreview == null) return;
 
-                
-                Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, radius, placementObstacle);             
 
-                
+                Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, dimensions, placementObstacle);
 
                 if (colliders.Length > 0)
                 {
@@ -66,21 +90,36 @@ public class BuildManager : MonoBehaviour
                     SetIsValidPlacement(false);
 
                     // Debug the colliders found inside the sphere
-                    Debug.Log("Colliders found inside the sphere:");
+                   // Debug.Log("Colliders found inside the sphere:");
                     foreach (Collider collider in colliders)
                     {
-                        Debug.Log($"Collider Name: {collider.name}, Tag: {collider.tag}, Layer: {LayerMask.LayerToName(collider.gameObject.layer)}");
+                       // Debug.Log($"Collider Name: {collider.name}, Tag: {collider.tag}, Layer: {LayerMask.LayerToName(collider.gameObject.layer)}");
                     }
                 }
-                else { 
+                else
+                {
 
-                    SetIsValidPlacement(true); 
+                    SetIsValidPlacement(true);
                 }
-               
-            }
-            else
-            {
-                SetIsValidPlacement(false);
+
+                //        bool isPlacementValid = IsPlacementValidWithBox(currentPreview, placementObstacle);
+
+                //        if (isPlacementValid)
+                //        {
+                //            Debug.Log("Placement is valid!");
+                //            SetIsValidPlacement(true);
+                //        }
+                //        else
+                //        {
+                //            Debug.Log("Placement is invalid. Obstacle detected!");
+                //            SetIsValidPlacement(false);
+                //        }
+
+                //    }
+                //    else
+                //    {
+                //        SetIsValidPlacement(false);
+                //    }
             }
         }
 
@@ -94,12 +133,53 @@ public class BuildManager : MonoBehaviour
 
     }
 
-    public void DisplaySelectedPrefab()
+    public List<GameObject> AlternateBetweenFakeLists()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+
+           
+            currentFakeList = fakeTurretPrefabs;
+            currentRealList = turretPrefabs;
+
+            //disable previous object while keeping the index
+            DestroyPreview();
+            isPlacing = false;
+
+        }
+
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+
+            
+            currentFakeList = fakeBarriersPrefabs;
+            currentRealList = barriersPrefabs;
+
+            //disable previous object while keeping the index
+            DestroyPreview();
+            isPlacing = false;
+             
+            
+
+        }
+
+        if (currentFakeList == null) Debug.Log("CURRENT LIST IS NULL");
+
+         
+        return currentFakeList;
+    }
+    public List<GameObject> AlternateBetweenLists(List<GameObject> list)
+    { 
+        currentRealList = list;
+
+        return currentRealList;
+    }
+    public void DisplaySelectedPrefab(List<GameObject> list)
     {
 
         if (!isPlacing)
         {
-            currentPreview = Instantiate(fakeTurretPrefabs[currentIndex], AimTransform.position, Quaternion.identity);
+            currentPreview = Instantiate(list[currentIndex], AimTransform.position, Quaternion.identity);
             currentPreview.transform.SetParent(AimTransform);
 
             if(currentPreview != null)
@@ -107,10 +187,9 @@ public class BuildManager : MonoBehaviour
                 EnableCanvas();
                 BuildCanvas.transform.SetParent(currentPreview.transform);               
                 BuildCanvas.transform.localPosition = Vector3.zero;
+                buildCanvasX.DisplayPrefabRequirments();
 
-                
             }
-            
 
             isPlacing = true;
         }
@@ -141,13 +220,13 @@ public class BuildManager : MonoBehaviour
         }
     }
 
-    public void SwitchSelectedPrefab(float scrollDelta)
+    public void SwitchSelectedPrefab(float scrollDelta, List<GameObject> list)
     {
 
         if (scrollDelta > 0)
         {
             currentIndex++;
-            if (currentIndex >= turretPrefabs.Length)
+            if (currentIndex >= list.Count)
             {
                 currentIndex = 0;
             }
@@ -158,14 +237,14 @@ public class BuildManager : MonoBehaviour
             currentIndex--;
             if (currentIndex < 0)
             {
-                currentIndex = turretPrefabs.Length - 1;
+                currentIndex = list.Count - 1;
             }
         }
 
         Destroy(currentPreview);
         isPlacing = false;
 
-        DisplaySelectedPrefab();
+        DisplaySelectedPrefab(AlternateBetweenFakeLists());
     }
 
     void EnableCanvas()
@@ -182,6 +261,7 @@ public class BuildManager : MonoBehaviour
         RotateBuildCanvas rotateScript = BuildCanvas.GetComponent<RotateBuildCanvas>();
         if (rotateScript != null) rotateScript.enabled = true;
 
+        
         BuildCanvas.SetActive(true); // Ensure the GameObject itself is active
     }
 
@@ -196,24 +276,29 @@ public class BuildManager : MonoBehaviour
         if (ReturnIsValidPlacement())
         {
 
-            selectedTurret = Instantiate(turretPrefabs[currentIndex], AimTransform.position, Quaternion.identity);
-            selectedTurret.transform.SetParent(AimTransform);
+            selectedPrefab = Instantiate(currentRealList[currentIndex], AimTransform.position, Quaternion.identity);
+            selectedPrefab.transform.SetParent(AimTransform);
 
-            selectedTurret.transform.SetParent(null);
+            selectedPrefab.transform.SetParent(null);
 
-            gameManager.EconomyManager.AddTurretToEconomyManager(selectedTurret);
-
-            DestroyPreview();
+            gameManager.EconomyManager.AddTurretToEconomyManager(selectedPrefab);
+            //
+            DisableCanvas();
+            Destroy(currentPreview);
             isPlacing = false;
+
+             
+            Bounds bounds = selectedPrefab.GetComponent<Collider>().bounds;
+            AstarPath.active.UpdateGraphs(bounds);
         }
 
 
     }
 
-    private float GetPrefabRadius(GameObject prefab)
+    private float GetPrefabDimensions(GameObject prefab)
     {
         if (prefab == null)
-            return 10f; // Default radius if no prefab exists
+            return 10f; // Default dimensions if no prefab exists
 
         Bounds bounds = new Bounds(prefab.transform.position, Vector3.zero);
 
@@ -223,8 +308,38 @@ public class BuildManager : MonoBehaviour
             bounds.Encapsulate(meshRenderer.bounds);
         }
 
-        // Use the largest dimension of the bounds as the radius
-        return bounds.extents.magnitude*0.7f;
+        
+        // Use the largest dimension of the bounds as the dimensions
+        return bounds.extents.magnitude;
+    }
+
+    private bool IsPlacementValidWithBox(GameObject prefab, LayerMask placementObstacle)
+    {
+        if (prefab == null)
+        {
+            Debug.LogError("Prefab is null!");
+            return false;
+        }
+
+        // Get bounds of the prefab
+        Bounds bounds = new Bounds(prefab.transform.position, Vector3.zero);
+
+        foreach (var meshRenderer in prefab.GetComponentsInChildren<MeshRenderer>())
+        {
+            bounds.Encapsulate(meshRenderer.bounds);
+        }
+
+        // Calculate box center and half-extents
+        Vector3 center = bounds.center;
+        Center = center;
+        Vector3 halfExtents = bounds.extents; // Extents are already half the size of bounds
+        HalfExtents = halfExtents;
+        // Perform overlap check
+        Collider[] colliders = Physics.OverlapBox(center, halfExtents, prefab.transform.rotation, placementObstacle);
+
+        
+        // Return true if no overlaps, false otherwise
+        return colliders.Length == 0;
     }
 
     public void DestroyPreview()
@@ -233,7 +348,6 @@ public class BuildManager : MonoBehaviour
         currentIndex = 0;
 
         DisableCanvas();
-
         Destroy(currentPreview);
     }
 
@@ -256,8 +370,9 @@ public class BuildManager : MonoBehaviour
     {
         // Draw the max range in red
         Gizmos.color = Color.red;
-        if(currentPreview != null)
-        Gizmos.DrawWireSphere(currentPreview.transform.position, radius);
+        //if(currentPreview != null)
+        //Gizmos.DrawWireSphere(currentPreview.transform.position, dimensions);
+        Gizmos.DrawWireCube(Center, HalfExtents * 2);
 
 
     }

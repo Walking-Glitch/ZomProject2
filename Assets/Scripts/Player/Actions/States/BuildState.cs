@@ -27,7 +27,7 @@ public class BuildState : ActionStateBase
 
     public override void OnScroll(ActionStateManager actionStateManager, float scrollDelta)
     {
-        actionStateManager.gameManager.BuildManager.SwitchSelectedPrefab(scrollDelta);  
+        actionStateManager.gameManager.BuildManager.SwitchSelectedPrefab(scrollDelta, actionStateManager.gameManager.BuildManager.AlternateBetweenFakeLists());  
     }
 
     public override void OnInventory(ActionStateManager actionStateManager)

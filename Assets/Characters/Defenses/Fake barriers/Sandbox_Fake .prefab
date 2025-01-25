@@ -100,3 +100,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PrefabName: SandBox
+  GeneratorCost: 0
+  FuelBarrelCost: 0
+  SparePartsCost: 250

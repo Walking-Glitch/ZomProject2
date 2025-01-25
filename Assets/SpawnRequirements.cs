@@ -3,7 +3,9 @@ using UnityEngine;
 public class SpawnRequirements : MonoBehaviour
 {
     public string PrefabName;
-    
+    public int GeneratorCost;
+    public int FuelBarrelCost;
+    public int SparePartsCost;
     void Start()
     {
         
@@ -14,4 +16,6 @@ public class SpawnRequirements : MonoBehaviour
     {
         
     }
+
+
 }

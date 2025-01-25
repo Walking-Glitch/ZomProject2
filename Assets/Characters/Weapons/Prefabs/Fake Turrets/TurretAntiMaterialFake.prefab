@@ -101,6 +101,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PrefabName: 'Anti Material Turret '
+  GeneratorCost: 1
+  FuelBarrelCost: 3
+  SparePartsCost: 500
 --- !u!1 &5264521443043944577
 GameObject:
   m_ObjectHideFlags: 0

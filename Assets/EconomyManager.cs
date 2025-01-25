@@ -9,6 +9,8 @@ public class EconomyManager : MonoBehaviour
     public int Generators;
     public int Ammo; 
     public int CurrentMoney;
+    public int FuelBarrels;
+    public int SpareParts;
 
     // lists of turrets 
     public List<TurretBase> VulcanTurretList;
@@ -94,7 +96,7 @@ public class EconomyManager : MonoBehaviour
             }
 
             Fuel -= fuelToSubtract * Time.deltaTime;
-
+            Fuel = Mathf.Clamp(Fuel, 0, Fuel);
             CheckEnoughFuel();
         }
     }
@@ -107,7 +109,14 @@ public class EconomyManager : MonoBehaviour
     public void SpendAmmoFromPooledResources(int shots)
     {
         Ammo -= shots;
-        Mathf.Clamp(Ammo, 0, Ammo);
+        Ammo = Mathf.Clamp(Ammo, 0, Ammo);
+        CheckEnoughAmmo();
+    }
+
+    public void SpendFuelBarrelsFromPooledResources(int barrel)
+    {
+        FuelBarrels -= barrel;
+        FuelBarrels = Mathf.Clamp(FuelBarrels, 0, FuelBarrels);
         CheckEnoughAmmo();
     }
 

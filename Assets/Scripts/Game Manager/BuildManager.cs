@@ -36,7 +36,7 @@ public class BuildManager : MonoBehaviour
 
     //secondary canvas that is attached to the dummy object
     public GameObject BuildCanvas;
-    private RotateBuildCanvas buildCanvasX;
+    private BuildCanvas buildCanvasX;
     //game manager for references
     private GameManager gameManager;
 
@@ -54,7 +54,7 @@ public class BuildManager : MonoBehaviour
         currentFakeList = fakeTurretPrefabs;
         currentRealList = turretPrefabs;
 
-        buildCanvasX = BuildCanvas.GetComponent<RotateBuildCanvas>();   
+        buildCanvasX = BuildCanvas.GetComponent<BuildCanvas>();   
     }
 
     private void Update()
@@ -257,8 +257,8 @@ public class BuildManager : MonoBehaviour
         if (canvasScaler != null) canvasScaler.enabled = true;
         if (graphicRaycaster != null) graphicRaycaster.enabled = true;
 
-        // If you are using any custom scripts like RotateBuildCanvas
-        RotateBuildCanvas rotateScript = BuildCanvas.GetComponent<RotateBuildCanvas>();
+        // If you are using any custom scripts like BuildCanvas
+        BuildCanvas rotateScript = BuildCanvas.GetComponent<BuildCanvas>();
         if (rotateScript != null) rotateScript.enabled = true;
 
         

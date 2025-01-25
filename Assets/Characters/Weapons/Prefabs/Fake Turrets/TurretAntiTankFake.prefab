@@ -274,3 +274,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PrefabName: Anti Tank turret
+  GeneratorCost: 1
+  FuelBarrelCost: 3
+  SparePartsCost: 700

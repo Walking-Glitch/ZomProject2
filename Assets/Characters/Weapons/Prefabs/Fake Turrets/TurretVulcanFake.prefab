@@ -393,6 +393,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PrefabName: Vulcan Turret
+  GeneratorCost: 1
+  FuelBarrelCost: 3
+  SparePartsCost: 1200
 --- !u!1 &8815147189657025375
 GameObject:
   m_ObjectHideFlags: 0

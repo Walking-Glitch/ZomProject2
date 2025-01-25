@@ -99,3 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd28cd4be9507774e96f407eec80ba9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PrefabName: 
+  GeneratorCost: 0
+  FuelBarrelCost: 0
+  SparePartsCost: 250

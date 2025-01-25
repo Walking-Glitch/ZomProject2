@@ -187,6 +187,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PrefabName: Shotgun Turret
+  GeneratorCost: 1
+  FuelBarrelCost: 3
+  SparePartsCost: 600
 --- !u!1 &3475035749726213509
 GameObject:
   m_ObjectHideFlags: 0

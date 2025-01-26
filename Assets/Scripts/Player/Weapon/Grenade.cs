@@ -72,11 +72,11 @@ public class Grenade : MonoBehaviour
 
         if (grenadeFlash != null)
         {
-            Debug.Log("WE HAVE LIGHT" + flashIntensity);
+            //Debug.Log("WE HAVE LIGHT" + flashIntensity);
         }
         else
         {
-            Debug.Log("NULL LIGHT");
+            //Debug.Log("NULL LIGHT");
         }
 
         grenadeFlash.intensity = Mathf.Lerp(grenadeFlash.intensity, 0, lightReturnSpeed * Time.deltaTime);

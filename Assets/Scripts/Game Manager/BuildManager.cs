@@ -29,6 +29,10 @@ public class BuildManager : MonoBehaviour
     //transform to parent the instantiated objects
     public Transform AimTransform;
 
+    // rotation of current preview
+    private Vector3 previewEulerAngles;
+    private Vector3 previewDefaultStartAngles = Vector3.zero;
+
     private GameObject currentPreview;
     private GameObject selectedPrefab;
     [SerializeField] public bool isPlacing = false;
@@ -81,6 +85,7 @@ public class BuildManager : MonoBehaviour
 
                 if (currentPreview == null) return;
 
+                RotatePreview(currentPreview);
 
                 Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, dimensions, placementObstacle);
 
@@ -133,7 +138,25 @@ public class BuildManager : MonoBehaviour
 
     }
 
-    public List<GameObject> AlternateBetweenFakeLists()
+    public void RotatePreview(GameObject currentPreview)
+    {
+        if (Input.GetKey(KeyCode.Q))
+        {
+            float rotateRate = -30;
+
+            currentPreview.transform.Rotate(0, rotateRate * Time.deltaTime, 0);
+        }
+        else if (Input.GetKey(KeyCode.E))
+        {
+            float rotateRate = 30;
+
+            currentPreview.transform.Rotate(0, rotateRate * Time.deltaTime, 0);
+        }
+
+        previewEulerAngles = currentPreview.transform.eulerAngles;
+
+    }
+        public List<GameObject> AlternateBetweenFakeLists()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -173,13 +196,13 @@ public class BuildManager : MonoBehaviour
         currentRealList = list;
 
         return currentRealList;
-    }
+    }// this can be deleted later
     public void DisplaySelectedPrefab(List<GameObject> list)
     {
 
         if (!isPlacing)
         {
-            currentPreview = Instantiate(list[currentIndex], AimTransform.position, Quaternion.identity);
+            currentPreview = Instantiate(list[currentIndex], AimTransform.position, Quaternion.Euler(previewEulerAngles));
             currentPreview.transform.SetParent(AimTransform);
 
             if(currentPreview != null)
@@ -244,6 +267,8 @@ public class BuildManager : MonoBehaviour
         Destroy(currentPreview);
         isPlacing = false;
 
+        previewEulerAngles = previewDefaultStartAngles;
+
         DisplaySelectedPrefab(AlternateBetweenFakeLists());
     }
 
@@ -276,7 +301,7 @@ public class BuildManager : MonoBehaviour
         if (ReturnIsValidPlacement())
         {
 
-            selectedPrefab = Instantiate(currentRealList[currentIndex], AimTransform.position, Quaternion.identity);
+            selectedPrefab = Instantiate(currentRealList[currentIndex], AimTransform.position, currentPreview.transform.rotation);
             selectedPrefab.transform.SetParent(AimTransform);
 
             selectedPrefab.transform.SetParent(null);
@@ -370,8 +395,8 @@ public class BuildManager : MonoBehaviour
     {
         // Draw the max range in red
         Gizmos.color = Color.red;
-        //if(currentPreview != null)
-        //Gizmos.DrawWireSphere(currentPreview.transform.position, dimensions);
+        if(currentPreview != null)
+        Gizmos.DrawWireSphere(currentPreview.transform.position, dimensions);
         Gizmos.DrawWireCube(Center, HalfExtents * 2);
 
 

@@ -1,15 +1,10 @@
 using System.Collections;
-using System.ComponentModel;
 using Assets.Scripts.Player.Actions;
 using Assets.Scripts.Player.Weapon;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
-using static UnityEditor.SceneView;
-using Input = UnityEngine.Input;
-
 public class AimStateManager : MonoBehaviour 
 {
 

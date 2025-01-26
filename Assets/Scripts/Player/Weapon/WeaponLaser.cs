@@ -1,7 +1,4 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using System.Collections;
-using System.Linq.Expressions;
 
 public class WeaponLaser : MonoBehaviour
 {

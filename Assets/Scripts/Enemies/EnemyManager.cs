@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Scripts.Game_Manager;
-using NUnit.Framework;
-using UnityEditor.Build.Content;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemyManager : MonoBehaviour
 {

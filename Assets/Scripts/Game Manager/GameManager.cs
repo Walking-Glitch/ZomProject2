@@ -34,6 +34,9 @@ namespace Assets.Scripts.Game_Manager
         [Header("Difficulty references")]
         public DayCycle DayCycle;
         public DifficultyManager DifficultyManager;
+
+        [Header("Vehicle references")]
+        public TruckController Truck;
         #endregion
 
         #region Singleton

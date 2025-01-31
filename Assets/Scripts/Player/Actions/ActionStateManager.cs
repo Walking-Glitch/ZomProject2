@@ -55,6 +55,8 @@ namespace Assets.Scripts.Player.Actions
             inputSystemActions.Player.Attack.performed += OnFirePerformed;
             inputSystemActions.Player.Scroll.performed += OnScrollPerformed;
 
+            inputSystemActions.Player.Interact.started += OnInteractPerformed;
+
 
         }
     
@@ -179,7 +181,7 @@ namespace Assets.Scripts.Player.Actions
             grenadeClone.transform.SetParent(WeaponManager.GrenadeSpawnTransform);
             grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(36f, -20f, -68f));
             grenadeClone.GetComponent<Grenade>().CodeToRunWhenObjectRequested();
-            //grenadeClone = Instantiate(GrenadePrefab, WeaponManager.GrenadeSpawnTransform.position, Quaternion.identity);
+            
          
             grenadeClone.SetActive(true);
            
@@ -236,6 +238,16 @@ namespace Assets.Scripts.Player.Actions
         private void OnFirePerformed(InputAction.CallbackContext context)
         {
             CurrentState?.OnFire(this);
+        }
+
+        private void OnInteractPerformed(InputAction.CallbackContext context)
+        {
+            //Debug.Log("E pressed");
+            if (gameManager.PlayerStats.isInInteractableRange)
+            {
+                gameManager.PlayerGameObject.SetActive(false);
+                gameManager.Truck.isPlayerIn = true;
+            }
         }
 
         public void WeaponReloaded()

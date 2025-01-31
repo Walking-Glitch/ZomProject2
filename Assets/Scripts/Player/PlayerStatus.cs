@@ -6,7 +6,9 @@ namespace Assets.Scripts.Player
     public class PlayerStatus : MonoBehaviour
     {
         public int MaxHealth;
-        public int Health;       
+        public int Health;
+
+        public bool isInInteractableRange;
 
         private GameManager gameManager;
 
@@ -16,6 +18,7 @@ namespace Assets.Scripts.Player
         private void OnEnable()
         {
             DayCycle.OnNightTimeChanged += ToggleLight;
+
         }
         private void OnDisable()
         {
@@ -49,6 +52,11 @@ namespace Assets.Scripts.Player
         private void ToggleLight(bool isNight)
         {
             TorsoLight.enabled = isNight;
+        }
+
+        public void setIsInInteractableRange(bool isInRange)
+        {
+            isInInteractableRange = isInRange;
         }
 
     }

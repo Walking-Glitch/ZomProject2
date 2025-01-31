@@ -2,7 +2,6 @@ using Assets.Scripts.Game_Manager;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static Pathfinding.Drawing.Palette;
 
 public class BuildManager : MonoBehaviour
 {
@@ -81,50 +80,41 @@ public class BuildManager : MonoBehaviour
 
                 DisplaySelectedPrefab(AlternateBetweenFakeLists());
 
-                dimensions = GetPrefabDimensions(currentPreview);
+                //dimensions = GetPrefabDimensions(currentPreview);
 
-                if (currentPreview == null) return;
+                //if (currentPreview == null) return;
 
                 RotatePreview(currentPreview);
 
-                Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, dimensions, placementObstacle);
+                //Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, dimensions, placementObstacle);
 
-                if (colliders.Length > 0)
+                //if (colliders.Length > 0)
+                //{
+                //    // Placement is invalid if any colliders are found
+                //    SetIsValidPlacement(false);
+
+                //    // Debug the colliders found inside the sphere
+                //   // Debug.Log("Colliders found inside the sphere:");
+                //    foreach (Collider collider in colliders)
+                //    {
+                //       // Debug.Log($"Collider Name: {collider.name}, Tag: {collider.tag}, Layer: {LayerMask.LayerToName(collider.gameObject.layer)}");
+                //    }
+                //}
+                //else
+                //{
+
+                //    SetIsValidPlacement(true);
+                //}
+                if(IsPlacementValidWithBox(currentPreview, placementObstacle))
                 {
-                    // Placement is invalid if any colliders are found
-                    SetIsValidPlacement(false);
-
-                    // Debug the colliders found inside the sphere
-                   // Debug.Log("Colliders found inside the sphere:");
-                    foreach (Collider collider in colliders)
-                    {
-                       // Debug.Log($"Collider Name: {collider.name}, Tag: {collider.tag}, Layer: {LayerMask.LayerToName(collider.gameObject.layer)}");
-                    }
+                    SetIsValidPlacement(true);
                 }
                 else
                 {
-
-                    SetIsValidPlacement(true);
+                    SetIsValidPlacement(false);
                 }
 
-                //        bool isPlacementValid = IsPlacementValidWithBox(currentPreview, placementObstacle);
 
-                //        if (isPlacementValid)
-                //        {
-                //            Debug.Log("Placement is valid!");
-                //            SetIsValidPlacement(true);
-                //        }
-                //        else
-                //        {
-                //            Debug.Log("Placement is invalid. Obstacle detected!");
-                //            SetIsValidPlacement(false);
-                //        }
-
-                //    }
-                //    else
-                //    {
-                //        SetIsValidPlacement(false);
-                //    }
             }
         }
 
@@ -136,6 +126,34 @@ public class BuildManager : MonoBehaviour
         }
 
 
+    }
+
+    private bool IsPlacementValidWithBox(GameObject prefab, LayerMask placementObstacle)
+    {
+        if (prefab == null)
+        {
+            Debug.LogError("Prefab is null!");
+            return false;
+        }
+        Bounds bounds = new Bounds(prefab.transform.position, Vector3.zero);
+
+        foreach (var meshRenderer in prefab.GetComponentsInChildren<MeshRenderer>())
+        {
+            bounds.Encapsulate(meshRenderer.bounds);
+        }
+
+      
+        Vector3 center = bounds.center;
+        Vector3 halfExtents = bounds.extents; // Extents are already half the size of bounds
+
+        Center = center;
+        HalfExtents = halfExtents;
+
+        // Perform overlap check
+        Collider[] colliders = Physics.OverlapBox(center, halfExtents, prefab.transform.rotation, placementObstacle);
+
+        // Return true if no overlaps, false otherwise
+        return colliders.Length == 0;
     }
 
     public void RotatePreview(GameObject currentPreview)
@@ -156,7 +174,7 @@ public class BuildManager : MonoBehaviour
         previewEulerAngles = currentPreview.transform.eulerAngles;
 
     }
-        public List<GameObject> AlternateBetweenFakeLists()
+    public List<GameObject> AlternateBetweenFakeLists()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -182,8 +200,6 @@ public class BuildManager : MonoBehaviour
             DestroyPreview();
             isPlacing = false;
              
-            
-
         }
 
         if (currentFakeList == null) Debug.Log("CURRENT LIST IS NULL");
@@ -337,36 +353,7 @@ public class BuildManager : MonoBehaviour
         // Use the largest dimension of the bounds as the dimensions
         return bounds.extents.magnitude;
     }
-
-    private bool IsPlacementValidWithBox(GameObject prefab, LayerMask placementObstacle)
-    {
-        if (prefab == null)
-        {
-            Debug.LogError("Prefab is null!");
-            return false;
-        }
-
-        // Get bounds of the prefab
-        Bounds bounds = new Bounds(prefab.transform.position, Vector3.zero);
-
-        foreach (var meshRenderer in prefab.GetComponentsInChildren<MeshRenderer>())
-        {
-            bounds.Encapsulate(meshRenderer.bounds);
-        }
-
-        // Calculate box center and half-extents
-        Vector3 center = bounds.center;
-        Center = center;
-        Vector3 halfExtents = bounds.extents; // Extents are already half the size of bounds
-        HalfExtents = halfExtents;
-        // Perform overlap check
-        Collider[] colliders = Physics.OverlapBox(center, halfExtents, prefab.transform.rotation, placementObstacle);
-
-        
-        // Return true if no overlaps, false otherwise
-        return colliders.Length == 0;
-    }
-
+ 
     public void DestroyPreview()
     {
       
@@ -396,7 +383,7 @@ public class BuildManager : MonoBehaviour
         // Draw the max range in red
         Gizmos.color = Color.red;
         if(currentPreview != null)
-        Gizmos.DrawWireSphere(currentPreview.transform.position, dimensions);
+        //Gizmos.DrawWireSphere(currentPreview.transform.position, dimensions);
         Gizmos.DrawWireCube(Center, HalfExtents * 2);
 
 

@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI Level;
     public TextMeshProUGUI Money;
 
+    public TextMeshProUGUI Interact; 
+
     private GameManager gameManager;
     void Start()
     {
@@ -25,9 +27,20 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        ToggleOffInteractText();
     }
 
+    public void ToggleOffInteractText()
+    {
+        if (gameManager.PlayerStats.isInInteractableRange)
+        {
+            Interact.gameObject.SetActive(true);
+        }
+        else
+        {
+            Interact.gameObject.SetActive(false);
+        }
+    }
     public void UpdateMoneyUI(int money)
     {         
         Money.text = money.ToString();

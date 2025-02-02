@@ -245,7 +245,8 @@ namespace Assets.Scripts.Player.Actions
             //Debug.Log("E pressed");
             if (gameManager.PlayerStats.isInInteractableRange)
             {
-                gameManager.PlayerGameObject.SetActive(false);
+                //gameManager.PlayerGameObject.SetActive(false);
+                anim.SetBool("IsDriving", true);
                 gameManager.Truck.isPlayerIn = true;
             }
         }

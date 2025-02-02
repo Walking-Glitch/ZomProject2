@@ -446,6 +446,7 @@ MonoBehaviour:
   lightReturnSpeed: 30
   fireSound:
   - {fileID: 8300000, guid: eaf43ed2ccdaf73409f08b1c1d4357e1, type: 3}
+  rotatoryBarrel: 0
 --- !u!114 &6795276447676579186
 MonoBehaviour:
   m_ObjectHideFlags: 0

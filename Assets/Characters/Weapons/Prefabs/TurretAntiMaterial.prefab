@@ -314,6 +314,7 @@ MonoBehaviour:
   lightReturnSpeed: 30
   fireSound:
   - {fileID: 8300000, guid: b7083e90cd0e0a14da4b024a24446868, type: 3}
+  rotatoryBarrel: 0
 --- !u!82 &1572033907995915609
 AudioSource:
   m_ObjectHideFlags: 0

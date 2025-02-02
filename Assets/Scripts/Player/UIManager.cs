@@ -32,12 +32,19 @@ public class UIManager : MonoBehaviour
 
     public void ToggleOffInteractText()
     {
-        if (gameManager.PlayerStats.isInInteractableRange)
+        if (gameManager.PlayerStats.isInInteractableRange && !gameManager.Truck.isPlayerIn)
         {
+            //Debug.Log("we are inside first if");
             Interact.gameObject.SetActive(true);
         }
-        else
+        else if(!gameManager.PlayerStats.isInInteractableRange )
         {
+            //Debug.Log("we are inside second if");
+            Interact.gameObject.SetActive(false);
+        }
+        else if (gameManager.Truck.isPlayerIn)
+        {
+            //Debug.Log("we are inside third if");
             Interact.gameObject.SetActive(false);
         }
     }

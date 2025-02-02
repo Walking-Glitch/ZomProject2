@@ -18,6 +18,7 @@ public class Missile : MonoBehaviour
 
     //checks
     [SerializeField] private bool exploded;
+    private Vector3 explosionPosition;
 
     // zombies in area of effect 
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
@@ -41,6 +42,8 @@ public class Missile : MonoBehaviour
     public float explosionRadius;
     public LayerMask ZombieLayerMask;
 
+    //Explosion particle system
+    public ParticleSystem ExplosionVFX;
     private void Awake()
     {
         gameManager = GameManager.Instance;
@@ -65,50 +68,54 @@ public class Missile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        {
-            if(!exploded) MissileInterpolation();
-        }
-    }
+        //{
+        //    if(!exploded) MissileInterpolation();
+        //}
+        MissileInterpolation();
+    
 
-   
+}
 
-     
-    public void PlayReleasePinSfx()
-    {
-        //MissileAudioSource.PlayOneShot(MissilePropulsion);
-    }
-
+    
     public void PlayExplosionSfx()
     {
-        //MissileAudioSource.PlayOneShot(MissileExplosion);
+        MissileAudioSource.PlayOneShot(MissileExplosion);
 
     }
 
     public void PlayExplosionVfx()
     {
-
-        
+        ExplosionVFX.Play();
     }
 
     public void MissileInterpolation()
     {
-        Vector3 currentTarget = turretAntiTank.CurrentMissileTarget.transform.position + Vector3.up * 1.1f; 
-        transform.position = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
-        
-        if (Vector3.Distance( transform.position, currentTarget) < 0.5f)
+        Vector3 currentTarget = turretAntiTank.CurrentMissileTarget.transform.position + Vector3.up * 1.1f;
+
+        if (!exploded)
         {
-            exploded = true;
-            FindEnemies();
-            KillEnemiesInBlastRadius();
-            MissileBody.SetActive(false);
-            transform.position = originalMissileTransform; 
-            gameObject.SetActive(false);
+            transform.position = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, currentTarget) < 1f)
+            {
+                exploded = true;
+                explosionPosition = transform.position; 
+                FindEnemies();
+                PlayExplosionVfx();
+                PlayExplosionSfx();
+                MissileBody.SetActive(false);
+                StartCoroutine(WaitForAudioToEndAndDisable());
+            }
+        }
+        else
+        {
+            // Keep the missile in place after explosion
+            transform.position = explosionPosition;
         }
     }
 
     public void KillEnemiesInBlastRadius()
-    {
-        //ExplosionParticleSystem.Play();
+    { 
 
         foreach (ZombieStateManager zombie in enemies)
         {
@@ -150,8 +157,11 @@ public class Missile : MonoBehaviour
     {
         yield return new WaitWhile(() => MissileAudioSource.isPlaying);
         Debug.Log("Audio clip has finished playing.");
-         
+
+        transform.position = originalMissileTransform;
+        
         gameObject.SetActive(false);
+        Debug.Log("Wait for audio done");
     }
  
 

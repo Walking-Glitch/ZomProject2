@@ -72,10 +72,10 @@ public class TurretBase : MonoBehaviour
     [Header("Weapon SFX")]
     protected AudioSource turretAudioSource;  
     public AudioClip [] fireSound;
-    
 
-    // barral rotation variables
-    protected bool rotatoryBarrel;
+
+    // barrel rotation variables
+    [SerializeField] protected bool rotatoryBarrel;
 
     // optimization attempts
     private float checkInterval = 0.2f;
@@ -89,8 +89,6 @@ public class TurretBase : MonoBehaviour
 
         CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
          
-
-        rotatoryBarrel = true;
 
     }
 
@@ -408,9 +406,12 @@ protected virtual void AddRecoil()
 
     protected void CollectMuzzleFlashChildObjects(Transform parentMuzzleFlash)
     {
-        foreach (Transform muzzle in parentMuzzleFlash)
+        if(parentMuzzleFlash != null)
         {
-            muzzleFlashList.Add(muzzle.transform);
+            foreach (Transform muzzle in parentMuzzleFlash)
+            {
+                muzzleFlashList.Add(muzzle.transform);
+            }
         }
     }
     protected void TriggerMuzzleFlash()
@@ -425,15 +426,7 @@ protected virtual void AddRecoil()
         if (lightCurves != null)
         {
             lightCurves.GraphIntensityMultiplier = lightIntensity;
-        }
-
-
-        //if(muzzleFlashLight != null)
-        //{
-        //    lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
-        //    muzzleFlashLight.intensity = lightIntensity;
-        //}
-
+        } 
     }
 
     protected void PlaySfx()

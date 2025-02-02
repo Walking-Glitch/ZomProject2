@@ -6,11 +6,7 @@ public class TurretSniper : TurretBase
    
     protected override void Start()
     {
-        gameManager = GameManager.Instance;
-
-        turretAudioSource = GetComponent<AudioSource>();
-
-        CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
+        base.Start();
     }
 
     protected override void Fire(bool hasRecoil)

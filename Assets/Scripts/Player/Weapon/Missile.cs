@@ -32,7 +32,7 @@ public class Missile : MonoBehaviour
     // flash
     private Light missileFlash;
     [SerializeField] private float flashIntensity;
-    [SerializeField] private float lightReturnSpeed = 30;
+    [SerializeField] private float lightReturnSpeed = 20;
 
 
     // antitank reference
@@ -46,20 +46,23 @@ public class Missile : MonoBehaviour
     public ParticleSystem ExplosionVFX;
     private void Awake()
     {
-        gameManager = GameManager.Instance;
+       gameManager = GameManager.Instance;
          
     }
     private void Start()
     {
         turretAntiTank = GetComponentInParent<TurretAntiTank>();
         originalMissileTransform = transform.position;
+
+        missileFlash = GetComponentInChildren<Light>();
+        flashIntensity = missileFlash.intensity;
+        missileFlash.intensity = 0;
     }
 
     private void OnEnable()
     {
         exploded = false;
-        MissileBody.SetActive(true); // Ensure the missile is visible again
-        //transform.position = originalMissileTransform; // Reset position to its starting point
+        MissileBody.SetActive(true); // Ensure the missile is visible again        
     }
     private void OnDisable()
     {
@@ -68,15 +71,13 @@ public class Missile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //{
-        //    if(!exploded) MissileInterpolation();
-        //}
         MissileInterpolation();
-    
 
-}
+        missileFlash.intensity = Mathf.Lerp(missileFlash.intensity, 0, lightReturnSpeed * Time.deltaTime);
 
-    
+    }
+
+
     public void PlayExplosionSfx()
     {
         MissileAudioSource.PlayOneShot(MissileExplosion);
@@ -85,11 +86,22 @@ public class Missile : MonoBehaviour
 
     public void PlayExplosionVfx()
     {
-        ExplosionVFX.Play();
+        if (missileFlash != null)
+        {
+            ExplosionVFX.Play();
+            missileFlash.intensity = flashIntensity;
+            Debug.Log("WE HAVE LIGHT" + flashIntensity);
+        }
+        else
+        {
+            Debug.Log("NULL LIGHT");
+        }
     }
 
     public void MissileInterpolation()
     {
+        if (turretAntiTank.CurrentMissileTarget == null) return;
+
         Vector3 currentTarget = turretAntiTank.CurrentMissileTarget.transform.position + Vector3.up * 1.1f;
 
         if (!exploded)

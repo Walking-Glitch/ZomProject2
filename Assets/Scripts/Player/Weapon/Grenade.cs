@@ -50,6 +50,9 @@ public class Grenade : MonoBehaviour
     [SerializeField] private float flashIntensity;
     [SerializeField] private float lightReturnSpeed = 30;
 
+    //Explosion particle system
+    public ParticleSystem ExplosionVFX;
+
 
     private void Awake()
     {
@@ -112,9 +115,11 @@ public class Grenade : MonoBehaviour
 
     public void PlayExplosionVfx()
     {
+        GrenadeRb.isKinematic = true;
 
         if (grenadeFlash != null)
         {
+            ExplosionVFX.Play();
             grenadeFlash.intensity = flashIntensity;
             Debug.Log("WE HAVE LIGHT" + flashIntensity);
         }

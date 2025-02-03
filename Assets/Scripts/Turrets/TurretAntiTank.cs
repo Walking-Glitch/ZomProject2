@@ -135,7 +135,7 @@ public class TurretAntiTank : TurretBase
                 }
             }
 
-            if (enemiesInBlast.Count > 2) return true;
+            if (enemiesInBlast.Count > 3) return true;
             else return false;
         }
         return false;

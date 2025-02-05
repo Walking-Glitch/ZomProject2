@@ -2,6 +2,7 @@ using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Actions;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -9,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Player.Weapon
 {
-    public class WeaponManager : MonoBehaviour
+    public class WeaponManager : NetworkBehaviour
     {
         [HideInInspector]public Vector3 ShotForceDir;
 
@@ -46,10 +47,7 @@ namespace Assets.Scripts.Player.Weapon
         private MovementStateManager moveStateManager;
         private ActionStateManager actionStateManager;
 
-        // decals 
-        public GameObject hitGroundDecal;
-        public GameObject fleshDecal;
-
+         
         // audio variables
         public AudioSource RifleAudioSource;
         public AudioSource ToggleWeaponAudioSource;
@@ -97,7 +95,7 @@ namespace Assets.Scripts.Player.Weapon
             inputSystemActions.Player.Attack.canceled += OnFireCanceled;
 
 
-            gameManager = GameManager.Instance;
+           
             anim = GetComponent<Animator>();
             aimStateManager = GetComponent<AimStateManager>();
             moveStateManager = GetComponent<MovementStateManager>();
@@ -115,6 +113,7 @@ namespace Assets.Scripts.Player.Weapon
 
         void Start()
         {
+            gameManager = GameManager.Instance; // moved in from awake
             CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
             //lightIntensity = muzzleFlashLight.intensity;
             //muzzleFlashLight.intensity = 0;

@@ -1,9 +1,10 @@
 using Assets.Scripts.Game_Manager;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Assets.Scripts.Player
 {
-    public class PlayerStatus : MonoBehaviour
+    public class PlayerStatus : NetworkBehaviour
     {
         public int MaxHealth;
         public int Health;

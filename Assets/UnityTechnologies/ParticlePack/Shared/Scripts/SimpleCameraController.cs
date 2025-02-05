@@ -108,7 +108,7 @@ namespace UnityTemplateProjects
         
         void Update()
         {
-            // Hide and lock cursor when right mouse button pressed
+            // LoadScene and lock cursor when right mouse button pressed
             if (Input.GetMouseButtonDown(1))
             {
                 Cursor.lockState = CursorLockMode.Locked;

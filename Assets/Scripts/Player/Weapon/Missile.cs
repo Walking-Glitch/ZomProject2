@@ -90,7 +90,7 @@ public class Missile : MonoBehaviour
         {
             ExplosionVFX.Play();
             missileFlash.intensity = flashIntensity;
-            Debug.Log("WE HAVE LIGHT" + flashIntensity);
+           // Debug.Log("WE HAVE LIGHT" + flashIntensity);
         }
         else
         {
@@ -168,7 +168,7 @@ public class Missile : MonoBehaviour
     IEnumerator WaitForAudioToEndAndDisable()
     {
         yield return new WaitWhile(() => MissileAudioSource.isPlaying);
-        Debug.Log("Audio clip has finished playing.");
+        //Debug.Log("Audio clip has finished playing.");
 
         transform.position = originalMissileTransform;
         

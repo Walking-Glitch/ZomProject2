@@ -13,6 +13,7 @@ TagManager:
   - Concrete
   - Wood
   - Metal
+  - SpawnPoint
   layers:
   - Default
   - TransparentFX

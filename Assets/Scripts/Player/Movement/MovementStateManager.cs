@@ -1,10 +1,10 @@
 using Assets.Scripts.Player.Actions;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
-using UnityEngine.Windows;
 
-public class MovementStateManager : MonoBehaviour
+
+public class MovementStateManager : NetworkBehaviour
 {
     // movement variables
     [HideInInspector] public Vector2 moveInput;
@@ -49,47 +49,66 @@ public class MovementStateManager : MonoBehaviour
     [HideInInspector] public AimStateManager aimStateManager;
     [HideInInspector] public ActionStateManager actionStateManager;
 
-    void Awake()
-    {
-        characterController = GetComponent<CharacterController>();
-        actionSystem = new InputSystem_Actions();
-        
-        actionSystem.Player.Move.performed += OnMovePerformed;
-        actionSystem.Player.Move.canceled += OnMoveCancelled;
-
-        actionSystem.Player.Sprint.performed += OnRunPerformed;
-        actionSystem.Player.Sprint.canceled += OnRunCancelled;
-    }
+     
 
 
     void OnEnable()
     {
-        actionSystem.Enable();
+        if (actionSystem != null)
+            actionSystem.Enable();
     }
 
     void OnDisable()
     {
-        actionSystem.Disable();
+        if (actionSystem != null)
+            actionSystem.Disable();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        Initialize();
     }
 
     void Start()
     {
-        currentSpeed = walkSpeed;
-        aimStateManager = GetComponent<AimStateManager>();
-        actionStateManager = GetComponent<ActionStateManager>();
-        anim = GetComponent<Animator>();
-
-        SwitchState(Idle);
+        if (!IsServer && !IsClient)  
+        {
+            Initialize();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log($"Player {NetworkObjectId} | IsOwner: {IsOwner}");
+
+        if (!IsOwner) return; //
+
         Move();
         Gravity();
 
         currentState.UpdateState(this);
 
+    }
+
+    private void Initialize()
+    {
+        characterController = GetComponent<CharacterController>();
+        actionSystem = new InputSystem_Actions();
+
+        actionSystem.Player.Move.performed += OnMovePerformed;
+        actionSystem.Player.Move.canceled += OnMoveCancelled;
+        actionSystem.Player.Sprint.performed += OnRunPerformed;
+        actionSystem.Player.Sprint.canceled += OnRunCancelled;
+
+        actionSystem.Enable();
+
+        currentSpeed = walkSpeed;
+        anim = GetComponent<Animator>();
+        aimStateManager = GetComponent<AimStateManager>();
+        actionStateManager = GetComponent<ActionStateManager>();
+
+        SwitchState(Idle);
     }
     public void SwitchState(MovementBaseState state)
     {

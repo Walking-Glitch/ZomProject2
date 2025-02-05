@@ -1,7 +1,8 @@
 using Assets.Scripts.Player.Weapon;
+using Unity.Netcode;
 using UnityEngine;
 
-public class WeaponAmmo : MonoBehaviour
+public class WeaponAmmo : NetworkBehaviour
 {
     public int clipSize;
     public int extraAmmo;

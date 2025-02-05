@@ -2,10 +2,11 @@ using System.Collections;
 using Assets.Scripts.Player.Actions;
 using Assets.Scripts.Player.Weapon;
 using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
-public class AimStateManager : MonoBehaviour 
+public class AimStateManager : NetworkBehaviour
 {
 
     // recoil test 
@@ -73,32 +74,32 @@ public class AimStateManager : MonoBehaviour
 
     private void Awake()
     {
-        actionSystem = new InputSystem_Actions();
-        actionSystem.Player.Look.performed += OnLookPerformed;
-        actionSystem.Player.Look.canceled += OnLookCancelled;
+        //actionSystem = new InputSystem_Actions();
+        //actionSystem.Player.Look.performed += OnLookPerformed;
+        //actionSystem.Player.Look.canceled += OnLookCancelled;
 
-        actionSystem.Player.Aim.performed += OnAimingPerformed;
-        actionSystem.Player.Aim.canceled += OnAimingCancelled;
-        actionSystem.Enable();
+        //actionSystem.Player.Aim.performed += OnAimingPerformed;
+        //actionSystem.Player.Aim.canceled += OnAimingCancelled;
+        //actionSystem.Enable();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        Initialize();
     }
 
     private void Start()
     {
-        weaponLaser = GetComponent<WeaponLaser>();
-        anim = GetComponent<Animator>();
-        WeaponManager = GetComponent<WeaponManager>();
-        actionStateManager = GetComponent<ActionStateManager>();
-        movementStateManager = GetComponent<MovementStateManager>();
-        LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
-
-        brain = Camera.main.GetComponent<CinemachineBrain>();
-        
-        Cursor.lockState = CursorLockMode.Locked;
-        SwitchState(AimIdleState);
+        if(!IsServer && !IsClient)
+        {
+            Initialize();
+        }
     }
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         MoveAimReference();
         CharacterRotation();
         CurrentState.UpdateState(this);
@@ -112,6 +113,31 @@ public class AimStateManager : MonoBehaviour
         state.EnterState(this);
     }
 
+    private void Initialize()
+    {
+
+        actionSystem = new InputSystem_Actions();
+        actionSystem.Player.Look.performed += OnLookPerformed;
+        actionSystem.Player.Look.canceled += OnLookCancelled;
+
+        actionSystem.Player.Aim.performed += OnAimingPerformed;
+        actionSystem.Player.Aim.canceled += OnAimingCancelled;
+        actionSystem.Enable();
+
+
+
+        weaponLaser = GetComponent<WeaponLaser>();
+        anim = GetComponent<Animator>();
+        WeaponManager = GetComponent<WeaponManager>();
+        actionStateManager = GetComponent<ActionStateManager>();
+        movementStateManager = GetComponent<MovementStateManager>();
+        LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
+
+        brain = Camera.main.GetComponent<CinemachineBrain>();
+
+        Cursor.lockState = CursorLockMode.Locked;
+        SwitchState(AimIdleState);
+    }
     public void AdjustConstraintWeight()
     {
         if (isTransitioning) return;
@@ -353,12 +379,14 @@ public class AimStateManager : MonoBehaviour
     }
     void OnEnable()
     {
-        actionSystem.Enable();
+        if(actionSystem != null)
+            actionSystem.Enable();
     }
 
     void OnDisable()
     {
-        actionSystem.Disable();
+        if (actionSystem != null)
+            actionSystem.Disable();
     }
 
 }

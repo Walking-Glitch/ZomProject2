@@ -2,13 +2,14 @@ using System.Collections;
 using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Weapon;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 
 namespace Assets.Scripts.Player.Actions
 {
-    public class ActionStateManager : MonoBehaviour
+    public class ActionStateManager : NetworkBehaviour
     {
         // states
         [HideInInspector] public ActionStateBase CurrentState;
@@ -20,7 +21,7 @@ namespace Assets.Scripts.Player.Actions
         // animator
         [HideInInspector] public Animator anim;
         public bool isProgressChecked;
-        public float blendDuration;  
+        public float blendDuration;
 
         // constraint variables
         [HideInInspector] private TwoBoneIKConstraint LeftHandIKConstraint;
@@ -45,35 +46,23 @@ namespace Assets.Scripts.Player.Actions
         public GameManager gameManager;
 
 
-
-        void Awake()
+        public override void OnNetworkSpawn()
         {
-            inputSystemActions = new InputSystem_Actions();
-            inputSystemActions.Player.Reload.performed += OnReloadPerformed;
-            inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
-            inputSystemActions.Player.Inventory.performed += OnInventoryPerformed;
-            inputSystemActions.Player.Attack.performed += OnFirePerformed;
-            inputSystemActions.Player.Scroll.performed += OnScrollPerformed;
-
-            inputSystemActions.Player.Interact.started += OnInteractPerformed;
-
-
+            Initialize();
         }
-    
+
         void Start()
         {
-            gameManager = GameManager.Instance;
-            anim = GetComponent<Animator>();
-            AimStateManager = GetComponent<AimStateManager>();
-            WeaponManager = GetComponent<WeaponManager>();
-            LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
-            SwitchState(Default);
+            if (!IsServer && !IsClient)
+            {
+                Initialize();
+            }
         }
-
         // Update is called once per frame
         void Update()
         {
-            //Debug.Log(CurrentState);
+            if (!IsOwner) return;
+            Debug.Log(CurrentState);
             CurrentState.UpdateState(this);
         }
 
@@ -83,6 +72,28 @@ namespace Assets.Scripts.Player.Actions
             state.EnterState(this);
         }
 
+        private void Initialize()
+        {
+            inputSystemActions = new InputSystem_Actions();
+             
+            inputSystemActions.Player.Reload.performed += OnReloadPerformed;
+            inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
+            inputSystemActions.Player.Inventory.performed += OnInventoryPerformed;
+            inputSystemActions.Player.Attack.performed += OnFirePerformed;
+            inputSystemActions.Player.Scroll.performed += OnScrollPerformed;
+            inputSystemActions.Player.Interact.started += OnInteractPerformed;
+
+            inputSystemActions.Enable();
+
+            gameManager = GameManager.Instance;
+            anim = GetComponent<Animator>();
+            AimStateManager = GetComponent<AimStateManager>();
+            WeaponManager = GetComponent<WeaponManager>();
+            LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
+
+            SwitchState(Default);
+
+        }
         public void TransitionToReload()
         {
             if (!AimStateManager.isTransitioning)
@@ -123,7 +134,7 @@ namespace Assets.Scripts.Player.Actions
                 yield return null;
             }
 
-            anim.SetLayerWeight(1,1);
+            anim.SetLayerWeight(1, 1);
             LeftHandIKConstraint.weight = isProgressChecked ? LeftHandIKConstraint.weight : 0f;  // Retain weight if progress checked
             LeftHandIKConstraint.data.hintWeight = 0;
             RightHandAimConstraint.weight = isProgressChecked ? RightHandAimConstraint.weight : 0f;
@@ -132,7 +143,7 @@ namespace Assets.Scripts.Player.Actions
             {
                 StartCoroutine(CheckAnimationProgress());
             }
-      
+
 
             AimStateManager.isTransitioning = false;
 
@@ -181,14 +192,14 @@ namespace Assets.Scripts.Player.Actions
             grenadeClone.transform.SetParent(WeaponManager.GrenadeSpawnTransform);
             grenadeClone.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.Euler(36f, -20f, -68f));
             grenadeClone.GetComponent<Grenade>().CodeToRunWhenObjectRequested();
-            
-         
+
+
             grenadeClone.SetActive(true);
-           
+
         }
         public void GrenadeToss()
         {
-           Vector3 direction = (WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position).normalized;
+            Vector3 direction = (WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position).normalized;
             grenadeClone.transform.SetParent(null);
             grenadeClone.GetComponent<Rigidbody>().isKinematic = false;
             grenadeClone.GetComponent<Rigidbody>().AddForce(direction * 100f, ForceMode.Impulse);
@@ -210,7 +221,7 @@ namespace Assets.Scripts.Player.Actions
             SwitchState(Default);
         }
 
-      
+
         private void OnReloadPerformed(InputAction.CallbackContext context)
         {
             if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Reload);
@@ -218,14 +229,15 @@ namespace Assets.Scripts.Player.Actions
 
         private void OnThrowGrenadePerformed(InputAction.CallbackContext context)
         {
-            if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Grenade); 
+            Debug.Log("asdasdasd");
+            if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Grenade);
         }
 
         private void OnInventoryPerformed(InputAction.CallbackContext context)
         {
             if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Build);
-            else if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Build)       
-            CurrentState?.OnInventory(this);
+            else if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Build)
+                CurrentState?.OnInventory(this);
         }
 
         private void OnScrollPerformed(InputAction.CallbackContext context)
@@ -273,11 +285,13 @@ namespace Assets.Scripts.Player.Actions
         }
         private void OnEnable()
         {
-            inputSystemActions.Enable();
+            if (inputSystemActions != null)
+                inputSystemActions.Enable();
         }
         private void OnDisable()
         {
-            inputSystemActions.Disable();
+            if (inputSystemActions != null)
+                inputSystemActions.Disable();
         }
     }
 }

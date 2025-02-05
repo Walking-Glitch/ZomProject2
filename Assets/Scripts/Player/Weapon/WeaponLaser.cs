@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class WeaponLaser : MonoBehaviour
+public class WeaponLaser : NetworkBehaviour
 {
     public Transform laserOrigin;
     public Transform laseroffTarget;

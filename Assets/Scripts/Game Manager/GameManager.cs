@@ -41,35 +41,54 @@ namespace Assets.Scripts.Game_Manager
 
         #region Singleton
 
-        private static GameManager instance;
+        //private static GameManager instance;
 
-        private GameManager() {}
+
+        //private GameManager() {}
+
+        //public static GameManager Instance
+        //{
+        //    get
+        //    {
+        //        if (instance is null)
+        //            Debug.LogError("Game Manager is Null");
+        //        return instance;
+        //    }
+
+        //}
+        //#endregion
+
+        //private void Awake()
+        //{
+        //    instance = this;
+        //}
+
+        private static GameManager instance;
 
         public static GameManager Instance
         {
             get
             {
-                if (instance is null)
-                    Debug.LogError("Game Manager is Null");
+                if (instance == null)
+                {
+                    Debug.LogError("GameManager is NULL. Make sure it exists in the scene.");
+                }
                 return instance;
             }
-
         }
         #endregion
-
         private void Awake()
         {
-            instance = this;
-        }
-        void Start()
-        {
-           
-        }
+            if (instance != null && instance != this)
+            {
+                Debug.LogWarning("Multiple GameManager instances found! Destroying the duplicate.");
+                Destroy(gameObject);
+                return;
+            }
 
-        // Update is called once per frame
-        void Update()
-        {
-        
+            instance = this;
+            DontDestroyOnLoad(gameObject);
         }
     }
+    
 }

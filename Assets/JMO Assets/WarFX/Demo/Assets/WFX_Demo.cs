@@ -113,7 +113,7 @@ public class WFX_Demo : MonoBehaviour
 		randomSpawnsDelay = Regex.Replace(randomSpawnsDelay, @"[^0-9.]", "");
 		*/
 		
-		if(GUILayout.Button(this.GetComponent<Renderer>().enabled ? "Hide Ground" : "Show Ground", GUILayout.Width(90)))
+		if(GUILayout.Button(this.GetComponent<Renderer>().enabled ? "LoadScene Ground" : "Show Ground", GUILayout.Width(90)))
 		{
 			this.GetComponent<Renderer>().enabled = !this.GetComponent<Renderer>().enabled;
 		}

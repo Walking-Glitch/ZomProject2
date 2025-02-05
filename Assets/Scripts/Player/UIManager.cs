@@ -1,10 +1,11 @@
 using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : NetworkBehaviour
 {
     public Image HealthFill;
     public PlayerStatus player;
@@ -12,9 +13,35 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI Level;
     public TextMeshProUGUI Money;
 
-    public TextMeshProUGUI Interact; 
+    public TextMeshProUGUI Interact;
+
+    //Networking variables
+
+    [SerializeField] private GameObject networkImage;
+    [SerializeField] private Button hostButton;
+    [SerializeField] private Button clientButton;
 
     private GameManager gameManager;
+
+    private void Awake()
+    {
+        hostButton.onClick.AddListener(() =>
+        {
+            NetworkManager.Singleton.StartHost();
+            Hide();
+        });
+
+        clientButton.onClick.AddListener(() =>
+        {
+            NetworkManager.Singleton.StartClient();
+            Hide();
+        });
+    }
+
+    private void Hide()
+    {
+        networkImage.SetActive(false);
+    }
     void Start()
     {
         gameManager = GameManager.Instance;
@@ -48,6 +75,8 @@ public class UIManager : MonoBehaviour
             Interact.gameObject.SetActive(false);
         }
     }
+
+
     public void UpdateMoneyUI(int money)
     {         
         Money.text = money.ToString();

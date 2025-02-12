@@ -78,7 +78,8 @@ public class AimStateManager : NetworkBehaviour
     private NetworkVariable<float> leftHandHintWeightData = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server); 
 
     private NetworkVariable<Vector3> aimPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    
+    private NetworkVariable<Vector3> laserPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
 
 
     public override void OnNetworkSpawn()
@@ -122,6 +123,11 @@ public class AimStateManager : NetworkBehaviour
         aimPosition.OnValueChanged += (prev, curr) =>
         {
             aimPos.position = curr;
+        };
+
+        laserPosition.OnValueChanged += (prev, curr) =>
+        {
+            laserPos.position = curr;  
         };
     }
 
@@ -515,7 +521,7 @@ public class AimStateManager : NetworkBehaviour
                 aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
 
                 laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
-                laserPos.position = hit2.point;
+                laserPosition.Value = hit2.point;
                 IsOnTarget = true;
             }
             else

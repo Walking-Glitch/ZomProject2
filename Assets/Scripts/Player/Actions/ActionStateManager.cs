@@ -49,8 +49,7 @@ namespace Assets.Scripts.Player.Actions
         private NetworkVariable<float> layer1Weight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private NetworkVariable<float> rightHandAimWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private NetworkVariable<float> leftHandHintWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        private NetworkVariable<float> leftHandHintWeightData = new NetworkVariable<float>(
-    0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<float> leftHandHintWeightData = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public override void OnNetworkSpawn()
         {
             Initialize();

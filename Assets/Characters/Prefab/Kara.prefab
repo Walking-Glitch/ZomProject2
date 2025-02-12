@@ -7744,6 +7744,7 @@ GameObject:
   - component: {fileID: 4684117849135949315}
   - component: {fileID: 770698843689518450}
   - component: {fileID: 1140010986805133878}
+  - component: {fileID: 7736572854478745551}
   m_Layer: 9
   m_Name: Kara
   m_TagString: Player
@@ -8141,7 +8142,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  spawnPoint: {fileID: 0}
 --- !u!114 &1140010986805133878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8178,6 +8178,21 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &7736572854478745551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5014838480513283903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f786f43339201e4a81d22795118d0e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 4613535024897461081}
 --- !u!1 &5024174932139872938
 GameObject:
   m_ObjectHideFlags: 0
@@ -8250,7 +8265,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 859248642880046426}
-  - component: {fileID: 6415206136532289677}
   m_Layer: 9
   m_Name: Mesh
   m_TagString: Untagged
@@ -8292,28 +8306,6 @@ Transform:
   - {fileID: 8976649298279526921}
   m_Father: {fileID: 6980313161418225717}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &6415206136532289677
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5219852358824648631}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 65f04126df552154982c56ac04e6a473, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5311087442090409139
 GameObject:
   m_ObjectHideFlags: 0

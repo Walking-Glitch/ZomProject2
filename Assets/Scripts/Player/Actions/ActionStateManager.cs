@@ -45,10 +45,50 @@ namespace Assets.Scripts.Player.Actions
         //game manager
         public GameManager gameManager;
 
-
+        // network variables
+        private NetworkVariable<float> layer1Weight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private NetworkVariable<float> rightHandAimWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private NetworkVariable<float> leftHandHintWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+        private NetworkVariable<float> leftHandHintWeightData = new NetworkVariable<float>(
+    0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public override void OnNetworkSpawn()
         {
             Initialize();
+
+            if (IsOwner)
+            {
+                UpdateLayerWieghtServerRpc(anim.GetLayerWeight(1));
+                UpdateLeftHintWeightServerRpc(LeftHandIKConstraint.weight);
+                UpdateRightHandAimWeightServerRpc(RightHandAimConstraint.weight);
+                UpdateLeftHintWeightDataServerRpc(LeftHandIKConstraint.data.hintWeight);
+            }
+
+            // Now apply the network variables to update the animation weights
+            anim.SetLayerWeight(1, layer1Weight.Value);
+            LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
+            RightHandAimConstraint.weight = rightHandAimWeight.Value;
+
+            layer1Weight.OnValueChanged += (prev, curr) =>
+            {
+                Debug.Log($"Layer1Weight changed from {prev} to {curr}");
+                anim.SetLayerWeight(1, curr);
+            };
+            leftHandHintWeight.OnValueChanged += (prev, curr) =>
+            {
+                Debug.Log($"LeftHandHintWeight changed from {prev} to {curr}");
+                LeftHandIKConstraint.weight = curr;
+            };
+            rightHandAimWeight.OnValueChanged += (prev, curr) =>
+            {
+                Debug.Log($"RightHandAimWeight changed from {prev} to {curr}");
+                RightHandAimConstraint.weight = curr;
+            };
+
+            leftHandHintWeightData.OnValueChanged += (prev, curr) =>
+            {
+                Debug.Log($"HintWeight changed from {prev} to {curr}");
+                LeftHandIKConstraint.data.hintWeight = curr;
+            };
         }
 
         void Start()
@@ -62,7 +102,7 @@ namespace Assets.Scripts.Player.Actions
         void Update()
         {
             if (!IsOwner) return;
-            Debug.Log(CurrentState);
+            //Debug.Log(CurrentState);
             CurrentState.UpdateState(this);
         }
 
@@ -75,7 +115,7 @@ namespace Assets.Scripts.Player.Actions
         private void Initialize()
         {
             inputSystemActions = new InputSystem_Actions();
-             
+
             inputSystemActions.Player.Reload.performed += OnReloadPerformed;
             inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
             inputSystemActions.Player.Inventory.performed += OnInventoryPerformed;
@@ -102,89 +142,228 @@ namespace Assets.Scripts.Player.Actions
             }
         }
 
+        [ServerRpc]
+        private void UpdateLayerWieghtServerRpc(float layerWeight)
+        {
+            layer1Weight.Value = layerWeight;
+        }
+
+        [ServerRpc]
+        private void UpdateLeftHintWeightServerRpc(float leftHandHintWeightValue)
+        {
+            leftHandHintWeight.Value = leftHandHintWeightValue;
+        }
+
+        [ServerRpc]
+        private void UpdateLeftHintWeightDataServerRpc(float leftHandHintWeightDataValue)
+        {
+            leftHandHintWeightData.Value = leftHandHintWeightDataValue;
+        }
+
+        [ServerRpc]
+        private void UpdateRightHandAimWeightServerRpc(float rightHandWeight)
+        {
+            rightHandAimWeight.Value = rightHandWeight;
+        }
+
         private IEnumerator FadeIntoReload()
         {
-            AimStateManager.isTransitioning = true;
-            float startWeight = anim.GetLayerWeight(1);
-            float leftHandStartIkWeight = LeftHandIKConstraint.weight;
-            float leftHandStartHintWeight = LeftHandIKConstraint.data.hintWeight;
-            float rightHandStartWeight = RightHandAimConstraint.weight;
-            float elapsed = 0;
-
-            while (elapsed < blendDuration)
+            if (!IsServer && !IsClient)
             {
-                elapsed += Time.deltaTime;
-                float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
-                anim.SetLayerWeight(1, newWeight);
+
+                AimStateManager.isTransitioning = true;
+                float startWeight = anim.GetLayerWeight(1);
+                float leftHandStartIkWeight = LeftHandIKConstraint.weight;
+                float leftHandStartHintWeight = LeftHandIKConstraint.data.hintWeight;
+                float rightHandStartWeight = RightHandAimConstraint.weight;
+                float elapsed = 0;
+
+                while (elapsed < blendDuration)
+                {
+                    elapsed += Time.deltaTime;
+                    float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
+                    anim.SetLayerWeight(1, newWeight);
+
+                    if (!isProgressChecked)
+                    {
+                        float newWeightTwoBoneIk = Mathf.Lerp(leftHandStartIkWeight, 0f, elapsed / blendDuration);
+                        LeftHandIKConstraint.weight = newWeightTwoBoneIk;
+
+
+                        float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
+                        RightHandAimConstraint.weight = newWeighRightHand;
+                    }
+
+                    float newHintWeighT = Mathf.Lerp(leftHandStartHintWeight, 0, elapsed / blendDuration);
+                    LeftHandIKConstraint.data.hintWeight = newHintWeighT;
+
+
+                    yield return null;
+                }
+
+                anim.SetLayerWeight(1, 1);
+                LeftHandIKConstraint.weight = isProgressChecked ? LeftHandIKConstraint.weight : 0f;  // Retain weight if progress checked
+                LeftHandIKConstraint.data.hintWeight = 0;
+                RightHandAimConstraint.weight = isProgressChecked ? RightHandAimConstraint.weight : 0f;
 
                 if (!isProgressChecked)
                 {
-                    float newWeightTwoBoneIk = Mathf.Lerp(leftHandStartIkWeight, 0f, elapsed / blendDuration);
-                    LeftHandIKConstraint.weight = newWeightTwoBoneIk;
-
-
-                    float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
-                    RightHandAimConstraint.weight = newWeighRightHand;
+                    StartCoroutine(CheckAnimationProgress());
                 }
 
-                float newHintWeighT = Mathf.Lerp(leftHandStartHintWeight, 0, elapsed / blendDuration);
-                LeftHandIKConstraint.data.hintWeight = newHintWeighT;
 
+                AimStateManager.isTransitioning = false;
 
-                yield return null;
             }
 
-            anim.SetLayerWeight(1, 1);
-            LeftHandIKConstraint.weight = isProgressChecked ? LeftHandIKConstraint.weight : 0f;  // Retain weight if progress checked
-            LeftHandIKConstraint.data.hintWeight = 0;
-            RightHandAimConstraint.weight = isProgressChecked ? RightHandAimConstraint.weight : 0f;
-
-            if (!isProgressChecked)
+            else if (IsOwner)
             {
-                StartCoroutine(CheckAnimationProgress());
+                Debug.Log("we are transitioning from shoot to reload");
+                AimStateManager.isTransitioning = true;
+                float startWeight = layer1Weight.Value;
+                float leftHandStartIkWeight = leftHandHintWeight.Value;
+                float leftHandStartHintWeight = leftHandHintWeightData.Value;
+                float rightHandStartWeight = rightHandAimWeight.Value;
+                float elapsed = 0;
+
+                while (elapsed < blendDuration)
+                {
+                    elapsed += Time.deltaTime;
+                    float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
+                    UpdateLayerWieghtServerRpc(newWeight);                  
+                     
+
+                    if (!isProgressChecked)
+                    {
+                        float newWeightTwoBoneIk = Mathf.Lerp(leftHandStartIkWeight, 0f, elapsed / blendDuration);
+                        //leftHandHintWeight.Value = newWeightTwoBoneIk;
+                        UpdateLeftHintWeightServerRpc(newWeightTwoBoneIk);
+                      
+
+                        float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
+                        //rightHandAimWeight.Value = newWeighRightHand;
+                        UpdateRightHandAimWeightServerRpc(newWeighRightHand);
+                      
+
+                        //UpdateLayerWeightServerRpc(newWeight, newWeightTwoBoneIk, newWeighRightHand, newHintWeighT);
+                    }
+
+                    float newHintWeighT = Mathf.Lerp(leftHandStartHintWeight, 0, elapsed / blendDuration);
+                    UpdateLeftHintWeightDataServerRpc(newHintWeighT);
+
+                    yield return null;
+                }
+
+                UpdateLayerWieghtServerRpc(1);
+                //leftHandHintWeight.Value = isProgressChecked ? leftHandHintWeight.Value : 0f;  // Retain weight if progress checked
+                if (!isProgressChecked)
+                {
+                    UpdateLeftHintWeightServerRpc(0);
+                    //leftHandHintWeight.Value = 0f;
+                }
+                //leftHandHintWeightData.Value = isProgressChecked ? leftHandHintWeightData.Value : 0f;
+                if (!isProgressChecked)
+                {
+                    UpdateLeftHintWeightDataServerRpc(0);
+                }
+
+                //rightHandAimWeight.Value = isProgressChecked ? rightHandAimWeight.Value : 0f;
+
+                if (!isProgressChecked)
+                {
+                    UpdateRightHandAimWeightServerRpc(0);
+                }
+
+                if (!isProgressChecked)
+                {
+                    StartCoroutine(CheckAnimationProgress());
+                }
+
+
+                AimStateManager.isTransitioning = false;
             }
-
-
-            AimStateManager.isTransitioning = false;
-
         }
 
         private IEnumerator CheckAnimationProgress()
         {
-            while (anim.GetCurrentAnimatorStateInfo(1).IsName("Reloading"))
+            if (!IsServer && !IsClient)
             {
-                float progress = anim.GetCurrentAnimatorStateInfo(1).normalizedTime % 1;
-
-                if (progress > 0.7f && !isProgressChecked)
+                while (anim.GetCurrentAnimatorStateInfo(1).IsName("Reloading"))
                 {
-                    float elapsed = 0;
-                    isProgressChecked = true;
+                    float progress = anim.GetCurrentAnimatorStateInfo(1).normalizedTime % 1;
 
-                    while (elapsed < blendDuration)
+                    if (progress > 0.7f && !isProgressChecked)
                     {
-                        elapsed += Time.deltaTime;
-                        float newWeightTwoBoneIk = Mathf.Lerp(0, 1f, elapsed / blendDuration);
-                        LeftHandIKConstraint.weight = newWeightTwoBoneIk;
+                        float elapsed = 0;
+                        isProgressChecked = true;
+
+                        while (elapsed < blendDuration)
+                        {
+                            elapsed += Time.deltaTime;
+                            float newWeightTwoBoneIk = Mathf.Lerp(0, 1f, elapsed / blendDuration);
+                            LeftHandIKConstraint.weight = newWeightTwoBoneIk;
 
 
-                        float newWeighRightHand = Mathf.Lerp(0, 1f, elapsed / blendDuration);
-                        RightHandAimConstraint.weight = newWeighRightHand;
+                            float newWeighRightHand = Mathf.Lerp(0, 1f, elapsed / blendDuration);
+                            RightHandAimConstraint.weight = newWeighRightHand;
 
-                        yield return null;
+                            yield return null;
+                        }
+
+                        Debug.Log("Progress reached 0.6f - LeftHandIKConstraint.weight set to 1");
+                        yield break;
                     }
 
-                    Debug.Log("Progress reached 0.6f - LeftHandIKConstraint.weight set to 1");
-                    yield break;
+                    yield return null;
+
                 }
 
+                isProgressChecked = false;
                 yield return null;
-
             }
 
-            isProgressChecked = false;
-            yield return null;
+            else if (IsOwner)
+            {
+                Debug.Log("Inside new if");
+                while (anim.GetCurrentAnimatorStateInfo(1).IsName("Reloading"))
+                {
+                    float progress = anim.GetCurrentAnimatorStateInfo(1).normalizedTime % 1;
 
-        }
+                    if (progress > 0.7f && !isProgressChecked)
+                    {
+                        float elapsed = 0;
+                        isProgressChecked = true;
+
+                        while (elapsed < blendDuration)
+                        {
+                            elapsed += Time.deltaTime;
+                            float newWeightTwoBoneIk = Mathf.Lerp(0, 1f, elapsed / blendDuration);
+                            //leftHandHintWeight.Value = newWeightTwoBoneIk;
+                            UpdateLeftHintWeightServerRpc(newWeightTwoBoneIk);
+
+                            float newWeighRightHand = Mathf.Lerp(0, 1f, elapsed / blendDuration);
+                            //rightHandAimWeight.Value = newWeighRightHand;
+                            UpdateRightHandAimWeightServerRpc(newWeighRightHand);
+
+                            yield return null;
+                        }
+
+                        Debug.Log("Progress reached 0.6f - LeftHandIKConstraint.weight set to 1");
+                        yield break;
+                    }
+
+                    yield return null;
+
+                }
+
+               // UpdateLeftHintWeightDataServerRpc(1);
+
+                isProgressChecked = false;
+                yield return null;
+            }
+
+
+        } 
 
         public void GrenadeInstantiate()
         {
@@ -229,7 +408,6 @@ namespace Assets.Scripts.Player.Actions
 
         private void OnThrowGrenadePerformed(InputAction.CallbackContext context)
         {
-            Debug.Log("asdasdasd");
             if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Grenade);
         }
 

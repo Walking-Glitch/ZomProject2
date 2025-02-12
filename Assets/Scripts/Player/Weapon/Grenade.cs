@@ -121,11 +121,11 @@ public class Grenade : MonoBehaviour
         {
             ExplosionVFX.Play();
             grenadeFlash.intensity = flashIntensity;
-            Debug.Log("WE HAVE LIGHT" + flashIntensity);
+            //Debug.Log("WE HAVE LIGHT" + flashIntensity);
         }
         else
         {
-            Debug.Log("NULL LIGHT");
+            //Debug.Log("NULL LIGHT");
         }
     }
 

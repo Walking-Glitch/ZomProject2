@@ -173,7 +173,7 @@ public class Missile : MonoBehaviour
         transform.position = originalMissileTransform;
         
         gameObject.SetActive(false);
-        Debug.Log("Wait for audio done");
+        //Debug.Log("Wait for audio done");
     }
  
 

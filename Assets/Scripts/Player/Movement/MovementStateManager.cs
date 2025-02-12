@@ -80,7 +80,7 @@ public class MovementStateManager : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log($"Player {NetworkObjectId} | IsOwner: {IsOwner}");
+        //Debug.Log($"Player {NetworkObjectId} | IsOwner: {IsOwner}");
 
         if (!IsOwner) return; //
 

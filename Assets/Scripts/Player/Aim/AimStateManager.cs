@@ -50,6 +50,7 @@ public class AimStateManager : NetworkBehaviour
     public MultiAimConstraint TorsoAimConstraint;
     public MultiAimConstraint RightHandAimConstraint;
 
+    
     // reference to action state manager
     [HideInInspector] public ActionStateManager actionStateManager;
 
@@ -70,22 +71,58 @@ public class AimStateManager : NetworkBehaviour
     [HideInInspector] public bool IsOnTarget;
     private WeaponLaser weaponLaser;
 
+    // network variables
+    private NetworkVariable<float> layer1Weight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<float> rightHandAimWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<float> leftHandHintWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<float> leftHandHintWeightData = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server); 
+
+    private NetworkVariable<Vector3> aimPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     
 
-    private void Awake()
-    {
-        //actionSystem = new InputSystem_Actions();
-        //actionSystem.Player.Look.performed += OnLookPerformed;
-        //actionSystem.Player.Look.canceled += OnLookCancelled;
-
-        //actionSystem.Player.Aim.performed += OnAimingPerformed;
-        //actionSystem.Player.Aim.canceled += OnAimingCancelled;
-        //actionSystem.Enable();
-    }
 
     public override void OnNetworkSpawn()
     {
         Initialize();
+
+        if (IsOwner)
+        {
+            UpdateLayerWieghtServerRpc(anim.GetLayerWeight(1));
+            UpdateLeftHintWeightServerRpc(LeftHandIKConstraint.weight);
+            UpdateRightHandAimWeightServerRpc(RightHandAimConstraint.weight);
+            UpdateLeftHintWeightDataServerRpc(LeftHandIKConstraint.data.hintWeight);
+        }
+
+        // Force update on new players
+        anim.SetLayerWeight(1, layer1Weight.Value);
+        LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
+        RightHandAimConstraint.weight = rightHandAimWeight.Value;
+
+        layer1Weight.OnValueChanged += (prev, curr) =>
+        {
+            Debug.Log($"Layer1Weight changed from {prev} to {curr}");
+            anim.SetLayerWeight(1, curr);
+        };
+        leftHandHintWeight.OnValueChanged += (prev, curr) => 
+        {
+            Debug.Log($"LeftHandHintWeight changed from {prev} to {curr}");
+            LeftHandIKConstraint.weight = curr;
+        };
+        rightHandAimWeight.OnValueChanged += (prev, curr) =>
+        {
+            Debug.Log($"RightHandAimWeight changed from {prev} to {curr}");
+            RightHandAimConstraint.weight = curr;
+        };
+        leftHandHintWeightData.OnValueChanged += (prev, curr) =>
+        {
+            Debug.Log($"LeftHandHintWeightData changed from {prev} to {curr}");
+            LeftHandIKConstraint.data.hintWeight = curr;
+        };
+
+        aimPosition.OnValueChanged += (prev, curr) =>
+        {
+            aimPos.position = curr;
+        };
     }
 
     private void Start()
@@ -138,35 +175,68 @@ public class AimStateManager : NetworkBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         SwitchState(AimIdleState);
     }
-    public void AdjustConstraintWeight()
+    public void AdjustConstraintWeight() //originall
     {
-        if (isTransitioning) return;
-
-        if (actionStateManager.CurrentState == actionStateManager.Reload)
+        if(!IsServer && !IsClient)
         {
-            actionStateManager.TransitionToReload();
+            if (isTransitioning) return;
+
+            if (actionStateManager.CurrentState == actionStateManager.Reload)
+            {
+                actionStateManager.TransitionToReload();
+            }
+
+            else if (actionStateManager.CurrentState == actionStateManager.Grenade)
+            {
+                actionStateManager.TransitionToReload();
+            }
+
+            else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Grenade)
+            {
+                TransitionFromMainToShootingLayer();
+            }
+
+            else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
+            {
+                TransitionFromMainToShootingLayer();
+            }
+
+            else
+            {
+                TransitionFromShootingToMainLayer();
+            }
         }
 
-        else if (actionStateManager.CurrentState == actionStateManager.Grenade)
+        else
         {
-            actionStateManager.TransitionToReload();
+            if (isTransitioning) return;
+
+            if (actionStateManager.CurrentState == actionStateManager.Reload)
+            {
+                actionStateManager.TransitionToReload();
+            }
+
+            else if (actionStateManager.CurrentState == actionStateManager.Grenade)
+            {
+                actionStateManager.TransitionToReload();
+            }
+
+            else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Grenade)
+            {
+                TransitionFromMainToShootingLayerServerRpc();
+            }
+
+            else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
+            {
+                TransitionFromMainToShootingLayerServerRpc();
+            }
+
+            else
+            {
+                TransitionFromShootingToMainLayerServerRpc();
+            }
         }
 
-        else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Grenade)
-        {
-            TransitionFromMainToShootingLayer();
-        }
-
-        else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
-        {
-            TransitionFromMainToShootingLayer();
-        }
-
-        else 
-        {
-            TransitionFromShootingToMainLayer();
-        }
-      
     }
 
     public void TransitionFromShootingToMainLayer()
@@ -177,6 +247,13 @@ public class AimStateManager : NetworkBehaviour
         }
     }
 
+    [ServerRpc]
+    private void TransitionFromShootingToMainLayerServerRpc()
+    {
+        TransitionFromShootingToMainLayer();
+        //Debug.Log("InsideShootingtoMainLayer"); 
+    }
+
     public void TransitionFromMainToShootingLayer()
     {
         if (!isTransitioning)
@@ -185,69 +262,191 @@ public class AimStateManager : NetworkBehaviour
         }
     }
 
+    [ServerRpc]
+    private void TransitionFromMainToShootingLayerServerRpc()
+    {
+        TransitionFromMainToShootingLayer();
+    }
+
+     
+    [ServerRpc]
+    private void UpdateLayerWieghtServerRpc(float layerWeight)
+    {
+        layer1Weight.Value = layerWeight;
+    }
+
+    [ServerRpc]
+    private void UpdateLeftHintWeightServerRpc(float leftHandHintWeightValue)
+    {
+        leftHandHintWeight.Value = leftHandHintWeightValue;
+    }
+
+    [ServerRpc]
+    private void UpdateLeftHintWeightDataServerRpc(float leftHandHintWeightDataValue)
+    {
+        leftHandHintWeightData.Value = leftHandHintWeightDataValue;
+    }
+
+    [ServerRpc]
+    private void UpdateRightHandAimWeightServerRpc(float rightHandWeight)
+    {
+        rightHandAimWeight.Value = rightHandWeight;
+    }
+
 
     private IEnumerator FadeIntoMainLayer()
     {
-        isTransitioning = true;  // Set the flag to true
-        float startWeight = anim.GetLayerWeight(1);
-        float leftHandStartWeight = LeftHandIKConstraint.data.hintWeight;
-        float rightHandStartWeight = RightHandAimConstraint.weight;
-        float elapsed = 0;
-
-        while (elapsed < blendDuration)
+        if (!IsServer && !IsClient) 
         {
-            elapsed += Time.deltaTime;
-            float newWeight = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
-            anim.SetLayerWeight(1, newWeight);
 
-            float newHintWeight = Mathf.Lerp(leftHandStartWeight, 0, elapsed / blendDuration);
-            LeftHandIKConstraint.data.hintWeight = newHintWeight;
+            isTransitioning = true;  // Set the flag to true
+            float startWeight = anim.GetLayerWeight(1);
+            float leftHandStartWeight = LeftHandIKConstraint.data.hintWeight;
+            float rightHandStartWeight = RightHandAimConstraint.weight;
+            float elapsed = 0;
 
-            float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
-            RightHandAimConstraint.weight = newWeighRightHand;
+            while (elapsed < blendDuration)
+            {
+                elapsed += Time.deltaTime;
+                float newWeight = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
+                anim.SetLayerWeight(1, newWeight);
 
-            yield return null;
+                float newHintWeight = Mathf.Lerp(leftHandStartWeight, 0, elapsed / blendDuration);
+                LeftHandIKConstraint.data.hintWeight = newHintWeight;
+
+                float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
+                RightHandAimConstraint.weight = newWeighRightHand;
+
+                yield return null;
+            }
+
+            anim.SetLayerWeight(1, 0); // Fully transitioned to main layer
+            LeftHandIKConstraint.weight = 1;
+            LeftHandIKConstraint.data.hintWeight = 0;
+            RightHandAimConstraint.weight = 0f;
+
+            isTransitioning = false;
+        }
+        else if(IsOwner)
+        {
+            //Debug.Log("IsOnwer inside fading to main");
+            isTransitioning = true;
+            float startWeight = layer1Weight.Value;
+            float leftHandStartWeight = leftHandHintWeightData.Value;
+            float rightHandStartWeight = rightHandAimWeight.Value;
+            float elapsed = 0;
+
+            while (elapsed < blendDuration)
+            {
+                elapsed += Time.deltaTime;
+                float newWeight = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
+                layer1Weight.Value = newWeight;  // Updates the NetworkVariable
+
+                float newHintWeight = Mathf.Lerp(leftHandStartWeight, 0, elapsed / blendDuration);
+                leftHandHintWeightData.Value = newHintWeight;
+
+                float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
+                rightHandAimWeight.Value = newWeighRightHand;
+
+
+                // Request server to update the NetworkVariables
+               // UpdateLayerWeightServerRpc(newWeight, newHintWeight, newWeighRightHand);
+
+              
+                yield return null;
+            }
+
+            layer1Weight.Value = 0;
+            leftHandHintWeight.Value = 1;
+            leftHandHintWeightData.Value = 0;
+            rightHandAimWeight.Value = 0;
+
+            
+            isTransitioning = false;
         }
 
-        anim.SetLayerWeight(1, 0); // Fully transitioned to main layer
-        LeftHandIKConstraint.weight = 1;
-        LeftHandIKConstraint.data.hintWeight = 0;
-        RightHandAimConstraint.weight = 0f;
-
-        isTransitioning = false;
     }
+
 
     private IEnumerator FadeIntoUpperBodyLayer()
     {
-        isTransitioning = true;  // Set the flag to true
-        float startWeight = anim.GetLayerWeight(1);
-        float leftHandStartWeight = LeftHandIKConstraint.data.hintWeight;
-        float rightHandStartWeight = RightHandAimConstraint.weight;
-        float elapsed = 0;
-
-        while (elapsed < blendDuration)
+        if(!IsServer && !IsClient)
         {
-            elapsed += Time.deltaTime;
-            float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
-            anim.SetLayerWeight(1, newWeight);
+            isTransitioning = true;  // Set the flag to true
+            float startWeight = anim.GetLayerWeight(1);
+            float leftHandStartWeight = LeftHandIKConstraint.data.hintWeight;
+            float rightHandStartWeight = RightHandAimConstraint.weight;
+            float elapsed = 0;
 
-            float newWeighTwoBoneIk = Mathf.Lerp(leftHandStartWeight, 1, elapsed / blendDuration);
-            LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
+            while (elapsed < blendDuration)
+            {
+                elapsed += Time.deltaTime;
+                float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
+                anim.SetLayerWeight(1, newWeight);
 
-            float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 1, elapsed / blendDuration);
-            RightHandAimConstraint.weight = newWeighRightHand;
+                float newWeighTwoBoneIk = Mathf.Lerp(leftHandStartWeight, 1, elapsed / blendDuration);
+                LeftHandIKConstraint.data.hintWeight = newWeighTwoBoneIk;
 
-            yield return null; // Wait for the next frame
+                float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 1, elapsed / blendDuration);
+                RightHandAimConstraint.weight = newWeighRightHand;
+
+                yield return null; // Wait for the next frame
+            }
+
+            // Set final values
+            anim.SetLayerWeight(1, 1);
+            LeftHandIKConstraint.weight = 1;
+            LeftHandIKConstraint.data.hintWeight = 1;
+            RightHandAimConstraint.weight = 1;
+
+            isTransitioning = false;  // Reset the flag when done
         }
 
-        // Set final values
-        anim.SetLayerWeight(1, 1);
-        LeftHandIKConstraint.weight = 1;
-        LeftHandIKConstraint.data.hintWeight = 1;
-        RightHandAimConstraint.weight = 1;
+        else if (IsOwner)
+        {
 
-        isTransitioning = false;  // Reset the flag when done
+            Debug.Log("we are transitioning from main to shoot");
+            isTransitioning = true;  // Set the flag to true
+            float startWeight = layer1Weight.Value;
+            float leftHandHintWeightDataStartValue = leftHandHintWeightData.Value;
+            float leftHandWeightStartValue = leftHandHintWeight.Value;
+            float rightHandStartWeight = rightHandAimWeight.Value;
+            float elapsed = 0;
+
+            while (elapsed < blendDuration)
+            {
+                elapsed += Time.deltaTime;
+                float newWeight = Mathf.Lerp(startWeight, 1, elapsed / blendDuration);
+                UpdateLayerWieghtServerRpc(newWeight);
+
+                float newWeighTwoBoneIk = Mathf.Lerp(leftHandWeightStartValue, 1, elapsed / blendDuration);
+                UpdateLeftHintWeightServerRpc(newWeighTwoBoneIk);
+
+                float newWeighDataTwoBoneIk = Mathf.Lerp(leftHandHintWeightDataStartValue, 1, elapsed / blendDuration);
+                UpdateLeftHintWeightDataServerRpc(newWeighDataTwoBoneIk);
+
+                float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 1, elapsed / blendDuration);
+                UpdateRightHandAimWeightServerRpc(newWeighRightHand);
+
+                yield return null; // Wait for the next frame
+            }
+
+            // Set final values
+            UpdateLayerWieghtServerRpc(1);
+            UpdateLeftHintWeightServerRpc(1);
+            UpdateLeftHintWeightDataServerRpc(1);
+            UpdateRightHandAimWeightServerRpc(1);
+
+            Debug.Log("we FINISHED THE transitioning from main to shoot");
+
+            UpdateLeftHintWeightServerRpc(1);
+            isTransitioning = false;  // Reset the flag when done
+        }
+
+
+
     }
+
 
     public void AddRecoil()
     {
@@ -259,37 +458,77 @@ public class AimStateManager : NetworkBehaviour
     }
     private void MoveAimReference()
     {
-        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
-        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
-        
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, aimMask))
+        if (!IsServer && !IsClient)
         {
-            Vector3 targetPosition = hit.point + recoilOffset; // Apply recoil offset
-            //aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
-            aimPos.position = Vector3.Lerp(aimPos.position, targetPosition, aimSmoothSpeed * Time.deltaTime);
+            Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+            Ray ray = Camera.main.ScreenPointToRay(screenCentre);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, aimMask))
+            {
+                Vector3 targetPosition = hit.point + recoilOffset; // Apply recoil offset
+                                                                   //aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
+                aimPos.position = Vector3.Lerp(aimPos.position, targetPosition, aimSmoothSpeed * Time.deltaTime);
+            }
+
+            Vector3 laserDirection = (aimPos.position - weaponLaser.laserOrigin.position);
+            Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection);
+
+            if (Physics.Raycast(ray2, out RaycastHit hit2, Mathf.Infinity, laserMask))
+            {
+                aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+                laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                laserPos.position = hit2.point;
+                IsOnTarget = true;
+            }
+            else
+            {
+                aimPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+
+                laserPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                IsOnTarget = false;
+            }
+
+            // Gradually reduce the recoil offset over time
+            recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, recoilDecaySpeed * Time.deltaTime);
         }
 
-        Vector3 laserDirection = (aimPos.position - weaponLaser.laserOrigin.position);
-        Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection );
-
-        if (Physics.Raycast( ray2  , out RaycastHit hit2, Mathf.Infinity, laserMask))
+        else if (IsOwner)
         {
-            aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+            Ray ray = Camera.main.ScreenPointToRay(screenCentre);
 
-            laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
-            laserPos.position = hit2.point;
-            IsOnTarget = true;
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, aimMask))
+            {
+                Vector3 targetPosition = hit.point + recoilOffset; // Apply recoil offset
+                                                                   //aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
+                aimPosition.Value = Vector3.Lerp(aimPos.position, targetPosition, aimSmoothSpeed * Time.deltaTime);
+
+                 
+            }
+
+            Vector3 laserDirection = (aimPosition.Value - weaponLaser.laserOrigin.position);
+            Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection);
+
+            if (Physics.Raycast(ray2, out RaycastHit hit2, Mathf.Infinity, laserMask))
+            {
+                aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+                laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                laserPos.position = hit2.point;
+                IsOnTarget = true;
+            }
+            else
+            {
+                aimPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+
+                laserPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                IsOnTarget = false;
+            }
+
+            // Gradually reduce the recoil offset over time
+            recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, recoilDecaySpeed * Time.deltaTime);
         }
-        else
-        {
-            aimPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
-
-            laserPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
-            IsOnTarget = false;
-        }
-
-        // Gradually reduce the recoil offset over time
-        recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, recoilDecaySpeed * Time.deltaTime);
     }
      
     private void CharacterRotation()

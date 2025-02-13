@@ -95,9 +95,9 @@ public class AimStateManager : NetworkBehaviour
         }
 
         // Force update on new players
-        anim.SetLayerWeight(1, layer1Weight.Value);
-        LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
-        RightHandAimConstraint.weight = rightHandAimWeight.Value;
+        //anim.SetLayerWeight(1, layer1Weight.Value);
+        //LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
+        //RightHandAimConstraint.weight = rightHandAimWeight.Value;
 
         layer1Weight.OnValueChanged += (prev, curr) =>
         {
@@ -187,12 +187,7 @@ public class AimStateManager : NetworkBehaviour
         {
             if (isTransitioning) return;
 
-            if (actionStateManager.CurrentState == actionStateManager.Reload)
-            {
-                actionStateManager.TransitionToReload();
-            }
-
-            else if (actionStateManager.CurrentState == actionStateManager.Grenade)
+            if (actionStateManager.CurrentState == actionStateManager.Reload || actionStateManager.CurrentState == actionStateManager.Grenade)
             {
                 actionStateManager.TransitionToReload();
             }
@@ -217,25 +212,15 @@ public class AimStateManager : NetworkBehaviour
         {
             if (isTransitioning) return;
 
-            if (actionStateManager.CurrentState == actionStateManager.Reload)
+            if (actionStateManager.CurrentState == actionStateManager.Reload || actionStateManager.CurrentState == actionStateManager.Grenade)
             {
                 actionStateManager.TransitionToReload();
             }
-
-            else if (actionStateManager.CurrentState == actionStateManager.Grenade)
-            {
-                actionStateManager.TransitionToReload();
-            }
-
-            else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Grenade)
+                        
+            else if (CurrentState == AimingState && actionStateManager.CurrentState == actionStateManager.Default)
             {
                 TransitionFromMainToShootingLayerServerRpc();
-            }
-
-            else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
-            {
-                TransitionFromMainToShootingLayerServerRpc();
-            }
+            } 
 
             else
             {
@@ -335,10 +320,11 @@ public class AimStateManager : NetworkBehaviour
         }
         else if(IsOwner)
         {
+            Debug.Log((IsClient) +"we areOWNERS and fading to main");
             //Debug.Log("IsOnwer inside fading to main");
             isTransitioning = true;
             float startWeight = layer1Weight.Value;
-            float leftHandStartWeight = leftHandHintWeightData.Value;
+            float leftHandStartWeightData = leftHandHintWeightData.Value;
             float rightHandStartWeight = rightHandAimWeight.Value;
             float elapsed = 0;
 
@@ -346,26 +332,22 @@ public class AimStateManager : NetworkBehaviour
             {
                 elapsed += Time.deltaTime;
                 float newWeight = Mathf.Lerp(startWeight, 0, elapsed / blendDuration);
-                layer1Weight.Value = newWeight;  // Updates the NetworkVariable
+                UpdateLayerWieghtServerRpc(newWeight);  
 
-                float newHintWeight = Mathf.Lerp(leftHandStartWeight, 0, elapsed / blendDuration);
-                leftHandHintWeightData.Value = newHintWeight;
+                float newHintWeightData = Mathf.Lerp(leftHandStartWeightData, 0, elapsed / blendDuration);
+                UpdateLeftHintWeightDataServerRpc(newHintWeightData);
 
                 float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
-                rightHandAimWeight.Value = newWeighRightHand;
-
-
-                // Request server to update the NetworkVariables
-               // UpdateLayerWeightServerRpc(newWeight, newHintWeight, newWeighRightHand);
+                UpdateRightHandAimWeightServerRpc(newWeighRightHand);
 
               
                 yield return null;
             }
 
-            layer1Weight.Value = 0;
-            leftHandHintWeight.Value = 1;
-            leftHandHintWeightData.Value = 0;
-            rightHandAimWeight.Value = 0;
+            UpdateLayerWieghtServerRpc(0);
+            UpdateLeftHintWeightServerRpc(1);
+            UpdateLeftHintWeightDataServerRpc(0);
+            UpdateRightHandAimWeightServerRpc(0);
 
             
             isTransitioning = false;
@@ -410,7 +392,7 @@ public class AimStateManager : NetworkBehaviour
 
         else if (IsOwner)
         {
-
+            Debug.Log(IsClient);
             Debug.Log("we are transitioning from main to shoot");
             isTransitioning = true;  // Set the flag to true
             float startWeight = layer1Weight.Value;

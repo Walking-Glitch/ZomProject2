@@ -49,7 +49,7 @@ namespace Assets.Scripts.Player.Actions
         private NetworkVariable<float> layer1Weight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private NetworkVariable<float> rightHandAimWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private NetworkVariable<float> leftHandHintWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-        private NetworkVariable<float> leftHandHintWeightData = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<float> leftHandHintWeightData = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         public override void OnNetworkSpawn()
         {
             Initialize();
@@ -63,9 +63,9 @@ namespace Assets.Scripts.Player.Actions
             }
 
             // Now apply the network variables to update the animation weights
-            anim.SetLayerWeight(1, layer1Weight.Value);
-            LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
-            RightHandAimConstraint.weight = rightHandAimWeight.Value;
+            //anim.SetLayerWeight(1, layer1Weight.Value);
+            //LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
+            //RightHandAimConstraint.weight = rightHandAimWeight.Value;
 
             layer1Weight.OnValueChanged += (prev, curr) =>
             {
@@ -234,17 +234,13 @@ namespace Assets.Scripts.Player.Actions
 
                     if (!isProgressChecked)
                     {
-                        float newWeightTwoBoneIk = Mathf.Lerp(leftHandStartIkWeight, 0f, elapsed / blendDuration);
-                        //leftHandHintWeight.Value = newWeightTwoBoneIk;
+                        float newWeightTwoBoneIk = Mathf.Lerp(leftHandStartIkWeight, 0f, elapsed / blendDuration);                       
                         UpdateLeftHintWeightServerRpc(newWeightTwoBoneIk);
                       
 
-                        float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);
-                        //rightHandAimWeight.Value = newWeighRightHand;
-                        UpdateRightHandAimWeightServerRpc(newWeighRightHand);
-                      
+                        float newWeighRightHand = Mathf.Lerp(rightHandStartWeight, 0, elapsed / blendDuration);                        
+                        UpdateRightHandAimWeightServerRpc(newWeighRightHand);                    
 
-                        //UpdateLayerWeightServerRpc(newWeight, newWeightTwoBoneIk, newWeighRightHand, newHintWeighT);
                     }
 
                     float newHintWeighT = Mathf.Lerp(leftHandStartHintWeight, 0, elapsed / blendDuration);
@@ -254,31 +250,15 @@ namespace Assets.Scripts.Player.Actions
                 }
 
                 UpdateLayerWieghtServerRpc(1);
-                //leftHandHintWeight.Value = isProgressChecked ? leftHandHintWeight.Value : 0f;  // Retain weight if progress checked
+               
                 if (!isProgressChecked)
                 {
                     UpdateLeftHintWeightServerRpc(0);
-                    //leftHandHintWeight.Value = 0f;
-                }
-                //leftHandHintWeightData.Value = isProgressChecked ? leftHandHintWeightData.Value : 0f;
-                if (!isProgressChecked)
-                {
                     UpdateLeftHintWeightDataServerRpc(0);
-                }
-
-                //rightHandAimWeight.Value = isProgressChecked ? rightHandAimWeight.Value : 0f;
-
-                if (!isProgressChecked)
-                {
                     UpdateRightHandAimWeightServerRpc(0);
-                }
-
-                if (!isProgressChecked)
-                {
                     StartCoroutine(CheckAnimationProgress());
                 }
-
-
+               
                 AimStateManager.isTransitioning = false;
             }
         }
@@ -287,7 +267,7 @@ namespace Assets.Scripts.Player.Actions
         {
             if (!IsServer && !IsClient)
             {
-                while (anim.GetCurrentAnimatorStateInfo(1).IsName("Reloading"))
+                while (anim.GetCurrentAnimatorStateInfo(1).IsName("Reloading") || anim.GetCurrentAnimatorStateInfo(1).IsName("Toss Grenade"))
                 {
                     float progress = anim.GetCurrentAnimatorStateInfo(1).normalizedTime % 1;
 
@@ -324,7 +304,7 @@ namespace Assets.Scripts.Player.Actions
             else if (IsOwner)
             {
                 Debug.Log("Inside new if");
-                while (anim.GetCurrentAnimatorStateInfo(1).IsName("Reloading"))
+                while (anim.GetCurrentAnimatorStateInfo(1).IsName("Reloading") || anim.GetCurrentAnimatorStateInfo(1).IsName("Toss Grenade"))
                 {
                     float progress = anim.GetCurrentAnimatorStateInfo(1).normalizedTime % 1;
 
@@ -336,12 +316,12 @@ namespace Assets.Scripts.Player.Actions
                         while (elapsed < blendDuration)
                         {
                             elapsed += Time.deltaTime;
-                            float newWeightTwoBoneIk = Mathf.Lerp(0, 1f, elapsed / blendDuration);
-                            //leftHandHintWeight.Value = newWeightTwoBoneIk;
+                            float newWeightTwoBoneIk = Mathf.Lerp(0, 1f, elapsed / blendDuration);                           
                             UpdateLeftHintWeightServerRpc(newWeightTwoBoneIk);
 
-                            float newWeighRightHand = Mathf.Lerp(0, 1f, elapsed / blendDuration);
-                            //rightHandAimWeight.Value = newWeighRightHand;
+                            Debug.Log(leftHandHintWeight.Value);
+
+                            float newWeighRightHand = Mathf.Lerp(0, 1f, elapsed / blendDuration);                           
                             UpdateRightHandAimWeightServerRpc(newWeighRightHand);
 
                             yield return null;
@@ -353,15 +333,10 @@ namespace Assets.Scripts.Player.Actions
 
                     yield return null;
 
-                }
-
-               // UpdateLeftHintWeightDataServerRpc(1);
-
+                } 
                 isProgressChecked = false;
                 yield return null;
             }
-
-
         } 
 
         public void GrenadeInstantiate()

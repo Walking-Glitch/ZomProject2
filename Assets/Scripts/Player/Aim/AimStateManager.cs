@@ -111,22 +111,22 @@ public class AimStateManager : NetworkBehaviour
 
         layer1Weight.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"Layer1Weight changed from {prev} to {curr}");
+            //Debug.Log($"Layer1Weight changed from {prev} to {curr}");
             anim.SetLayerWeight(1, curr);
         };
         leftHandHintWeight.OnValueChanged += (prev, curr) => 
         {
-            Debug.Log($"LeftHandHintWeight changed from {prev} to {curr}");
+            //Debug.Log($"LeftHandHintWeight changed from {prev} to {curr}");
             LeftHandIKConstraint.weight = curr;
         };
         rightHandAimWeight.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"RightHandAimWeight changed from {prev} to {curr}");
+            //Debug.Log($"RightHandAimWeight changed from {prev} to {curr}");
             RightHandAimConstraint.weight = curr;
         };
         leftHandHintWeightData.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"LeftHandHintWeightData changed from {prev} to {curr}");
+            //Debug.Log($"LeftHandHintWeightData changed from {prev} to {curr}");
             LeftHandIKConstraint.data.hintWeight = curr;
         };
 
@@ -328,7 +328,7 @@ public class AimStateManager : NetworkBehaviour
         else if(IsOwner)
         {
             //Debug.Log((IsClient) +"we areOWNERS and fading to main");
-            Debug.Log("IsOnwer inside fading to main");
+            //Debug.Log("IsOnwer inside fading to main");
             isTransitioning = true;
             float startWeight = layer1Weight.Value;
             float leftHandStartWeightData = leftHandHintWeightData.Value;

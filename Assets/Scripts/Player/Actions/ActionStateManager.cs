@@ -69,23 +69,23 @@ namespace Assets.Scripts.Player.Actions
 
             layer1Weight.OnValueChanged += (prev, curr) =>
             {
-                Debug.Log($"Layer1Weight changed from {prev} to {curr}");
+                //Debug.Log($"Layer1Weight changed from {prev} to {curr}");
                 anim.SetLayerWeight(1, curr);
             };
             leftHandHintWeight.OnValueChanged += (prev, curr) =>
             {
-                Debug.Log($"LeftHandHintWeight changed from {prev} to {curr}");
+                //Debug.Log($"LeftHandHintWeight changed from {prev} to {curr}");
                 LeftHandIKConstraint.weight = curr;
             };
             rightHandAimWeight.OnValueChanged += (prev, curr) =>
             {
-                Debug.Log($"RightHandAimWeight changed from {prev} to {curr}");
+                //Debug.Log($"RightHandAimWeight changed from {prev} to {curr}");
                 RightHandAimConstraint.weight = curr;
             };
 
             leftHandHintWeightData.OnValueChanged += (prev, curr) =>
             {
-                Debug.Log($"HintWeight changed from {prev} to {curr}");
+                //Debug.Log($"HintWeight changed from {prev} to {curr}");
                 LeftHandIKConstraint.data.hintWeight = curr;
             };
         }

@@ -1,10 +1,12 @@
 using Assets.Scripts.Player;
 using Assets.Scripts.Player.Weapon;
+using System;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Assets.Scripts.Game_Manager
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : NetworkBehaviour
     {
         #region References
 
@@ -37,33 +39,14 @@ namespace Assets.Scripts.Game_Manager
 
         [Header("Vehicle references")]
         public TruckController Truck;
+
         #endregion
 
+
         #region Singleton
-
-        //private static GameManager instance;
-
-
-        //private GameManager() {}
-
-        //public static GameManager Instance
-        //{
-        //    get
-        //    {
-        //        if (instance is null)
-        //            Debug.LogError("Game Manager is Null");
-        //        return instance;
-        //    }
-
-        //}
-        //#endregion
-
-        //private void Awake()
-        //{
-        //    instance = this;
-        //}
-
         private static GameManager instance;
+
+
 
         public static GameManager Instance
         {
@@ -76,7 +59,6 @@ namespace Assets.Scripts.Game_Manager
                 return instance;
             }
         }
-        #endregion
         private void Awake()
         {
             if (instance != null && instance != this)
@@ -89,6 +71,12 @@ namespace Assets.Scripts.Game_Manager
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        #endregion
+         
     }
-    
 }
+
+
+
+     

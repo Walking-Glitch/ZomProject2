@@ -115,8 +115,6 @@ namespace Assets.Scripts.Player.Weapon
         {
             gameManager = GameManager.Instance; // moved in from awake
             CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
-            //lightIntensity = muzzleFlashLight.intensity;
-            //muzzleFlashLight.intensity = 0;
         }
 
         // Update is called once per frame
@@ -130,8 +128,6 @@ namespace Assets.Scripts.Player.Weapon
             }
 
             fireRateTimer += Time.deltaTime;
-
-            //muzzleFlashLight.intensity = Mathf.Lerp(muzzleFlashLight.intensity, 0, lightReturnSpeed * Time.deltaTime);
 
         }
 
@@ -150,28 +146,85 @@ namespace Assets.Scripts.Player.Weapon
 
         public void AdjustWeaponParentedHand()
         {
-            if (actionStateManager.CurrentState == actionStateManager.Grenade)
+            if(!IsServer && !IsClient)
             {
-                rifle.transform.SetParent(LeftHandTransform);
+                if (actionStateManager.CurrentState == actionStateManager.Grenade)
+                {
+                    rifle.transform.SetParent(LeftHandTransform);
+                }
+
+                else if (actionStateManager.CurrentState == actionStateManager.Reload)
+                {
+                    rifle.transform.SetParent(cachedWeaponParent);
+                    rifle.transform.localPosition = cachedWeaponPosition;
+                    rifle.transform.localRotation = cachedWeaponRotation;
+                }
+
+                else if (actionStateManager.CurrentState == actionStateManager.Default)
+                {
+
+                    rifle.transform.SetParent(cachedWeaponParent);
+                    rifle.transform.localPosition = cachedWeaponPosition;
+                    rifle.transform.localRotation = cachedWeaponRotation;
+
+                }
+            } 
+                
+            else if (IsOwner)
+            {
+                if (actionStateManager.CurrentState == actionStateManager.Grenade)
+                {
+                    RequestWeaponParentChangeServerRpc(true);
+                }
+                else if (actionStateManager.CurrentState == actionStateManager.Reload)
+                {
+                    RequestWeaponParentChangeServerRpc(false);
+                }
+                else if (actionStateManager.CurrentState == actionStateManager.Default)
+                {
+                    RequestWeaponParentChangeServerRpc(false);
+                }
             }
 
-            else if (actionStateManager.CurrentState == actionStateManager.Reload)
+         
+        }
+
+        [ServerRpc]
+        private void RequestWeaponParentChangeServerRpc(bool parentToLeftHand, ServerRpcParams rpcParams = default)
+        {
+            if (parentToLeftHand)
+            {
+                rifle.transform.SetParent(LeftHandTransform);
+
+                UpdateWeaponTransformClientRpc(true);
+            }
+
+            else
             {
                 rifle.transform.SetParent(cachedWeaponParent);
                 rifle.transform.localPosition = cachedWeaponPosition;
                 rifle.transform.localRotation = cachedWeaponRotation;
-            }
 
-            else if (actionStateManager.CurrentState == actionStateManager.Default)
-            {
-           
-                    rifle.transform.SetParent(cachedWeaponParent);
-                    rifle.transform.localPosition = cachedWeaponPosition;
-                    rifle.transform.localRotation = cachedWeaponRotation;
-                
+                UpdateWeaponTransformClientRpc(false);
             }
         }
-         
+
+        [ClientRpc]
+        private void UpdateWeaponTransformClientRpc(bool parentToLeftHand, ClientRpcParams rpcParams = default)
+        {
+            if (parentToLeftHand)
+            {
+                rifle.transform.SetParent(LeftHandTransform);
+            }
+            else
+            {
+                rifle.transform.SetParent(cachedWeaponParent);
+
+                rifle.transform.localPosition = cachedWeaponPosition;
+                rifle.transform.localRotation = cachedWeaponRotation;
+            }
+        }
+
         void Fire()
         {
             anim.SetTrigger("Firing");
@@ -180,7 +233,16 @@ namespace Assets.Scripts.Player.Weapon
             fireRateTimer = 0;
             RifleAudioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
             gameManager.WeaponAmmo.currentAmmo--;
-            TriggerMuzzleFlash();
+            
+            if(!IsServer && !IsClient)
+            {
+                TriggerMuzzleFlash();
+            }
+
+            if (IsOwner)  
+            {
+                TriggerMuzzleFlashServerRpc();
+            }
 
             Vector3 direction = TargetTransform.position - GunEndTransform.position;
             if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
@@ -190,36 +252,47 @@ namespace Assets.Scripts.Player.Weapon
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+
+
+                    if (IsOwner) gameManager.DecalManager.SpawnGroundHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Metal"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+
+                    if (IsOwner) gameManager.DecalManager.SpawnMetalHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Wood"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+
+                    if (IsOwner) gameManager.DecalManager.SpawnWoodHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Concrete"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
+
+                    if (IsOwner) gameManager.DecalManager.SpawnConcreteHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Zombie"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                     
-                    gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
-                     
+
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
+
+                    if (IsOwner) gameManager.DecalManager.SpawnBloodHitDecalServerRpc(hit.point, decalRotation);
+
 
 
                     ShotForceDir = hit.normal * -1;
@@ -369,8 +442,29 @@ namespace Assets.Scripts.Player.Weapon
             }
         }
 
+        [ClientRpc]
+        private void TriggerMuzzleFlashClientRpc()
+        {
+            int index = Random.Range(0, muzzleFlashList.Count);
+            muzzleFlashList[index].gameObject.SetActive(true);
 
-            void OnEnable()
+            lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
+
+            FPSLightCurves lightCurves = muzzleFlashList[index].GetComponentInChildren<FPSLightCurves>();
+
+            if (lightCurves != null)
+            {
+                lightCurves.GraphIntensityMultiplier = lightIntensity;
+            }
+        }
+
+        [ServerRpc]
+        public void TriggerMuzzleFlashServerRpc()
+        {
+            TriggerMuzzleFlashClientRpc();
+        }
+
+        void OnEnable()
         {
             inputSystemActions.Enable();
         }

@@ -88,22 +88,26 @@ public class AimStateManager : NetworkBehaviour
 
         if (IsOwner)
         {
+             
             UpdateLayerWieghtServerRpc(anim.GetLayerWeight(1));
             UpdateLeftHintWeightServerRpc(LeftHandIKConstraint.weight);
             UpdateRightHandAimWeightServerRpc(RightHandAimConstraint.weight);
             UpdateLeftHintWeightDataServerRpc(LeftHandIKConstraint.data.hintWeight);
+
         }
+
+
         else
         {           
             DefaultCamera.gameObject.SetActive(false);
             ZoomedCamera.gameObject.SetActive(false);
         }
 
-       
-        // Force update on new players
-        //anim.SetLayerWeight(1, layer1Weight.Value);
-        //LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
-        //RightHandAimConstraint.weight = rightHandAimWeight.Value;
+
+        //Force update on new players
+        anim.SetLayerWeight(1, layer1Weight.Value);
+        LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
+        RightHandAimConstraint.weight = rightHandAimWeight.Value;
 
         layer1Weight.OnValueChanged += (prev, curr) =>
         {
@@ -224,7 +228,7 @@ public class AimStateManager : NetworkBehaviour
             }
         }
 
-        else
+        else 
         {
             if (isTransitioning) return;
 
@@ -234,13 +238,13 @@ public class AimStateManager : NetworkBehaviour
             }
                         
             else if (CurrentState == AimingState && actionStateManager.CurrentState == actionStateManager.Default)
-            {
-                TransitionFromMainToShootingLayerServerRpc();
+            {                
+                TransitionFromMainToShootingLayer();
             } 
 
             else
             {
-                TransitionFromShootingToMainLayerServerRpc();
+                TransitionFromShootingToMainLayer();               
             }
         }
 
@@ -254,25 +258,12 @@ public class AimStateManager : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
-    private void TransitionFromShootingToMainLayerServerRpc()
-    {
-        TransitionFromShootingToMainLayer();
-        //Debug.Log("InsideShootingtoMainLayer"); 
-    }
-
     public void TransitionFromMainToShootingLayer()
     {
         if (!isTransitioning)
         {
             StartCoroutine(FadeIntoUpperBodyLayer());
         }
-    }
-
-    [ServerRpc]
-    private void TransitionFromMainToShootingLayerServerRpc()
-    {
-        TransitionFromMainToShootingLayer();
     }
 
      
@@ -337,7 +328,7 @@ public class AimStateManager : NetworkBehaviour
         else if(IsOwner)
         {
             //Debug.Log((IsClient) +"we areOWNERS and fading to main");
-            //Debug.Log("IsOnwer inside fading to main");
+            Debug.Log("IsOnwer inside fading to main");
             isTransitioning = true;
             float startWeight = layer1Weight.Value;
             float leftHandStartWeightData = leftHandHintWeightData.Value;

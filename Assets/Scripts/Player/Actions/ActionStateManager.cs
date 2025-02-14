@@ -63,9 +63,9 @@ namespace Assets.Scripts.Player.Actions
             }
 
             // Now apply the network variables to update the animation weights
-            //anim.SetLayerWeight(1, layer1Weight.Value);
-            //LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
-            //RightHandAimConstraint.weight = rightHandAimWeight.Value;
+            anim.SetLayerWeight(1, layer1Weight.Value);
+            LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
+            RightHandAimConstraint.weight = rightHandAimWeight.Value;
 
             layer1Weight.OnValueChanged += (prev, curr) =>
             {

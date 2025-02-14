@@ -93,7 +93,13 @@ public class AimStateManager : NetworkBehaviour
             UpdateRightHandAimWeightServerRpc(RightHandAimConstraint.weight);
             UpdateLeftHintWeightDataServerRpc(LeftHandIKConstraint.data.hintWeight);
         }
+        else
+        {           
+            DefaultCamera.gameObject.SetActive(false);
+            ZoomedCamera.gameObject.SetActive(false);
+        }
 
+       
         // Force update on new players
         //anim.SetLayerWeight(1, layer1Weight.Value);
         //LeftHandIKConstraint.data.hintWeight = leftHandHintWeight.Value;
@@ -141,6 +147,16 @@ public class AimStateManager : NetworkBehaviour
 
     private void Update()
     {
+        Debug.Log($"Before IsOwner check: IsClient = {IsClient}, IsServer = {IsServer}, IsOwner = {IsOwner}, Owner of this object: {GetComponent<NetworkObject>().OwnerClientId}, Local Client ID: {NetworkManager.Singleton.LocalClientId}");
+        if (IsOwner)
+        {
+            Debug.Log("Passed IsOwner check!");             
+        }
+        else
+        {
+            Debug.Log("Failed IsOwner check.");
+        }
+
         if (!IsOwner) return;
 
         MoveAimReference();
@@ -320,7 +336,7 @@ public class AimStateManager : NetworkBehaviour
         }
         else if(IsOwner)
         {
-            Debug.Log((IsClient) +"we areOWNERS and fading to main");
+            //Debug.Log((IsClient) +"we areOWNERS and fading to main");
             //Debug.Log("IsOnwer inside fading to main");
             isTransitioning = true;
             float startWeight = layer1Weight.Value;

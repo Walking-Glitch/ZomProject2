@@ -7742,7 +7742,6 @@ GameObject:
   - component: {fileID: 5107311071314844578}
   - component: {fileID: 4919773617666062198}
   - component: {fileID: 4684117849135949315}
-  - component: {fileID: 770698843689518450}
   - component: {fileID: 1140010986805133878}
   - component: {fileID: 7736572854478745551}
   m_Layer: 9
@@ -8129,19 +8128,6 @@ MonoBehaviour:
   magOutClip: {fileID: 8300000, guid: 0c3e450a9ac087f4ebe85a59b471e6f5, type: 3}
   releaseSlideClip: {fileID: 8300000, guid: 31915e5dc4459864ebb1717a8d9dcc71, type: 3}
   switchFireMode: {fileID: 8300000, guid: 10caf4b43f5b8a643961e37ad5ac506a, type: 3}
---- !u!114 &770698843689518450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5014838480513283903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e89c6cca63bb18b4cb476b9c1c03f042, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &1140010986805133878
 MonoBehaviour:
   m_ObjectHideFlags: 0

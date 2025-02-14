@@ -8,7 +8,7 @@ public class NetworkPlayerSpawn : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner) return;
+        if (!IsClient) return;
 
         // Find all spawn points only once
         if (spawnPoints == null || spawnPoints.Length == 0)

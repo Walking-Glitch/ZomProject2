@@ -282,11 +282,10 @@ namespace Assets.Scripts.Player.Weapon
 
                 
 
-                // Get local casing spawn position & rotation
+                // taken out of server rcp cause it was not updating properly 
                 Vector3 spawnPos = CasingSpawnPoint.position;
                 Quaternion spawnRot = CasingSpawnPoint.rotation;
-
-                // Calculate force directions relative to spawn rotation
+ 
                 Vector3 forceRight = spawnRot * Vector3.left * Random.Range(MinEjectForce, MaxEjectForce);
                 Vector3 forceForward = spawnRot * Vector3.forward * Random.Range(MinEjectForce, MaxEjectForce);
                 Vector3 torque = new Vector3(10, 0, 0) * ejectTorque;

@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Assets.Scripts.Game_Manager;
+using Unity.Netcode;
 using UnityEngine;
 
-public class EnemyManager : MonoBehaviour
+public class EnemyManager : NetworkBehaviour
 {
     public Transform parentSpawnPoint;
 
@@ -43,10 +45,21 @@ public class EnemyManager : MonoBehaviour
     {
         if(!isInitialized) return;
 
-        if (!isSpawning && EnemyCtr < MaxEnemy)
+        if(!IsServer && !IsClient)
         {
-            StartCoroutine(SpawnEnemies());
+            if (!isSpawning && EnemyCtr < MaxEnemy)
+            {
+                //StartCoroutine(SpawnEnemies());
+            }
         }
+        else
+        {
+            if (!isSpawning && EnemyCtr < MaxEnemy)
+            {
+                StartCoroutine(NetworkSpawnEnemies());
+            }
+        }
+        
     }
 
     void CollectChildObjects(Transform parentSpawnPoint)
@@ -59,7 +72,7 @@ public class EnemyManager : MonoBehaviour
         }
     }
     private IEnumerator SpawnEnemies()
-    {
+    { 
         isSpawning = true;
 
         Transform selectedSpawnPoint = GetValidSpawnPoint();
@@ -89,6 +102,58 @@ public class EnemyManager : MonoBehaviour
         yield return new WaitForSeconds(Delay);
         isSpawning = false;
 
+    }
+
+    private IEnumerator NetworkSpawnEnemies()
+    {
+        if (!IsServer) yield break; // Ensure only the server spawns enemies
+
+        isSpawning = true;
+
+        Transform selectedSpawnPoint = GetValidSpawnPoint();
+        int attempts = 0;
+
+        while (selectedSpawnPoint == null && attempts < 10)
+        {
+            selectedSpawnPoint = GetValidSpawnPoint();
+            attempts++;
+        }
+
+        if (selectedSpawnPoint == null)
+        {
+            isSpawning = false;
+            yield break;
+        }
+
+        // Request an enemy from the synchronized pool
+        NetworkObject tempEnemy = gameManager.EnemyPool.RequestNetworkEnemy();
+
+        if (tempEnemy == null)
+        {
+            Debug.LogError("No available enemies in pool!");
+            isSpawning = false;
+            yield break;
+        }
+
+        tempEnemy.transform.position = selectedSpawnPoint.position;
+        tempEnemy.transform.rotation = selectedSpawnPoint.rotation;
+
+        tempEnemy.gameObject.SetActive(true); // Activate on the server
+
+        // Tell all clients to activate this specific enemy
+        ActivateEnemyClientRpc(tempEnemy.NetworkObjectId);
+
+        EnemyCtr++;
+
+        yield return new WaitForSeconds(Delay);
+        isSpawning = false;
+    }
+
+    [ClientRpc]
+    private void ActivateEnemyClientRpc(ulong enemyId)
+    {
+        NetworkObject enemyNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[enemyId];
+        enemyNetworkObject.gameObject.SetActive(true);
     }
 
     Transform GetValidSpawnPoint()

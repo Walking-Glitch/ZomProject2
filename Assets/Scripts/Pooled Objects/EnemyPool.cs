@@ -1,41 +1,78 @@
 using System.Collections.Generic;
+using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyPool : MonoBehaviour
+public class EnemyPool : NetworkBehaviour
 {
     [SerializeField] private List<GameObject> enemyPrefabs;
 
     [SerializeField] private int poolSize;
     [SerializeField] private List<GameObject> enemyList;
 
+    [SerializeField] private List<NetworkObject> networkEnemyList = new List<NetworkObject>();
+
     void Start()
     {
-        AddEnemiesToPool(poolSize);
+        //AddEnemiesToPool(poolSize);
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            NetworkAddEnemiesToPool(poolSize);
+        }
     }
 
     private void AddEnemiesToPool(int amount)
     {
+
         for (int i = 0; i < amount; i++)
         {
-            //if ((i + 1) % 7 == 0)
-            //{
-            //    GameObject enemyPrefab = enemyPrefabs[2];
-            //    GameObject enemy = Instantiate(enemyPrefab);
-            //    enemy.SetActive(false);
-            //    enemyList.Add(enemy);
-            //    enemy.transform.parent = transform;
-            //}
+            GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
+            GameObject enemy = Instantiate(enemyPrefab);
 
-            //else
-            //{
-                GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
-                GameObject enemy = Instantiate(enemyPrefab);
-                enemy.SetActive(false);
-                enemyList.Add(enemy);
-                enemy.transform.parent = transform;
-           // }
+            //If running single-player, do not treat it as a networked object.
+            if (NetworkManager.Singleton.IsListening)
+            {
+                NetworkObject enemyNetObj = enemy.GetComponent<NetworkObject>();
+                if (enemyNetObj != null)
+                {
+                    enemyNetObj.TrySetParent(transform, true);
+                }
+            }
+            else
+            {
+                enemy.transform.parent = transform; // Regular parenting in single-player
+            }
 
+            enemy.SetActive(false);
+            enemyList.Add(enemy);       
+        }
+    }
+
+    public void NetworkAddEnemiesToPool(int amount)
+    {
+        Debug.Log("inside network pool");
+        for (int i = 0; i < amount; i++)
+        {
+            GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
+            GameObject enemy = Instantiate(enemyPrefab);
+            NetworkObject enemyNetObj = enemy.GetComponent<NetworkObject>();
+
+            if (enemyNetObj == null)
+            {
+                Debug.LogError("Enemy prefab is missing a NetworkObject component!");
+                return;
+            }
+
+            enemyNetObj.Spawn(false);  // Spawn on the server, but keep it disabled for now.
+            enemy.SetActive(false);     // Pool is inactive initially.
+
+            networkEnemyList.Add(enemyNetObj);
+            enemy.transform.parent = transform;
         }
     }
 
@@ -50,6 +87,17 @@ public class EnemyPool : MonoBehaviour
 
         }
         return null;
+    }
 
+    public NetworkObject RequestNetworkEnemy()
+    {
+        for (int i = 0; i < networkEnemyList.Count; i++)
+        {
+            if (!networkEnemyList[i].isActiveAndEnabled)
+            {
+                return networkEnemyList[i];
+            }
+        }
+        return null;
     }
 }

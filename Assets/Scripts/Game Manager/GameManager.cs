@@ -1,6 +1,7 @@
 using Assets.Scripts.Player;
 using Assets.Scripts.Player.Weapon;
 using System;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -73,10 +74,47 @@ namespace Assets.Scripts.Game_Manager
         }
 
         #endregion
-         
+
+        #region Multiplayer Initialization
+
+        public override void OnNetworkSpawn()
+        {
+            if (IsClient)
+            {
+                StartCoroutine(FindAndAssignLocalPlayer());
+            }
+        }
+
+        private IEnumerator FindAndAssignLocalPlayer()
+        {
+            while (PlayerStats == null)
+            {
+                yield return new WaitForSeconds(0.2f);
+
+                foreach (var playerStats in FindObjectsOfType<PlayerStatus>())
+                {
+                    if (playerStats.IsOwner) // Assign only the local player's components
+                    {
+                        PlayerGameObject = playerStats.gameObject;
+                        PlayerStats = playerStats;
+                        WeaponManager = PlayerGameObject.GetComponent<WeaponManager>();                        
+                        WeaponAmmo = PlayerGameObject.GetComponent<WeaponAmmo>();
+                        WeaponLaser = PlayerGameObject.GetComponent<WeaponLaser>();
+
+                        Debug.Log("GameManager: Local player assigned.");
+
+                        break;
+                    }
+                }
+            }
+        }
+        #endregion
+
     }
+
+
 }
 
 
 
-     
+ 

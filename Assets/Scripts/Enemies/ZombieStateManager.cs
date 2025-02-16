@@ -117,30 +117,34 @@ public class ZombieStateManager : MonoBehaviour
 
         gameManager = GameManager.Instance;
 
+        StartCoroutine(WaitForPlayer());
+    }
+
+
+    private IEnumerator WaitForPlayer()
+    {
+        // Wait until PlayerGameObject is assigned
+        while (gameManager.PlayerGameObject == null)
+        {
+            yield return null; // Waits one frame
+        }
+
+        // Now it's safe to assign the player transform
         PlayerTransform = gameManager.PlayerGameObject.transform;
 
         health = maxHealth;
-
         zombieParent = transform.parent.gameObject;
-
         night = gameManager.DayCycle.IsNightTime;
         NightTimeMode(night);
-
         zombieAudioSource = GetComponent<AudioSource>();
-
         Reward = 50;
-
 
         GetSkinMeshBits();
         GetZombieLimbs();
         GetRagdollBits();
         RagdollModeOff();
-
         SwitchState(chasing);
-
-
     }
-
 
 
     // Update is called once per frame

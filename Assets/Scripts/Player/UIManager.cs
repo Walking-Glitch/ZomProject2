@@ -1,5 +1,6 @@
 using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player;
+using System.Collections;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine.UI;
 public class UIManager : NetworkBehaviour
 {
     public Image HealthFill;
-    public PlayerStatus player;
+    //public PlayerStatus player;
 
     public TextMeshProUGUI Level;
     public TextMeshProUGUI Money;
@@ -22,6 +23,8 @@ public class UIManager : NetworkBehaviour
     [SerializeField] private Button clientButton;
 
     private GameManager gameManager;
+
+    private bool isInitialized;
 
     private void Awake()
     {
@@ -46,14 +49,29 @@ public class UIManager : NetworkBehaviour
     {
         gameManager = GameManager.Instance;
 
+        StartCoroutine(WaitForPlayer());
+       
+    }
+
+    private IEnumerator WaitForPlayer()
+    {
+        while (gameManager.PlayerGameObject == null)
+        {
+            yield return null;
+        }
         UpdateHealthUI();
         UpdateLevelUI(gameManager.DifficultyManager.Day);
         UpdateMoneyUI(gameManager.EconomyManager.CurrentMoney);
+
+        isInitialized = true;
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!isInitialized) return;
+
         ToggleOffInteractText();
     }
 
@@ -87,6 +105,6 @@ public class UIManager : NetworkBehaviour
     }
     public void UpdateHealthUI()
     {
-        HealthFill.fillAmount = (float)(player.Health * 0.01);
+        HealthFill.fillAmount = (float)(gameManager.PlayerStats.Health * 0.01);
     }
 }

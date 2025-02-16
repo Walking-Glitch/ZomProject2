@@ -17,16 +17,32 @@ public class EnemyManager : MonoBehaviour
 
     private GameManager gameManager;
 
+    private bool isInitialized = false;
+
+
     void Start()
     {
         gameManager = GameManager.Instance;
 
-        CollectChildObjects(parentSpawnPoint);
+        StartCoroutine(WaitForPlayer());
     }
 
+    private IEnumerator WaitForPlayer()
+    {
+        while (gameManager.PlayerGameObject == null)
+        {
+            yield return null;
+        }
+
+        CollectChildObjects(parentSpawnPoint);
+
+        isInitialized = true;
+    }
     // Update is called once per frame
     void Update()
     {
+        if(!isInitialized) return;
+
         if (!isSpawning && EnemyCtr < MaxEnemy)
         {
             StartCoroutine(SpawnEnemies());

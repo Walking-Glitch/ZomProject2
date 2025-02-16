@@ -8069,6 +8069,7 @@ MonoBehaviour:
   maxLightIntensity: 50
   minLightIntensity: 10
   semiAuto: 0
+  CasingSpawnPoint: {fileID: 1589590928286842828}
 --- !u!114 &5107311071314844578
 MonoBehaviour:
   m_ObjectHideFlags: 0

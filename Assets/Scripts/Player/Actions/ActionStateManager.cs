@@ -45,6 +45,9 @@ namespace Assets.Scripts.Player.Actions
         //game manager
         public GameManager gameManager;
 
+        // player spawned check 
+        private bool isInitialized;
+
         // network variables
         private NetworkVariable<float> layer1Weight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
         private NetworkVariable<float> rightHandAimWeight = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -53,6 +56,61 @@ namespace Assets.Scripts.Player.Actions
         public override void OnNetworkSpawn()
         {
             Initialize();
+
+            
+        }
+
+        void Start()
+        {
+            if (!IsServer && !IsClient)
+            {
+                Initialize();
+            }
+        }
+        // Update is called once per frame
+        void Update()
+        {
+            if (!IsOwner || !isInitialized) return;
+            //Debug.Log(CurrentState);
+            CurrentState.UpdateState(this);
+        }
+
+        public void SwitchState(ActionStateBase state)
+        {
+            CurrentState = state;
+            state.EnterState(this);
+        }
+
+        private void Initialize()
+        {
+            gameManager = GameManager.Instance;
+            StartCoroutine(WaitForPlayer());           
+        }
+
+        private IEnumerator WaitForPlayer()
+        {
+            while (gameManager.PlayerGameObject == null)
+            {
+                yield return null;
+            }
+
+            inputSystemActions = new InputSystem_Actions();
+
+            inputSystemActions.Player.Reload.performed += OnReloadPerformed;
+            inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
+            inputSystemActions.Player.Inventory.performed += OnInventoryPerformed;
+            inputSystemActions.Player.Attack.performed += OnFirePerformed;
+            inputSystemActions.Player.Scroll.performed += OnScrollPerformed;
+            inputSystemActions.Player.Interact.started += OnInteractPerformed;
+
+            inputSystemActions.Enable();
+
+            anim = GetComponent<Animator>();
+            AimStateManager = GetComponent<AimStateManager>();
+            WeaponManager = GetComponent<WeaponManager>();
+            LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
+
+            
 
             if (IsOwner)
             {
@@ -88,50 +146,10 @@ namespace Assets.Scripts.Player.Actions
                 //Debug.Log($"HintWeight changed from {prev} to {curr}");
                 LeftHandIKConstraint.data.hintWeight = curr;
             };
-        }
-
-        void Start()
-        {
-            if (!IsServer && !IsClient)
-            {
-                Initialize();
-            }
-        }
-        // Update is called once per frame
-        void Update()
-        {
-            if (!IsOwner) return;
-            //Debug.Log(CurrentState);
-            CurrentState.UpdateState(this);
-        }
-
-        public void SwitchState(ActionStateBase state)
-        {
-            CurrentState = state;
-            state.EnterState(this);
-        }
-
-        private void Initialize()
-        {
-            inputSystemActions = new InputSystem_Actions();
-
-            inputSystemActions.Player.Reload.performed += OnReloadPerformed;
-            inputSystemActions.Player.Grenade.performed += OnThrowGrenadePerformed;
-            inputSystemActions.Player.Inventory.performed += OnInventoryPerformed;
-            inputSystemActions.Player.Attack.performed += OnFirePerformed;
-            inputSystemActions.Player.Scroll.performed += OnScrollPerformed;
-            inputSystemActions.Player.Interact.started += OnInteractPerformed;
-
-            inputSystemActions.Enable();
-
-            gameManager = GameManager.Instance;
-            anim = GetComponent<Animator>();
-            AimStateManager = GetComponent<AimStateManager>();
-            WeaponManager = GetComponent<WeaponManager>();
-            LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
 
             SwitchState(Default);
 
+            isInitialized = true;
         }
         public void TransitionToReload()
         {

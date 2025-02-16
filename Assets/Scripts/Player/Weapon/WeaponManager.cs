@@ -1,5 +1,6 @@
 using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Actions;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -83,6 +84,11 @@ namespace Assets.Scripts.Player.Weapon
         [SerializeField] private bool semiAuto;
         private bool isFiring = false;
 
+        //casing spawn transform
+        public Transform CasingSpawnPoint;
+        private float MaxEjectForce = 3.5f;
+        private float MinEjectForce = 1.8f;
+        private float ejectTorque = 50;
 
         // game manager
         private GameManager gameManager;
@@ -117,9 +123,36 @@ namespace Assets.Scripts.Player.Weapon
             CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
         }
 
+        public override void OnNetworkSpawn()
+        {
+            if (IsOwner)
+            {
+                StartCoroutine(WaitForPlayer());
+            }
+        }
+
+        private IEnumerator WaitForPlayer()
+        {
+            while (gameManager == null || gameManager.PlayerGameObject == null)
+            {
+                yield return null; // Waits one frame
+            }
+
+            // Wait until CasingManager is assigned
+            while (gameManager.CasingManager == null)
+            {
+                yield return null;
+            }
+
+            gameManager.CasingManager.CasingSpawnTransform = CasingSpawnPoint;
+        }
+
+
         // Update is called once per frame
         void Update()
         {
+            if (!IsOwner) return;
+
             ToogleFireRate();
 
             if (!semiAuto && isFiring && CanFire())
@@ -131,7 +164,8 @@ namespace Assets.Scripts.Player.Weapon
 
         }
 
-        public void RemoveMag()
+       
+            public void RemoveMag()
         {           
             Mag.transform.SetParent(LeftHandTransform);
             Mag.transform.SetLocalPositionAndRotation(new Vector3(-0.133599997f, 0.0542000011f, -0.0315999985f), Quaternion.Euler(25.4739895f, 230.443344f, 212.954651f));
@@ -229,7 +263,9 @@ namespace Assets.Scripts.Player.Weapon
         {
             anim.SetTrigger("Firing");
             rifle.GetComponent<Animation>().Play();
-            gameManager.CasingManager.SpawnBulletCasing();
+           
+
+
             fireRateTimer = 0;
             RifleAudioSource.PlayOneShot(gunShots[Random.Range(0, gunShots.Length)]);
             gameManager.WeaponAmmo.currentAmmo--;
@@ -237,11 +273,27 @@ namespace Assets.Scripts.Player.Weapon
             if(!IsServer && !IsClient)
             {
                 TriggerMuzzleFlash();
+                gameManager.CasingManager.SpawnBulletCasing();
             }
 
             if (IsOwner)  
             {
                 TriggerMuzzleFlashServerRpc();
+
+                
+
+                // Get local casing spawn position & rotation
+                Vector3 spawnPos = CasingSpawnPoint.position;
+                Quaternion spawnRot = CasingSpawnPoint.rotation;
+
+                // Calculate force directions relative to spawn rotation
+                Vector3 forceRight = spawnRot * Vector3.left * Random.Range(MinEjectForce, MaxEjectForce);
+                Vector3 forceForward = spawnRot * Vector3.forward * Random.Range(MinEjectForce, MaxEjectForce);
+                Vector3 torque = new Vector3(10, 0, 0) * ejectTorque;
+
+                // Call ServerRpc with correct forces               
+
+                gameManager.CasingManager.SpawnBulletCasingServerRpc(spawnPos, spawnRot, forceRight, forceForward, torque);
             }
 
             Vector3 direction = TargetTransform.position - GunEndTransform.position;

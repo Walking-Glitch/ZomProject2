@@ -42,7 +42,7 @@ namespace Unity.Cinemachine.Samples
         /// want it to work everywhere.
         void IInputAxisOwner.GetInputAxes(List<IInputAxisOwner.AxisDescriptor> axes)
         {
-            axes.Add(new () { DrivenAxis = () => ref Fire, Name = "Fire" });
+            axes.Add(new () { DrivenAxis = () => ref Fire, Name = "FireRpc" });
         }
 
         void OnValidate()
@@ -78,7 +78,7 @@ namespace Unity.Cinemachine.Samples
                     AimController.RecenterPlayer(rotationTime);
             }
 
-            // Fire the bullet
+            // FireRpc the bullet
             if (fireNow)
             {
                 m_LastFireTime = now;

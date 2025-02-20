@@ -1,9 +1,10 @@
 using Assets.Scripts.Game_Manager;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 
-public class TurretBase : MonoBehaviour
+public class TurretBase : NetworkBehaviour
 {
     // weapon stats
     [Header("Weapon Stats")]
@@ -50,8 +51,7 @@ public class TurretBase : MonoBehaviour
     public LineRenderer laserLine;
     public Transform laserOrigin;
     public Transform LaserAimTransform;
-    private bool isOnTarget;
-
+    
     // spot light 
     [Header("Weapon VFX")]
     public Light WeaponSpotLight;
@@ -81,6 +81,13 @@ public class TurretBase : MonoBehaviour
     private float checkInterval = 0.2f;
     private float checkTimer;
 
+    [Header("Networked Variables")]
+    private NetworkVariable<ulong> targetEnemyId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<Vector3> panRotation = new NetworkVariable<Vector3>();
+    private NetworkVariable<Vector3> pitchRotation = new NetworkVariable<Vector3>();
+
+    //private NetworkVariable<bool> isFiring = new NetworkVariable<bool>(false);
+
     protected virtual void Start()
     {
         gameManager = GameManager.Instance;
@@ -88,13 +95,51 @@ public class TurretBase : MonoBehaviour
         turretAudioSource = GetComponent<AudioSource>();
 
         CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
-         
+          
+    }
 
+    public override void OnNetworkSpawn()
+    {
+        if (IsServer)
+        {
+            // The server will own turret logic and update clients
+            FindEnemiesInRange();
+        }
+
+        // Sync rotations on clients when they change
+        panRotation.OnValueChanged += (oldRot, newRot) =>
+        {
+            PanTransform.rotation = Quaternion.Euler(newRot);
+        };
+
+        pitchRotation.OnValueChanged += (oldRot, newRot) =>
+        {
+            PitchTransform.rotation = Quaternion.Euler(newRot);
+        };
+
+        targetEnemyId.OnValueChanged += (oldId, newId) =>
+        {
+            if (newId == 0)
+            {
+                currentEnemy = null;
+            }
+            else
+            {
+                currentEnemy = NetworkManager.Singleton.SpawnManager.SpawnedObjects[newId].GetComponent<ZombieStateManager>();
+            }
+        };
+
+        //isFiring.OnValueChanged += (oldValue, newValue) =>
+        //{
+        //    if (newValue) TriggerMuzzleFlash();
+        //};
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
+        if (!IsServer) return;
+
         fireRateTimer += Time.deltaTime;
         
 
@@ -186,7 +231,9 @@ protected virtual void AddRecoil()
     }
     protected virtual void AimAtTarget()
     {
-        if(enemies.Count > 0 && gameManager.EconomyManager.CheckEnoughFuel())
+        if (!IsServer) return;
+
+        if (enemies.Count > 0 && gameManager.EconomyManager.CheckEnoughFuel())
         {
             if (currentEnemy == null || !enemies.Contains(currentEnemy))
             {
@@ -204,6 +251,9 @@ protected virtual void AddRecoil()
             {
                 Quaternion horizontalRotation = Quaternion.LookRotation(horizontalDirection);
                 PanTransform.rotation = Quaternion.Slerp(PanTransform.rotation, horizontalRotation, Time.deltaTime * AimingSpeed);
+
+                // Sync with clients
+                panRotation.Value = PanTransform.rotation.eulerAngles;
             }
 
             if (PitchTransform != null)
@@ -216,6 +266,10 @@ protected virtual void AddRecoil()
 
                 // Lock the barrel's horizontal rotation to match the turret base
                 PitchTransform.rotation = Quaternion.Euler(PitchTransform.rotation.eulerAngles.x, PanTransform.rotation.eulerAngles.y, 0);
+
+
+                // Sync with clients
+                pitchRotation.Value = PitchTransform.rotation.eulerAngles;
             }
 
 
@@ -246,6 +300,8 @@ protected virtual void AddRecoil()
 
     protected virtual void FindEnemiesInRange()
     {
+        if (!IsServer) return;
+
         enemies.Clear();
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, MaxWeaponRange, ZombieLayer);
@@ -264,15 +320,32 @@ protected virtual void AddRecoil()
                         enemies.Add(col.GetComponentInParent<ZombieStateManager>());
                 }
             }
+  
+        }
 
-                
-            
+        if (enemies.Count > 0)
+        {
+            currentEnemy = enemies[0];
+
+            // Sync target to clients
+            if (currentEnemy != null)
+            {
+                targetEnemyId.Value = currentEnemy.GetComponentInParent<NetworkObject>().NetworkObjectId;
+            }
+        }
+        else
+        {
+            currentEnemy = null;
+            targetEnemyId.Value = 0;
         }
     }
 
     protected virtual bool CanFire()
     {
-        fireRateTimer += Time.deltaTime;
+        if (!IsServer) return false;
+
+        fireRateTimer += Time.deltaTime;       
+
         if (fireRateTimer < WeaponFireRate) return false;   
         if(!gameManager.EconomyManager.CheckEnoughAmmo()) return false;
         if(!gameManager.EconomyManager.CheckEnoughFuel()) return false;
@@ -280,12 +353,23 @@ protected virtual void AddRecoil()
 
         return false;       
     }
+   
     protected virtual void Fire(bool hasRecoil)
     {
 
         fireRateTimer = 0;
 
-        TriggerMuzzleFlash();
+        // Sync firing state
+        //isFiring.Value = true;
+
+        if(!IsServer && !IsClient)
+        {
+            TriggerMuzzleFlash();
+        }
+        else
+        {
+            TriggerMuzzleFlashServerRpc();
+        }
 
         PlaySfx();
 
@@ -305,34 +389,47 @@ protected virtual void AddRecoil()
             if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("Environment"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+                if (!IsServer && !IsClient) gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+
+                else gameManager.DecalManager.SpawnGroundHitDecalServerRpc(hit.point, decalRotation);
             }
 
             else if (hit.collider.CompareTag("Metal"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+                if (!IsServer && !IsClient) gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+
+                else gameManager.DecalManager.SpawnMetalHitDecalServerRpc(hit.point, decalRotation);
             }
 
             else if (hit.collider.CompareTag("Wood"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+                if (!IsServer && !IsClient) gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+
+                else gameManager.DecalManager.SpawnWoodHitDecalServerRpc(hit.point, decalRotation);
             }
 
             else if (hit.collider.CompareTag("Concrete"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
+                if (!IsServer && !IsClient) gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
+
+                else gameManager.DecalManager.SpawnConcreteHitDecalServerRpc(hit.point, decalRotation);
             }
 
             else if (hit.collider.CompareTag("Zombie"))
             {
                 Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
+
+
+                if (!IsServer && !IsClient) gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
+
+              else gameManager.DecalManager.SpawnBloodHitDecalServerRpc(hit.point, decalRotation);
+
 
                 ZombieStateManager zombieStateManager;
 
@@ -391,7 +488,10 @@ protected virtual void AddRecoil()
             }
         }
 
-         
+
+        //
+        //isFiring.Value = false;
+
     }
 
     protected virtual void RotateBarrel(bool rotatoryBarrel)
@@ -428,6 +528,29 @@ protected virtual void AddRecoil()
             lightCurves.GraphIntensityMultiplier = lightIntensity;
         } 
     }
+
+    [ClientRpc]
+    protected void TriggerMuzzleFlashClientRpc()
+    {
+        int index = Random.Range(0, muzzleFlashList.Count);
+        muzzleFlashList[index].gameObject.SetActive(true);
+
+        lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
+
+        FPSLightCurves lightCurves = GetComponentInChildren<FPSLightCurves>();
+
+        if (lightCurves != null)
+        {
+            lightCurves.GraphIntensityMultiplier = lightIntensity;
+        }
+    }
+
+    [ServerRpc]
+    public void TriggerMuzzleFlashServerRpc()
+    {
+        TriggerMuzzleFlashClientRpc();
+    }
+
 
     protected void PlaySfx()
     {

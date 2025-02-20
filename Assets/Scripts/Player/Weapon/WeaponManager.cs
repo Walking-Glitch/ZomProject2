@@ -59,7 +59,7 @@ namespace Assets.Scripts.Player.Weapon
 
 
         // firing variables
-        [Header("Fire Rate")]
+        [Header("FireRpc Rate")]
         [SerializeField] float fireRate;
         private float fireRateTimer;
 

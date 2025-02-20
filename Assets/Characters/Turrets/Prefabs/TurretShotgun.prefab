@@ -324,6 +324,7 @@ GameObject:
   - component: {fileID: 7344539797678608641}
   - component: {fileID: 540433558964868269}
   - component: {fileID: 8020305864879660801}
+  - component: {fileID: 2945387519736340556}
   - component: {fileID: 6173986049753901565}
   - component: {fileID: 6795276447676579186}
   - component: {fileID: 4063095197311702782}
@@ -404,6 +405,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2945387519736340556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2578714790109156629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 777649939
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &6173986049753901565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -416,6 +442,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a40121cc21c94b347944006a8b7756ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   WeaponDamage: 100
   MinWeaponRange: 5
   MaxWeaponRange: 30

@@ -150,7 +150,7 @@ public class ZombieStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
         currentState.UpdateState(this);
        
          

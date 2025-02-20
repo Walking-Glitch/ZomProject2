@@ -171,6 +171,7 @@ GameObject:
   - component: {fileID: 7610992209047260166}
   - component: {fileID: 1485303500864200193}
   - component: {fileID: 3766258466507435436}
+  - component: {fileID: -3561236028294133787}
   - component: {fileID: 2182128170650806364}
   - component: {fileID: 1572033907995915609}
   - component: {fileID: 6395358193265613016}
@@ -272,6 +273,31 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 8210119501060539841, guid: bf2c4962ff9d2d34b99ef312eeadc150, type: 3}
+--- !u!114 &-3561236028294133787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4104018517110414734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2673633731
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &2182128170650806364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae2512ff881d06048875adcaa2eb2f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   WeaponDamage: 100
   MinWeaponRange: 55
   MaxWeaponRange: 150

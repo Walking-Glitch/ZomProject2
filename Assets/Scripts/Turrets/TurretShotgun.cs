@@ -1,4 +1,5 @@
 using Assets.Scripts.Game_Manager;
+using Unity.Netcode;
 using UnityEngine;
 
 public class TurretShotgun : TurretBase
@@ -7,11 +8,21 @@ public class TurretShotgun : TurretBase
     {
         base.Start();
     }
+    
     protected override void Fire(bool hasRecoil)
     {
         fireRateTimer = 0;
 
-        TriggerMuzzleFlash();
+        if(!IsServer && !IsClient)
+        {
+            TriggerMuzzleFlash();
+        }
+
+        else
+        {
+            TriggerMuzzleFlashServerRpc();
+        }
+        
         PlaySfx();
 
         hasRecoil = true;
@@ -42,34 +53,45 @@ public class TurretShotgun : TurretBase
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
+
+                    if (IsServer) gameManager.DecalManager.SpawnGroundHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Metal"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
+
+                    if (IsServer) gameManager.DecalManager.SpawnMetalHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Wood"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
+
+                    if (IsServer) gameManager.DecalManager.SpawnWoodHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Concrete"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
 
-                    gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
+
+                    if (IsServer) gameManager.DecalManager.SpawnConcreteHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Zombie"))
                 {
                     Quaternion decalRotation = Quaternion.LookRotation(hit.normal);
-                    gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
+
+                    if (!IsServer && !IsClient) gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
+
+                    if (IsServer) gameManager.DecalManager.SpawnBloodHitDecalServerRpc(hit.point, decalRotation);
 
                     ZombieStateManager zombieStateManager;
 

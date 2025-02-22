@@ -86,7 +86,10 @@ public class TurretBase : NetworkBehaviour
     private NetworkVariable<Vector3> panRotation = new NetworkVariable<Vector3>();
     private NetworkVariable<Vector3> pitchRotation = new NetworkVariable<Vector3>();
 
-    //private NetworkVariable<bool> isFiring = new NetworkVariable<bool>(false);
+    private NetworkVariable<bool> laserNetworkReady = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<Vector3> laserEndPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<Vector3> laserStartPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
 
     protected virtual void Start()
     {
@@ -129,10 +132,19 @@ public class TurretBase : NetworkBehaviour
             }
         };
 
-        //isFiring.OnValueChanged += (oldValue, newValue) =>
-        //{
-        //    if (newValue) TriggerMuzzleFlash();
-        //};
+        laserNetworkReady.OnValueChanged += (prev, curr) =>
+        {
+            laserLine.enabled = curr;
+        };
+
+        laserEndPosition.OnValueChanged += (prev, curr) =>
+        {
+            laserLine.SetPosition(1, curr);
+        };
+        laserStartPosition.OnValueChanged += (prev, curr) =>
+        {
+            laserLine.SetPosition(0, curr);
+        };
     }
 
     // Update is called once per frame
@@ -165,42 +177,82 @@ public class TurretBase : NetworkBehaviour
     
     protected virtual void DisplayLaser()
     {
-       
-        if (currentEnemy != null)
+        if (IsServer)
         {
-
-            Vector3 laserDirection = GunEndTransform.forward;
-
-
-            Ray ray = new Ray(GunEndTransform.position, laserDirection);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ShootMask))
+            if (currentEnemy != null)
             {
-                LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
-                LaserAimTransform.position = hit.point;
+
+                Vector3 laserDirection = GunEndTransform.forward;
+
+
+                Ray ray = new Ray(GunEndTransform.position, laserDirection);
+
+                if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ShootMask))
+                {
+                    LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                    LaserAimTransform.position = hit.point;
+                  
+                }
+                laserNetworkReady.Value = true;
+                laserStartPosition.Value = laserOrigin.position;
+                laserEndPosition.Value = hit.point;
+
+
+                if (WeaponSpotLight != null)
+                {
+                    WeaponSpotLight.gameObject.SetActive(true);
+                    WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
+                }
+
             }
-
-            laserLine.enabled = true;
-            laserLine.SetPosition(0, laserOrigin.position);
-            laserLine.SetPosition(1, LaserAimTransform.position);
-
-            if (WeaponSpotLight != null)
+            else
             {
-                WeaponSpotLight.gameObject.SetActive(true);
-                WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
+                LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                laserNetworkReady.Value = false;
+
+                if (WeaponSpotLight != null) WeaponSpotLight.gameObject.SetActive(false);
             }
 
         }
         else
         {
-            LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
-            laserLine.enabled = false;
+            if (currentEnemy != null)
+            {
 
-            if (WeaponSpotLight != null) WeaponSpotLight.gameObject.SetActive(false);
+                Vector3 laserDirection = GunEndTransform.forward;
+
+
+                Ray ray = new Ray(GunEndTransform.position, laserDirection);
+
+                if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ShootMask))
+                {
+                    LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                    LaserAimTransform.position = hit.point;
+                }
+
+                laserLine.enabled = true;
+                laserLine.SetPosition(0, laserOrigin.position);
+                laserLine.SetPosition(1, LaserAimTransform.position);
+
+                if (WeaponSpotLight != null)
+                {
+                    WeaponSpotLight.gameObject.SetActive(true);
+                    WeaponSpotLight.transform.LookAt(LaserAimTransform.position);
+                }
+
+            }
+            else
+            {
+                LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                laserLine.enabled = false;
+
+                if (WeaponSpotLight != null) WeaponSpotLight.gameObject.SetActive(false);
+            }
+
         }
-    
 
-}
+
+    }
 
 protected virtual void AddRecoil()
     {

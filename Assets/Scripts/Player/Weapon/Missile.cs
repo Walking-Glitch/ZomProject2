@@ -1,11 +1,10 @@
 using Assets.Scripts.Game_Manager;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Missile : MonoBehaviour
+public class Missile : NetworkBehaviour
 {
     // audio variables
     public AudioSource MissileAudioSource;

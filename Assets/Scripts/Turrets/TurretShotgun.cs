@@ -55,7 +55,7 @@ public class TurretShotgun : TurretBase
 
                     if (!IsServer && !IsClient) gameManager.DecalManager.SpawnGroundHitDecal(hit.point, decalRotation);
 
-                    if (IsServer) gameManager.DecalManager.SpawnGroundHitDecalServerRpc(hit.point, decalRotation);
+                    else gameManager.DecalManager.SpawnGroundHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Metal"))
@@ -64,7 +64,7 @@ public class TurretShotgun : TurretBase
 
                     if (!IsServer && !IsClient) gameManager.DecalManager.SpawnMetalHitDecal(hit.point, decalRotation);
 
-                    if (IsServer) gameManager.DecalManager.SpawnMetalHitDecalServerRpc(hit.point, decalRotation);
+                    else gameManager.DecalManager.SpawnMetalHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Wood"))
@@ -73,7 +73,7 @@ public class TurretShotgun : TurretBase
 
                     if (!IsServer && !IsClient) gameManager.DecalManager.SpawnWoodHitDecal(hit.point, decalRotation);
 
-                    if (IsServer) gameManager.DecalManager.SpawnWoodHitDecalServerRpc(hit.point, decalRotation);
+                    else gameManager.DecalManager.SpawnWoodHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Concrete"))
@@ -82,7 +82,7 @@ public class TurretShotgun : TurretBase
 
                     if (!IsServer && !IsClient) gameManager.DecalManager.SpawnConcreteHitDecal(hit.point, decalRotation);
 
-                    if (IsServer) gameManager.DecalManager.SpawnConcreteHitDecalServerRpc(hit.point, decalRotation);
+                    else gameManager.DecalManager.SpawnConcreteHitDecalServerRpc(hit.point, decalRotation);
                 }
 
                 else if (hit.collider.CompareTag("Zombie"))
@@ -91,7 +91,7 @@ public class TurretShotgun : TurretBase
 
                     if (!IsServer && !IsClient) gameManager.DecalManager.SpawnBloodHitDecal(hit.point, decalRotation);
 
-                    if (IsServer) gameManager.DecalManager.SpawnBloodHitDecalServerRpc(hit.point, decalRotation);
+                    else gameManager.DecalManager.SpawnBloodHitDecalServerRpc(hit.point, decalRotation);
 
                     ZombieStateManager zombieStateManager;
 

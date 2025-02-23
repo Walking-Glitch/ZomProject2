@@ -21,8 +21,10 @@ public class TurretAntiTank : TurretBase
 
     // network variables 
     public NetworkVariable<Vector3> missilePosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<Vector3> explosionPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<bool> missileActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<bool> missileBodyActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> missileExploded = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     protected override void Start()
     {
@@ -50,7 +52,18 @@ public class TurretAntiTank : TurretBase
 
         missilePosition.OnValueChanged += (prev, curr) =>
         {
+            Debug.Log($"Missile transform changed: {prev} ? {curr}");
             missileReference.gameObject.transform.position = curr; 
+        };
+
+        explosionPosition.OnValueChanged += (prev, curr) =>
+        {
+
+            if (missileReference.exploded)
+            {
+                missileReference.explosionPosition = missilePosition.Value;
+                Debug.Log("Missile Explosion Position Set: " + explosionPosition);
+            }
         };
 
         missileActive.OnValueChanged += (prev, curr) =>
@@ -63,25 +76,36 @@ public class TurretAntiTank : TurretBase
             missileReference.MissileBody.SetActive(curr);
         };
 
-        //NetworkObject missileNetworkObject = missileReference.GetComponent<NetworkObject>();
-
-        //// Assign ownership to the server (you can assign to the player if necessary)
-        //if (missileNetworkObject != null && missileNetworkObject.OwnerClientId == NetworkManager.Singleton.LocalClientId)
-        //{
-        //    missileNetworkObject.ChangeOwnership(NetworkManager.Singleton.LocalClientId);
-        //}
-
+        missileExploded.OnValueChanged += (prev, curr) =>
+        {
+            //Debug.Log($"Missile exploded changed: {prev} ? {curr}");
+            missileReference.exploded = curr;
+        };
 
     }
 
     [ClientRpc]
-    public void PlayExplosionSfxClientRpc()
+    public void ReparentMissileClientRpc()
+    {
+        missileReference.ReparentMissile();
+
+    }
+
+    [ClientRpc]
+    public void PlayExplosionVfxClientRpc()
     {
         missileReference.PlayExplosionVfx();
     }
+
+
+    [ClientRpc]
+    public void PlayExplosionSfxClientRpc()
+    {
+        missileReference.PlayExplosionSfx();
+    }
     protected override void AimAtTarget()
     {
-        if (!IsServer) return;
+        if (!IsServer) return;       
   
 
         if (enemies.Count > 0)
@@ -89,8 +113,7 @@ public class TurretAntiTank : TurretBase
              
             if (currentEnemy == null || !enemies.Contains(currentEnemy))
             {
-                FindCurrentEnemy();
-                if (currentEnemy == null) return;
+                 return;
             } 
             
 
@@ -163,21 +186,72 @@ public class TurretAntiTank : TurretBase
 
         return false;
     }
-    private void FindCurrentEnemy()
+
+    protected override void FindEnemiesInRange()
     {
         if (!IsServer) return;
-            for (int i = 0; i < enemies.Count; i++)
+
+        // Check if currentEnemy is still valid before clearing the list
+        if (currentEnemy != null)
+        {
+            float currentEnemyDistance = Vector3.Distance(transform.position, currentEnemy.transform.position);
+            if (currentEnemyDistance >= MinWeaponRange && currentEnemyDistance <= MaxWeaponRange && currentEnemy.health > 0)
             {
-                if (EnoughEnemiesInBlastRange(enemies[i]))
-                {
-                    currentEnemy = enemies[i];
-                    break;
-                }
-              
+                // If currentEnemy is still valid, return early to avoid unnecessary reassignment
+                return;
             }
-       // }
-       
+        }
+
+
+
+        enemies.Clear();
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, MaxWeaponRange, ZombieLayer);
+
+        foreach (Collider col in colliders)
+        {
+            float distance = Vector3.Distance(transform.position, col.transform.position);
+
+            if (distance >= MinWeaponRange && distance <= MaxWeaponRange)
+            {
+                ZombieStateManager zombie = col.gameObject.GetComponentInParent<ZombieStateManager>();
+
+                if (zombie != null)
+                {
+                    if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
+                        enemies.Add(col.GetComponentInParent<ZombieStateManager>());
+                }
+            }
+
+        }
+        if (enemies.Count > 0)
+        {
+            int i = 0;
+            while (i < enemies.Count && !EnoughEnemiesInBlastRange(enemies[i]))
+            {
+                i++;
+            }
+
+            if (i < enemies.Count)
+            {
+                currentEnemy = enemies[i];
+
+                // Sync target to clients
+                if (currentEnemy != null)
+                {
+                    targetEnemyId.Value = currentEnemy.GetComponentInParent<NetworkObject>().NetworkObjectId;
+                }
+            }
+
+        }
+        else
+        {
+            currentEnemy = null;
+            targetEnemyId.Value = 0;
+        }
     }
+
+    
     protected virtual bool EnoughEnemiesInBlastRange(ZombieStateManager tempEnemy)
     { 
         if(tempEnemy != null)

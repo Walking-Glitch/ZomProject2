@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Missile : NetworkBehaviour
+public class Missile : MonoBehaviour
 {
     // audio variables
     public AudioSource MissileAudioSource;
@@ -13,11 +13,12 @@ public class Missile : NetworkBehaviour
      
     // game object references     
     public GameObject MissileBody;
-    private Vector3 originalMissileTransform;
+    private Vector3 originalMissilePosition;
+    private Quaternion origianlMissileRotation;
 
     //checks
-    [SerializeField] private bool exploded;
-    private Vector3 explosionPosition;
+    [HideInInspector] public bool exploded;
+    [HideInInspector] public Vector3 explosionPosition;
 
     // zombies in area of effect 
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
@@ -28,6 +29,7 @@ public class Missile : NetworkBehaviour
     //game manager
     private GameManager gameManager;
 
+    Transform immediateParent;
     // flash
     private Light missileFlash;
     [SerializeField] private float flashIntensity;
@@ -37,12 +39,16 @@ public class Missile : NetworkBehaviour
     // antitank reference
     private TurretAntiTank turretAntiTank;
 
+    
+
     // area of effect and detection variables
     public float explosionRadius;
     public LayerMask ZombieLayerMask;
 
     //Explosion particle system
     public ParticleSystem ExplosionVFX;
+
+    
     private void Awake()
     {
        gameManager = GameManager.Instance;
@@ -51,24 +57,27 @@ public class Missile : NetworkBehaviour
     private void Start()
     {
         turretAntiTank = GetComponentInParent<TurretAntiTank>();
-        originalMissileTransform = transform.position;
+        originalMissilePosition = transform.position;
+        origianlMissileRotation = transform.rotation;  
 
         missileFlash = GetComponentInChildren<Light>();
         flashIntensity = missileFlash.intensity;
         missileFlash.intensity = 0;
+
+        immediateParent = gameObject.transform.parent;
     }
 
     private void OnEnable()
     {
-        exploded = false;
-        //MissileBody.SetActive(true); // Ensure the missile is visible again
+        //exploded = false;     
        
-        
+
+        turretAntiTank.missileExploded.Value = false;
         turretAntiTank.missileBodyActive.Value = true; 
     }
     private void OnDisable()
     {
-        exploded = false;  
+        exploded = false;        
     }
     // Update is called once per frame
     void Update()
@@ -102,31 +111,45 @@ public class Missile : NetworkBehaviour
 
     public void MissileInterpolation()
     {
-        if (turretAntiTank.CurrentMissileTarget == null) return;
+        if(transform.parent != null)
+        {
+            transform.SetParent(null, true);
+        }
+
+        if (turretAntiTank.CurrentMissileTarget == null)
+        {
+            Debug.Log("MissileInterpolation Stopped! exploded: " + exploded);
+            return;
+        }
 
         Vector3 currentTarget = turretAntiTank.CurrentMissileTarget.transform.position + Vector3.up * 1.1f;
 
         if (!exploded)
-        {
-            //transform.position = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
+        { 
             turretAntiTank.missilePosition.Value = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, currentTarget) < 1f)
             {
-                exploded = true;
-                explosionPosition = transform.position; 
+                Debug.Log("Missile hit target! exploded BEFORE: " + exploded);
+               
+                turretAntiTank.missileExploded.Value = true;
+
+                Debug.Log("Missile hit target! exploded AFTER: " + exploded);
+
+                turretAntiTank.explosionPosition.Value = turretAntiTank.missilePosition.Value; 
                 FindEnemies();
-                //PlayExplosionVfx();
+              
+                turretAntiTank.PlayExplosionVfxClientRpc();
                 turretAntiTank.PlayExplosionSfxClientRpc();
-                PlayExplosionSfx();                
                 turretAntiTank.missileBodyActive.Value = false;
                 StartCoroutine(WaitForAudioToEndAndDisable());
             }
         }
         else
         {
+            Debug.Log("INSIDE ELSE! Holding Position. exploded: " + exploded);
             // Keep the missile in place after explosion
-            turretAntiTank.missilePosition.Value = explosionPosition;
+            turretAntiTank.missilePosition.Value = turretAntiTank.explosionPosition.Value;
         }
     }
 
@@ -174,16 +197,24 @@ public class Missile : NetworkBehaviour
         yield return new WaitWhile(() => MissileAudioSource.isPlaying);
         //Debug.Log("Audio clip has finished playing.");
 
-        //transform.position = originalMissileTransform;
-        turretAntiTank.missilePosition.Value = originalMissileTransform;
+         
+        turretAntiTank.ReparentMissileClientRpc();
+
+        turretAntiTank.missilePosition.Value = originalMissilePosition;
 
         turretAntiTank.missileActive.Value = false;
-        //gameObject.SetActive(false);
-        //Debug.Log("Wait for audio done");
+        
     }
- 
 
-    
+
+   
+    public void ReparentMissile()
+    {
+        Debug.Log("is this repeating?");
+        transform.SetLocalPositionAndRotation(originalMissilePosition, Quaternion.LookRotation(immediateParent.forward));
+        transform.SetParent(immediateParent);
+
+    }
 
 
     private void OnDrawGizmosSelected()

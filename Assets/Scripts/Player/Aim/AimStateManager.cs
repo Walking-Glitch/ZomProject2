@@ -151,15 +151,15 @@ public class AimStateManager : NetworkBehaviour
 
     private void Update()
     {
-        Debug.Log($"Before IsOwner check: IsClient = {IsClient}, IsServer = {IsServer}, IsOwner = {IsOwner}, Owner of this object: {GetComponent<NetworkObject>().OwnerClientId}, Local Client ID: {NetworkManager.Singleton.LocalClientId}");
-        if (IsOwner)
-        {
-            Debug.Log("Passed IsOwner check!");             
-        }
-        else
-        {
-            Debug.Log("Failed IsOwner check.");
-        }
+        //Debug.Log($"Before IsOwner check: IsClient = {IsClient}, IsServer = {IsServer}, IsOwner = {IsOwner}, Owner of this object: {GetComponent<NetworkObject>().OwnerClientId}, Local Client ID: {NetworkManager.Singleton.LocalClientId}");
+        //if (IsOwner)
+        //{
+        //    Debug.Log("Passed IsOwner check!");             
+        //}
+        //else
+        //{
+        //    Debug.Log("Failed IsOwner check.");
+        //}
 
         if (!IsOwner) return;
 

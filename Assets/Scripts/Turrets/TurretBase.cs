@@ -82,9 +82,9 @@ public class TurretBase : NetworkBehaviour
     private float checkTimer;
 
     [Header("Networked Variables")]
-    private NetworkVariable<ulong> targetEnemyId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    private NetworkVariable<Vector3> panRotation = new NetworkVariable<Vector3>();
-    private NetworkVariable<Vector3> pitchRotation = new NetworkVariable<Vector3>();
+    public NetworkVariable<ulong> targetEnemyId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    protected NetworkVariable<Vector3> panRotation = new NetworkVariable<Vector3>();
+    protected NetworkVariable<Vector3> pitchRotation = new NetworkVariable<Vector3>();
 
     private NetworkVariable<bool> laserNetworkReady = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private NetworkVariable<Vector3> laserEndPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);

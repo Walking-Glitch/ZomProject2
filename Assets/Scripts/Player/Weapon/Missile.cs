@@ -61,7 +61,10 @@ public class Missile : NetworkBehaviour
     private void OnEnable()
     {
         exploded = false;
-        MissileBody.SetActive(true); // Ensure the missile is visible again        
+        //MissileBody.SetActive(true); // Ensure the missile is visible again
+       
+        
+        turretAntiTank.missileBodyActive.Value = true; 
     }
     private void OnDisable()
     {
@@ -82,7 +85,7 @@ public class Missile : NetworkBehaviour
         MissileAudioSource.PlayOneShot(MissileExplosion);
 
     }
-
+    
     public void PlayExplosionVfx()
     {
         if (missileFlash != null)
@@ -105,23 +108,25 @@ public class Missile : NetworkBehaviour
 
         if (!exploded)
         {
-            transform.position = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
+            //transform.position = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
+            turretAntiTank.missilePosition.Value = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, currentTarget) < 1f)
             {
                 exploded = true;
                 explosionPosition = transform.position; 
                 FindEnemies();
-                PlayExplosionVfx();
-                PlayExplosionSfx();
-                MissileBody.SetActive(false);
+                //PlayExplosionVfx();
+                turretAntiTank.PlayExplosionSfxClientRpc();
+                PlayExplosionSfx();                
+                turretAntiTank.missileBodyActive.Value = false;
                 StartCoroutine(WaitForAudioToEndAndDisable());
             }
         }
         else
         {
             // Keep the missile in place after explosion
-            transform.position = explosionPosition;
+            turretAntiTank.missilePosition.Value = explosionPosition;
         }
     }
 
@@ -169,9 +174,11 @@ public class Missile : NetworkBehaviour
         yield return new WaitWhile(() => MissileAudioSource.isPlaying);
         //Debug.Log("Audio clip has finished playing.");
 
-        transform.position = originalMissileTransform;
-        
-        gameObject.SetActive(false);
+        //transform.position = originalMissileTransform;
+        turretAntiTank.missilePosition.Value = originalMissileTransform;
+
+        turretAntiTank.missileActive.Value = false;
+        //gameObject.SetActive(false);
         //Debug.Log("Wait for audio done");
     }
  

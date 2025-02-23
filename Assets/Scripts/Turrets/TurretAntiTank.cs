@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Net.Sockets;
-using TMPro;
-using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEngine;
 
 public class TurretAntiTank : TurretBase
@@ -17,20 +15,74 @@ public class TurretAntiTank : TurretBase
     public Transform CurrentMissileTarget;
 
     public bool MissileTraveling;
- 
+
+    public Missile missileReference;
+
+
+    // network variables 
+    public NetworkVariable<Vector3> missilePosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> missileActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> missileBodyActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     protected override void Start()
     {
         base.Start();
+
+        //missileReference = GetComponentInChildren<Missile>();
         
+        if(missileReference == null)
+        {
+            Debug.Log("this is null");
+        }
+
+       
+
     }
     protected override void Update()
     {
         base.Update();
  
     }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        missilePosition.OnValueChanged += (prev, curr) =>
+        {
+            missileReference.gameObject.transform.position = curr; 
+        };
+
+        missileActive.OnValueChanged += (prev, curr) =>
+        {
+            missileReference.gameObject.SetActive(curr);
+        };
+
+        missileBodyActive.OnValueChanged += (prev, curr) =>
+        {
+            missileReference.MissileBody.SetActive(curr);
+        };
+
+        //NetworkObject missileNetworkObject = missileReference.GetComponent<NetworkObject>();
+
+        //// Assign ownership to the server (you can assign to the player if necessary)
+        //if (missileNetworkObject != null && missileNetworkObject.OwnerClientId == NetworkManager.Singleton.LocalClientId)
+        //{
+        //    missileNetworkObject.ChangeOwnership(NetworkManager.Singleton.LocalClientId);
+        //}
+
+
+    }
+
+    [ClientRpc]
+    public void PlayExplosionSfxClientRpc()
+    {
+        missileReference.PlayExplosionVfx();
+    }
     protected override void AimAtTarget()
     {
+        if (!IsServer) return;
+  
 
         if (enemies.Count > 0)
         {
@@ -53,6 +105,9 @@ public class TurretAntiTank : TurretBase
             {
                 Quaternion horizontalRotation = Quaternion.LookRotation(horizontalDirection);
                 PanTransform.rotation = Quaternion.Slerp(PanTransform.rotation, horizontalRotation, Time.deltaTime * AimingSpeed);
+
+                // Sync with clients
+                panRotation.Value = PanTransform.rotation.eulerAngles;
             }
 
             if (PitchTransform != null)
@@ -65,6 +120,9 @@ public class TurretAntiTank : TurretBase
 
                 // Lock the barrel's horizontal rotation to match the turret base
                 PitchTransform.rotation = Quaternion.Euler(PitchTransform.rotation.eulerAngles.x, PanTransform.rotation.eulerAngles.y, 0);
+
+                // Sync with clients
+                pitchRotation.Value = PitchTransform.rotation.eulerAngles;
             }
 
 
@@ -107,14 +165,18 @@ public class TurretAntiTank : TurretBase
     }
     private void FindCurrentEnemy()
     {
-        for (int i = 0; i < enemies.Count; i++)
-        {
-            if (EnoughEnemiesInBlastRange(enemies[i]))
+        if (!IsServer) return;
+            for (int i = 0; i < enemies.Count; i++)
             {
-                currentEnemy = enemies[i];
-                break;
+                if (EnoughEnemiesInBlastRange(enemies[i]))
+                {
+                    currentEnemy = enemies[i];
+                    break;
+                }
+              
             }
-        }
+       // }
+       
     }
     protected virtual bool EnoughEnemiesInBlastRange(ZombieStateManager tempEnemy)
     { 
@@ -148,9 +210,11 @@ public class TurretAntiTank : TurretBase
         fireRateTimer = 0;
         MissileTraveling = true;
 
-        Missile missile = missilePrefab.GetComponent<Missile>();        
-        missile.gameObject.SetActive(true);
-        missile.MissileBody.SetActive(true);
+        //Missile missile = missilePrefab.GetComponent<Missile>();
+        //missile.gameObject.SetActive(true);
+        //missile.MissileBody.SetActive(true);
+        missileActive.Value = true;
+        missileBodyActive.Value = true;
     }
 
      

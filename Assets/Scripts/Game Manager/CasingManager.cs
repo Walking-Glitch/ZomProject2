@@ -58,7 +58,7 @@ public class CasingManager : NetworkBehaviour
     {
         
 
-        Debug.Log("CALLING CASINGS FROM RPC");
+        //Debug.Log("CALLING CASINGS FROM RPC");
 
         GameObject casing = gameManager.BulletCasingPool.RequestCasing();
         casing.transform.position = spawnPosition;

@@ -1,15 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
+ 
 using Assets.Scripts.Game_Manager;
 using Pathfinding;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
+using Unity.Netcode;  
 
 [RequireComponent(typeof(AudioSource))]
-public class ZombieStateManager : MonoBehaviour
+public class ZombieStateManager : NetworkBehaviour
 {
     // player reference    
     [SerializeField] public Transform PlayerTransform;
@@ -91,6 +88,16 @@ public class ZombieStateManager : MonoBehaviour
     // reward 
     [HideInInspector] public int Reward;
 
+    //Network variables 
+    public NetworkVariable<int> NetworkHealth = new NetworkVariable<int>(100,
+       NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<bool> NetworkIsDead = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<bool> NetworkIsCrippled = new NetworkVariable<bool>(false,
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
     private void OnEnable()
     {
         DayCycle.OnNightTimeChanged += NightTimeMode;
@@ -112,14 +119,36 @@ public class ZombieStateManager : MonoBehaviour
         agent = GetComponentInParent<IAstarAI>();
     }
     void Start()
-    {
-        
-
+    { 
         gameManager = GameManager.Instance;
 
         StartCoroutine(WaitForPlayer());
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        NetworkHealth.OnValueChanged += (curr, prev) =>
+        {
+            Debug.Log($"zombie health changed: {prev} ? {curr}");
+            health = curr;
+        };
+
+        NetworkIsCrippled.OnValueChanged += (curr, prev) =>
+        {
+            Debug.Log($"zombie crippled changed: {prev} ? {curr}");
+            //Debug.Log($"zombie crippled changed: {prev} ? {curr} \n{System.Environment.StackTrace}");
+            isCrippled = curr;
+        };
+
+        NetworkIsDead.OnValueChanged += (curr, prev) =>
+        {
+            Debug.Log($"zombie is dead changed: {prev} ? {curr}");
+            isDead = curr; 
+        };
+
+    }
 
     private IEnumerator WaitForPlayer()
     {
@@ -142,7 +171,7 @@ public class ZombieStateManager : MonoBehaviour
         GetSkinMeshBits();
         GetZombieLimbs();
         GetRagdollBits();
-        RagdollModeOff();
+        RagdollModeOffClientRpc();
         SwitchState(chasing);
     }
 
@@ -172,6 +201,10 @@ public class ZombieStateManager : MonoBehaviour
             if (limb.limbHealth <= 0)
             {
                 isCrippled = true;
+               
+                NetworkIsCrippled.Value = isCrippled;
+                //Debug.Log($"NetworkIsCrippled.Value: {NetworkIsCrippled.Value}");
+                //Debug.Log(isCrippled);
             }
         }
 
@@ -180,6 +213,9 @@ public class ZombieStateManager : MonoBehaviour
             if (limb.limbHealth <= 0)
             {
                 isCrippled = true;
+                NetworkIsCrippled.Value = isCrippled;
+                //Debug.Log($"NetworkIsCrippled.Value: {NetworkIsCrippled.Value}");
+                //Debug.Log(isCrippled);
             }
         }
     }
@@ -233,7 +269,8 @@ public class ZombieStateManager : MonoBehaviour
     {
         zombieLimbs = rig.GetComponentsInChildren<Limbs>();
     }
-    public void RagdollModeOn()
+    [ClientRpc]
+    public void RagdollModeOnClientRpc()
     {
      
         foreach (Rigidbody rigid in ragdollRigidbodies)
@@ -244,10 +281,11 @@ public class ZombieStateManager : MonoBehaviour
         anim.enabled = false;
 
     }
-
-    public void RagdollModeOff()
+    [ClientRpc]
+    public void RagdollModeOffClientRpc()
     {
-        isDead = false;
+        //isDead = false;
+        NetworkIsDead.Value = true;
 
         foreach (Rigidbody rigid in ragdollRigidbodies)
         {
@@ -262,7 +300,6 @@ public class ZombieStateManager : MonoBehaviour
     public void PlayerDestroyZombie()
     {
         StartCoroutine(DelayDestruction(3f));
-
     }
 
     protected virtual IEnumerator DelayDestruction(float delay)
@@ -270,17 +307,18 @@ public class ZombieStateManager : MonoBehaviour
 
         yield return new WaitForSeconds(delay);
        
-        RagdollModeOff();
+        RagdollModeOffClientRpc();
 
         gameManager.EconomyManager.CollectMoney(Reward);
 
-        gameManager.EnemyManager.DecreaseEnemyCtr(); 
-       
-        health = maxHealth;
+        gameManager.EnemyManager.DecreaseEnemyCtr();
+
+        //health = maxHealth;
+        NetworkHealth.Value = maxHealth;
 
         foreach (var skin in zombieMeshRenderers)
         {
-                skin.enabled = true;
+            skin.enabled = true;
         }
 
         foreach (var col in ragdollColliders)
@@ -295,6 +333,7 @@ public class ZombieStateManager : MonoBehaviour
         }
 
         isCrippled = false;
+        NetworkIsCrippled.Value = isCrippled;
 
         SetIsAlerted(false);
 
@@ -305,8 +344,8 @@ public class ZombieStateManager : MonoBehaviour
         
 
     }
-
-    public void DismembermentByExplosion()
+    [ClientRpc]
+    public void DismembermentByExplosionClientRpc()
     {
         foreach (var limbs in zombieLimbs)
         {
@@ -323,6 +362,8 @@ public class ZombieStateManager : MonoBehaviour
 
     public virtual void TakeDamage(int damage, string limbName, bool explosion, bool turret , float force)
     {
+        if (!IsServer) return;
+
         health -= damage;
 
        
@@ -421,15 +462,29 @@ public class ZombieStateManager : MonoBehaviour
     public void SetCanMove(bool canMove)
     { 
         aiPath.canMove = canMove;
-        anim.SetBool("CanMove", canMove);
+        PlayZombieAnimationBoolClientRpc("CanMove", canMove);
+        //anim.SetBool("CanMove", canMove);
     }
 
     public void SetPlayerAttackStatus(bool isInAttackArea)
     {
         AttackPlayer = isInAttackArea;
-        anim.SetBool("IsAttacking", isInAttackArea);
+        PlayZombieAnimationBoolClientRpc("IsAttacking", isInAttackArea);
+        //anim.SetBool("IsAttacking", isInAttackArea);
     }
 
+    [ClientRpc]
+    public void PlayZombieAnimationBoolClientRpc(string animationName, bool setBool)
+    {
+        if (!IsOwner || IsServer)
+            anim.SetBool(animationName, setBool);
+    }
+    [ClientRpc]
+    public void PlayZombieAnimationTriggerClientRpc(string animationName)
+    {
+        if (!IsOwner || IsServer)
+            anim.SetTrigger(animationName);
+    }
     public bool IsPlayerInAttackArea()
     {
         return AttackPlayer;
@@ -447,7 +502,8 @@ public class ZombieStateManager : MonoBehaviour
     public void SetIsAlerted(bool isAlerted)
     {
         alerted = isAlerted;
-        anim.SetBool("IsAlerted", alerted);
+        PlayZombieAnimationBoolClientRpc("IsAlerted", isAlerted);
+        //anim.SetBool("IsAlerted", alerted);
     }
 
     public bool IsZombieAlerted()

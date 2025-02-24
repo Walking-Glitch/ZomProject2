@@ -7,7 +7,8 @@ public class Hurt : ZombieBaseState
     {
         zombie.SetIsAlerted(true);
         zombie.SetCanMove(false);
-        zombie.anim.SetTrigger("IsHit");
+        //zombie.anim.SetTrigger("IsHit");
+        zombie.PlayZombieAnimationTriggerClientRpc("IsHit");
 
         zombie.zombieAudioSource.Stop();
         zombie.PlayZombieHurtSfx();

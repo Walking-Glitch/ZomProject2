@@ -2531,6 +2531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b871ffc45524964395f490a3c00a748, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   PlayerTransform: {fileID: 0}
   aiPath: {fileID: 0}
   destinationSetter: {fileID: 0}
@@ -2569,6 +2570,12 @@ MonoBehaviour:
   zombieAudioSource: {fileID: 0}
   night: 0
   Reward: 0
+  NetworkHealth:
+    m_InternalValue: 100
+  NetworkIsDead:
+    m_InternalValue: 0
+  NetworkIsCrippled:
+    m_InternalValue: 0
 --- !u!82 &5105836329922190706
 AudioSource:
   m_ObjectHideFlags: 0

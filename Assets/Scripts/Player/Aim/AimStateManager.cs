@@ -399,8 +399,8 @@ public class AimStateManager : NetworkBehaviour
 
         else if (IsOwner)
         {
-            Debug.Log(IsClient);
-            Debug.Log("we are transitioning from main to shoot");
+            //Debug.Log(IsClient);
+            //Debug.Log("we are transitioning from main to shoot");
             isTransitioning = true;  // Set the flag to true
             float startWeight = layer1Weight.Value;
             float leftHandHintWeightDataStartValue = leftHandHintWeightData.Value;

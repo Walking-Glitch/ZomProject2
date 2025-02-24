@@ -147,7 +147,7 @@ public class Missile : MonoBehaviour
         }
         else
         {
-            Debug.Log("INSIDE ELSE! Holding Position. exploded: " + exploded);
+           // Debug.Log("INSIDE ELSE! Holding Position. exploded: " + exploded);
             // Keep the missile in place after explosion
             turretAntiTank.missilePosition.Value = turretAntiTank.explosionPosition.Value;
         }

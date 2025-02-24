@@ -5,31 +5,33 @@ public class Death : ZombieBaseState
 {
      public override void EnterState(ZombieStateManager zombie)
     {
-        zombie.isDead = true;
+        //zombie.isDead = true;
+        zombie.NetworkIsDead.Value = true;
         zombie.SetCanMove(false); ;
 
         zombie.zombieAudioSource.Stop();
 
         if (zombie.IsKilledByTurret())
         {
-            zombie.RagdollModeOn();
+            zombie.RagdollModeOnClientRpc();
         }
 
         else if (zombie.IsKilledByExplosion())
         {
             
-            zombie.RagdollModeOn();            
+            zombie.RagdollModeOnClientRpc();            
             zombie.rig.GetComponent<Rigidbody>().AddForce(zombie.GetExplosionDirection() *700f, ForceMode.Impulse);
-            zombie.DismembermentByExplosion();
+            zombie.DismembermentByExplosionClientRpc();
         }
 
         else if (zombie.isCrippled)
         {
-            zombie.RagdollModeOn();
+            zombie.RagdollModeOnClientRpc();
         }
         else
         {
-            zombie.anim.SetBool("IsDead", true);
+            zombie.PlayZombieAnimationBoolClientRpc("IsDead", true);
+            //zombie.anim.SetBool("IsDead", true);
         }
 
         zombie.PlayerDestroyZombie();

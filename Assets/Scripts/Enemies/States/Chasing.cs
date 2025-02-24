@@ -22,7 +22,8 @@ public class Chasing : ZombieBaseState
 
         if (zombie.isCrippled)
         {
-            zombie.anim.SetBool("IsCrippled", true);
+            zombie.PlayZombieAnimationBoolClientRpc("IsCrippled", zombie.isCrippled);
+            //zombie.anim.SetBool("IsCrippled", true);
         }
   
         if (zombie.IsPlayerInAttackArea())

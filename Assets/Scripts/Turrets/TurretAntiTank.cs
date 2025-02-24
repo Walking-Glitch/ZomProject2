@@ -52,7 +52,7 @@ public class TurretAntiTank : TurretBase
 
         missilePosition.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"Missile transform changed: {prev} ? {curr}");
+           // Debug.Log($"Missile transform changed: {prev} ? {curr}");
             missileReference.gameObject.transform.position = curr; 
         };
 
@@ -62,7 +62,7 @@ public class TurretAntiTank : TurretBase
             if (missileReference.exploded)
             {
                 missileReference.explosionPosition = missilePosition.Value;
-                Debug.Log("Missile Explosion Position Set: " + explosionPosition);
+                //Debug.Log("Missile Explosion Position Set: " + explosionPosition);
             }
         };
 

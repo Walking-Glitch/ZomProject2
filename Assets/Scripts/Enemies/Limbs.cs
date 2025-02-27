@@ -1,9 +1,8 @@
 using Assets.Scripts.Game_Manager;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.LightAnchor;
+using Unity.Netcode;
 
-public class Limbs : MonoBehaviour
+public class Limbs : NetworkBehaviour
 {
     [Header("ID")]
     public string limbName;
@@ -36,6 +35,10 @@ public class Limbs : MonoBehaviour
     //explosion
     public Vector3 ExpDirection;
     private Vector3 grenadePos;
+
+    //Network variables
+    public NetworkVariable<int> NetworkLimbHealth = new NetworkVariable<int>(100,
+    NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     void Start()
     {
         gameManager = GameManager.Instance;
@@ -53,6 +56,17 @@ public class Limbs : MonoBehaviour
         limbCollider = GetComponent<Collider>();
 
         GetNestedLimbs();
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        NetworkLimbHealth.OnValueChanged += (prev, curr) =>
+        {
+            Debug.Log("HEALTH IS CHANGING");
+            limbHealth = curr;
+        };
     }
 
     void OnEnable()
@@ -126,8 +140,13 @@ public class Limbs : MonoBehaviour
 
         limbReplacement.transform.SetParent(null);
     }
-
-    public void ReattachReplacementLimb()
+    [ServerRpc]
+    public void ReattachReplacementLimbServerRpc()
+    {
+        ReattachReplacementLimbClientRpc();
+    }
+    [ClientRpc]
+    public void ReattachReplacementLimbClientRpc()
     {
         if(limbReplacement != null)
         {
@@ -139,14 +158,20 @@ public class Limbs : MonoBehaviour
         }
         
     }
-
-    public void LimbTakeDamage(int damage)
+    [ServerRpc(RequireOwnership = false)]
+    public void LimbTakeDamageServerRpc(int damage)
     {
-        limbHealth -= damage;
-        limbHealth = Mathf.Clamp(limbHealth, 0, limbMaxHealth);
+        if (!IsServer) return;
+
+        //limbHealth -= damage;
+        //limbHealth = Mathf.Clamp(limbHealth, 0, limbMaxHealth);
+
+        NetworkLimbHealth.Value -= damage;
+        NetworkLimbHealth.Value = Mathf.Clamp(NetworkLimbHealth.Value, 0, limbMaxHealth);
+
         if (limbHealth <= 0 && isDestructible)
         {
-            DestroyLimb();
+            DestroyLimbServerRpc();
         }
         
     }
@@ -156,7 +181,14 @@ public class Limbs : MonoBehaviour
         NestedLimbs = GetComponentsInChildren<Limbs>();
     }
 
-    public void DestroyLimb()
+    [ServerRpc(RequireOwnership = false)]
+    public void DestroyLimbServerRpc()
+    {
+        DestroyLimbClientRpc();  // Tell all clients to update
+    }
+
+    [ClientRpc]
+    public void DestroyLimbClientRpc()
     {
         if (limbCollider != null) limbCollider.enabled = false;
         if (limbMesh != null)
@@ -173,13 +205,12 @@ public class Limbs : MonoBehaviour
                 if (Neslimb != NestedLimbs[0])
                 {
                     //Debug.Log(Neslimb.limbName);
-                    Neslimb.LimbTakeDamage(100);
+                    Neslimb.LimbTakeDamageServerRpc(100);
                 }
                
                
             }
         }
-
 
         if (limbReplacement != null)
         {

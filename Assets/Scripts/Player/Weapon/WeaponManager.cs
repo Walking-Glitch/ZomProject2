@@ -358,26 +358,26 @@ namespace Assets.Scripts.Player.Weapon
                         if (limb.limbName == "head")
                         {
                             zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                            zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, false, 0);
+                            zombieStateManager.TakeDamageServerRpc((int)finalDamage, limb.limbName, false, false, 0);
                         }                       
                     
                     else if (limb.limbName == "torso" || limb.limbName == "belly")
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, false, 0);
+                        zombieStateManager.TakeDamageServerRpc((int)finalDamage, limb.limbName, false, false, 0);
                     }
 
                     else
                     {
                         zombieStateManager = hit.collider.GetComponentInParent<ZombieStateManager>();
-                        zombieStateManager.TakeDamage((int)finalDamage, limb.limbName, false, false, 0);
+                        zombieStateManager.TakeDamageServerRpc((int)finalDamage, limb.limbName, false, false, 0);
                     }
 
 
                     float baseLimbDmg = 100f;
                         float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
 
-                        limb.LimbTakeDamage((int)finalLimbDmg);
+                        limb.LimbTakeDamageServerRpc((int)finalLimbDmg);
                          
                         if (limb.limbReplacement != null && limb.limbHealth <= 0)
                         {

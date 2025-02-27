@@ -145,6 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: lowerArm
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -156,6 +157,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 5481288783917235798}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &82846972465833721
 GameObject:
   m_ObjectHideFlags: 0
@@ -229,6 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: hand
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -240,6 +244,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 2794182756687970600}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &191192691506708022
 GameObject:
   m_ObjectHideFlags: 0
@@ -2171,6 +2177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: torso
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -2182,6 +2189,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 0}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &1831764346414800294
 GameObject:
   m_ObjectHideFlags: 0
@@ -3152,6 +3161,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: belly
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -3163,6 +3173,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 0}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &2367663702054307747
 GameObject:
   m_ObjectHideFlags: 0
@@ -3308,6 +3320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: lowerArm
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -3319,6 +3332,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 2556298295536106194}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &2372496124159373756
 GameObject:
   m_ObjectHideFlags: 0
@@ -3388,6 +3403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: foot
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -3399,6 +3415,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 8892797985327697766}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &2497880894721580274
 GameObject:
   m_ObjectHideFlags: 0
@@ -3639,6 +3657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: leg
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -3650,6 +3669,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 4954100280858894105}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &3096723781107311864
 GameObject:
   m_ObjectHideFlags: 0
@@ -5274,6 +5295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: hand
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -5285,6 +5307,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 4573814372662348836}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &4842185868637056700
 GameObject:
   m_ObjectHideFlags: 0
@@ -5963,6 +5987,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: foot
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -5974,6 +5999,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 5126209415850141202}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &5986103172658233543
 GameObject:
   m_ObjectHideFlags: 0
@@ -6280,6 +6307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: head
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -6291,6 +6319,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 698365964150937148}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &6182435304704423878
 GameObject:
   m_ObjectHideFlags: 0
@@ -7314,6 +7344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81cef43ae06be1a4aacf5b616b18868b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   limbName: leg
   damageMultiplier: 0
   limbDamageMultiplier: 0
@@ -7325,6 +7356,8 @@ MonoBehaviour:
   NestedLimbs: []
   limbReplacement: {fileID: 717029000293534079}
   ExpDirection: {x: 0, y: 0, z: 0}
+  NetworkLimbHealth:
+    m_InternalValue: 100
 --- !u!1 &7610031319482005285
 GameObject:
   m_ObjectHideFlags: 0

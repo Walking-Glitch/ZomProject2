@@ -163,7 +163,7 @@ public class Missile : MonoBehaviour
             if (zombie != null && zombie.health > 0)
             {
                 zombie.SetExplosionDirection(transform.position, zombie.transform.position);
-                zombie.TakeDamage(100, "all", true, false, 500f);
+                zombie.TakeDamageServerRpc(100, "all", true, false, 500f);
             }
         }
 

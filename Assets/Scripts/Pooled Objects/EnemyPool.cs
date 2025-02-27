@@ -1,9 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
-using Unity.VisualScripting;
+using Unity.Netcode; 
 using UnityEngine;
-using UnityEngine.AI;
-
+ 
 public class EnemyPool : NetworkBehaviour
 {
     [SerializeField] private List<GameObject> enemyPrefabs;
@@ -20,11 +19,18 @@ public class EnemyPool : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+
         if (IsServer)
         {
+          
             NetworkAddEnemiesToPool(poolSize);
+
         }
+        
+
     }
+    
+    
 
     private void AddEnemiesToPool(int amount)
     {
@@ -70,11 +76,35 @@ public class EnemyPool : NetworkBehaviour
 
             enemyNetObj.Spawn(false);  // Spawn on the server, but keep it disabled for now.
             enemy.SetActive(false);     // Pool is inactive initially.
+            
 
-            networkEnemyList.Add(enemyNetObj);
+
+            disableNetworkZombiesClientRpc(enemyNetObj.NetworkObjectId);
+
             enemy.transform.parent = transform;
+
         }
     }
+     
+
+    [ClientRpc]
+    private void disableNetworkZombiesClientRpc(ulong enemyNetId)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(enemyNetId, out NetworkObject enemyNetObj))
+        {
+            Debug.Log("we are disabling network zombie rpc");
+
+            networkEnemyList.Add(enemyNetObj);
+            enemyNetObj.gameObject.SetActive(false);
+
+        }
+        else
+        {
+            Debug.Log("else clause called on disable network zombie rpc");
+        }
+    }
+
+   
 
     public GameObject RequestEnemy()
     {
@@ -97,6 +127,7 @@ public class EnemyPool : NetworkBehaviour
             {
                 return networkEnemyList[i];
             }
+
         }
         return null;
     }

@@ -432,7 +432,7 @@ public class AimStateManager : NetworkBehaviour
             UpdateLeftHintWeightDataServerRpc(1);
             UpdateRightHandAimWeightServerRpc(1);
 
-            Debug.Log("we FINISHED THE transitioning from main to shoot");
+            //Debug.Log("we FINISHED THE transitioning from main to shoot");
 
             UpdateLeftHintWeightServerRpc(1);
             isTransitioning = false;  // Reset the flag when done

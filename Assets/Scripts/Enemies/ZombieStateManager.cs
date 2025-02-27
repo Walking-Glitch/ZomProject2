@@ -179,7 +179,8 @@ public class ZombieStateManager : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+      
+
         currentState.UpdateState(this);
        
          
@@ -283,9 +284,9 @@ public class ZombieStateManager : NetworkBehaviour
     }
     [ClientRpc]
     public void RagdollModeOffClientRpc()
-    {
+    { 
         //isDead = false;
-        NetworkIsDead.Value = true;
+        //NetworkIsDead.Value = true;
 
         foreach (Rigidbody rigid in ragdollRigidbodies)
         {
@@ -306,7 +307,9 @@ public class ZombieStateManager : NetworkBehaviour
     {
 
         yield return new WaitForSeconds(delay);
-       
+
+        NetworkIsDead.Value = true;//moved out from ragdoll off function
+
         RagdollModeOffClientRpc();
 
         gameManager.EconomyManager.CollectMoney(Reward);
@@ -328,8 +331,9 @@ public class ZombieStateManager : NetworkBehaviour
 
         foreach (var limb in zombieLimbs)
         {
-            limb.limbHealth = limb.limbMaxHealth;
-            limb.ReattachReplacementLimb();
+            //limb.limbHealth = limb.limbMaxHealth;
+            limb.NetworkLimbHealth.Value = limb.limbMaxHealth;
+            limb.ReattachReplacementLimbServerRpc();
         }
 
         isCrippled = false;
@@ -353,14 +357,14 @@ public class ZombieStateManager : NetworkBehaviour
 
             if (shouldDmg)
             {
-                limbs.LimbTakeDamage(500);
+                limbs.LimbTakeDamageServerRpc(500);
             }
         }
     }
 
-    
 
-    public virtual void TakeDamage(int damage, string limbName, bool explosion, bool turret , float force)
+    [ServerRpc(RequireOwnership = false)]
+    public virtual void TakeDamageServerRpc(int damage, string limbName, bool explosion, bool turret , float force)
     {
         if (!IsServer) return;
 

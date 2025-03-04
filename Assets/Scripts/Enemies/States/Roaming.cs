@@ -5,7 +5,7 @@ public class Roaming : ZombieBaseState
     public override void EnterState(ZombieStateManager zombie)
     {
 
-        zombie.RagdollModeOffClientRpc();
+        zombie.RagdollModeOffServerRpc();
         zombie.aiPath.canMove = true;
         zombie.patrol.enabled = true; 
     }

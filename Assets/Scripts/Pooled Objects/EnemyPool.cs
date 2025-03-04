@@ -1,8 +1,9 @@
+using Assets.Scripts.Game_Manager;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode; 
+using Unity.Netcode;
 using UnityEngine;
- 
+
 public class EnemyPool : NetworkBehaviour
 {
     [SerializeField] private List<GameObject> enemyPrefabs;
@@ -10,27 +11,34 @@ public class EnemyPool : NetworkBehaviour
     [SerializeField] private int poolSize;
     [SerializeField] private List<GameObject> enemyList;
 
-    [SerializeField] private List<NetworkObject> networkEnemyList = new List<NetworkObject>();
+    private GameManager gameManager;
+    public bool isInitialized = false;
+
+
+
+    [SerializeField] private NetworkList<NetworkObjectReference> networkList = new NetworkList<NetworkObjectReference>();
+
 
     void Start()
     {
+        gameManager = GameManager.Instance;
+
+       
         //AddEnemiesToPool(poolSize);
     }
 
     public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
 
         if (IsServer)
         {
-          
             NetworkAddEnemiesToPool(poolSize);
 
         }
-        
 
     }
-    
-    
+
 
     private void AddEnemiesToPool(int amount)
     {
@@ -55,13 +63,13 @@ public class EnemyPool : NetworkBehaviour
             }
 
             enemy.SetActive(false);
-            enemyList.Add(enemy);       
+            enemyList.Add(enemy);
         }
     }
 
     public void NetworkAddEnemiesToPool(int amount)
     {
-        Debug.Log("inside network pool");
+        //Debug.Log("inside network pool");
         for (int i = 0; i < amount; i++)
         {
             GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
@@ -70,41 +78,63 @@ public class EnemyPool : NetworkBehaviour
 
             if (enemyNetObj == null)
             {
-                Debug.LogError("Enemy prefab is missing a NetworkObject component!");
+                //Debug.LogError("Enemy prefab is missing a NetworkObject component!");
                 return;
             }
 
             enemyNetObj.Spawn(false);  // Spawn on the server, but keep it disabled for now.
-            enemy.SetActive(false);     // Pool is inactive initially.
-            
+                                       //enemy.SetActive(false);     // Pool is inactive initially.
+
 
 
             disableNetworkZombiesClientRpc(enemyNetObj.NetworkObjectId);
+           
+
 
             enemy.transform.parent = transform;
 
         }
     }
-     
 
-    [ClientRpc]
+
+    [ClientRpc]   
     private void disableNetworkZombiesClientRpc(ulong enemyNetId)
     {
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(enemyNetId, out NetworkObject enemyNetObj))
         {
-            Debug.Log("we are disabling network zombie rpc");
+            //Debug.Log("we are disabling network zombie rpc");
 
-            networkEnemyList.Add(enemyNetObj);
-            enemyNetObj.gameObject.SetActive(false);
+            //networkEnemyList.Add(enemyNetObj);
+            //enemyNetObj.gameObject.SetActive(false);
 
+            NetworkObjectReference enemyRef = new NetworkObjectReference(enemyNetObj);
+            networkList.Add(enemyRef);
+
+            foreach (NetworkObjectReference netObjRef in networkList)
+            {
+                //Debug.Log("dentro del foreach");
+
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(netObjRef.NetworkObjectId, out NetworkObject enemyNetObj2))
+                {
+                    enemyNetObj2.gameObject.SetActive(false);
+                    //enemyNetObj2.GetComponentInChildren<ZombieStateManager>().DisableZombieRpc();
+                }
+                else
+                {
+                    //Debug.LogWarning($"Failed to find NetworkObject with ID {netObjRef.NetworkObjectId}");
+                }
+
+            }
         }
         else
         {
-            Debug.Log("else clause called on disable network zombie rpc");
+            //Debug.Log("else clause called on disable network zombie rpc");
         }
     }
 
-   
+
+
+
 
     public GameObject RequestEnemy()
     {
@@ -121,12 +151,15 @@ public class EnemyPool : NetworkBehaviour
 
     public NetworkObject RequestNetworkEnemy()
     {
-        for (int i = 0; i < networkEnemyList.Count; i++)
+        for (int i = 0; i < networkList.Count; i++)
         {
-            if (!networkEnemyList[i].isActiveAndEnabled)
+            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkList[i].NetworkObjectId, out NetworkObject enemyNetObj);
+            if (!enemyNetObj.isActiveAndEnabled)
             {
-                return networkEnemyList[i];
+
+                return enemyNetObj;
             }
+
 
         }
         return null;

@@ -53,6 +53,7 @@ public class ZombieStateManager : NetworkBehaviour
     public int maxHealth;
     public int health;
     public bool isDead;
+    public bool isActive;
 
     // alerted
     public bool alerted; 
@@ -89,7 +90,7 @@ public class ZombieStateManager : NetworkBehaviour
     [HideInInspector] public int Reward;
 
     //Network variables 
-    public NetworkVariable<int> NetworkHealth = new NetworkVariable<int>(100,
+    public NetworkVariable<int> NetworkHealth = new NetworkVariable<int>(0,
        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public NetworkVariable<bool> NetworkIsDead = new NetworkVariable<bool>(false,
@@ -97,6 +98,10 @@ public class ZombieStateManager : NetworkBehaviour
 
     public NetworkVariable<bool> NetworkIsCrippled = new NetworkVariable<bool>(false,
         NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<bool> NetworkIsActive = new NetworkVariable<bool>(true,
+      NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
 
     private void OnEnable()
     {
@@ -129,24 +134,34 @@ public class ZombieStateManager : NetworkBehaviour
     {
         base.OnNetworkSpawn();
 
-        NetworkHealth.OnValueChanged += (curr, prev) =>
+        NetworkHealth.Value = maxHealth;
+
+        NetworkHealth.OnValueChanged += (prev, curr) =>
         {
             Debug.Log($"zombie health changed: {prev} ? {curr}");
             health = curr;
         };
 
-        NetworkIsCrippled.OnValueChanged += (curr, prev) =>
+        NetworkIsCrippled.OnValueChanged += (prev, curr) =>
         {
             Debug.Log($"zombie crippled changed: {prev} ? {curr}");
             //Debug.Log($"zombie crippled changed: {prev} ? {curr} \n{System.Environment.StackTrace}");
             isCrippled = curr;
         };
 
-        NetworkIsDead.OnValueChanged += (curr, prev) =>
+        NetworkIsDead.OnValueChanged += (prev, curr) =>
         {
             Debug.Log($"zombie is dead changed: {prev} ? {curr}");
             isDead = curr; 
         };
+
+        NetworkIsActive.OnValueChanged += (prev, curr) =>
+        {
+            Debug.Log($"zombie is active changed: {prev} ? {curr}");
+            isActive = curr;
+            //zombieParent.SetActive(isActive);
+        };
+
 
     }
 
@@ -167,11 +182,12 @@ public class ZombieStateManager : NetworkBehaviour
         NightTimeMode(night);
         zombieAudioSource = GetComponent<AudioSource>();
         Reward = 50;
+        isActive = true;
 
         GetSkinMeshBits();
         GetZombieLimbs();
         GetRagdollBits();
-        RagdollModeOffClientRpc();
+        RagdollModeOffServerRpc();
         SwitchState(chasing);
     }
 
@@ -180,11 +196,10 @@ public class ZombieStateManager : NetworkBehaviour
     void Update()
     {
       
-
         currentState.UpdateState(this);
        
          
-        CheckIfCrippled();
+        CheckIfCrippledServerRpc();
 
         //Debug.Log(currentState);
     }
@@ -195,15 +210,38 @@ public class ZombieStateManager : NetworkBehaviour
         currentState.EnterState(this);
     }
 
-    public void CheckIfCrippled()
+    [ServerRpc]
+    public void DisableZombieServerRpc()
+    {
+        NetworkIsActive.Value = false;
+        NetworkHealth.Value = maxHealth;
+        SetEnableZombieClientRpc(isActive);
+    }
+
+    [ClientRpc]
+    public void SetEnableZombieClientRpc(bool x)
+    {
+        zombieParent.SetActive(x);
+        Debug.Log("disablind worked");
+    }
+
+    [ServerRpc]
+    public void EnableZombieServerRpc()
+    {
+        NetworkIsActive.Value = true;
+        SetEnableZombieClientRpc(isActive);
+    }
+
+    [ServerRpc(RequireOwnership = false)]      
+    public void CheckIfCrippledServerRpc()
     {
         foreach (Limbs limb in LeftLeg)
         {
             if (limb.limbHealth <= 0)
             {
-                isCrippled = true;
+                //isCrippled = true;
                
-                NetworkIsCrippled.Value = isCrippled;
+                NetworkIsCrippled.Value = true;
                 //Debug.Log($"NetworkIsCrippled.Value: {NetworkIsCrippled.Value}");
                 //Debug.Log(isCrippled);
             }
@@ -213,8 +251,8 @@ public class ZombieStateManager : NetworkBehaviour
         {
             if (limb.limbHealth <= 0)
             {
-                isCrippled = true;
-                NetworkIsCrippled.Value = isCrippled;
+                //isCrippled = true;
+                NetworkIsCrippled.Value = true;
                 //Debug.Log($"NetworkIsCrippled.Value: {NetworkIsCrippled.Value}");
                 //Debug.Log(isCrippled);
             }
@@ -282,23 +320,36 @@ public class ZombieStateManager : NetworkBehaviour
         anim.enabled = false;
 
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RagdollModeOffServerRpc()
+    {
+        NetworkIsDead.Value = false;
+        RagdollModeOffClientRpc();
+    }
+
     [ClientRpc]
     public void RagdollModeOffClientRpc()
     { 
-        //isDead = false;
-        //NetworkIsDead.Value = true;
-
         foreach (Rigidbody rigid in ragdollRigidbodies)
         {
             rigid.isKinematic = true;
         }
 
-        anim.enabled = true;
-
-        //bloodVisualEffect.enabled = false;
+        anim.enabled = true;        
     }
 
-    public void PlayerDestroyZombie()
+
+    [ServerRpc]
+    public void PlayerDestroyZombieServerRpc()
+    {
+        NetworkIsCrippled.Value = false; // taken out delaydestruction 
+        NetworkHealth.Value = maxHealth;
+        PlayerDestroyZombieClientRpc();
+       
+    }
+    [ClientRpc]
+    public void PlayerDestroyZombieClientRpc()
     {
         StartCoroutine(DelayDestruction(3f));
     }
@@ -308,16 +359,16 @@ public class ZombieStateManager : NetworkBehaviour
 
         yield return new WaitForSeconds(delay);
 
-        NetworkIsDead.Value = true;//moved out from ragdoll off function
+        //NetworkIsDead.Value = true; 
 
-        RagdollModeOffClientRpc();
+        RagdollModeOffServerRpc();
 
         gameManager.EconomyManager.CollectMoney(Reward);
 
         gameManager.EnemyManager.DecreaseEnemyCtr();
 
         //health = maxHealth;
-        NetworkHealth.Value = maxHealth;
+        
 
         foreach (var skin in zombieMeshRenderers)
         {
@@ -332,20 +383,20 @@ public class ZombieStateManager : NetworkBehaviour
         foreach (var limb in zombieLimbs)
         {
             //limb.limbHealth = limb.limbMaxHealth;
-            limb.NetworkLimbHealth.Value = limb.limbMaxHealth;
+            //limb.NetworkLimbHealth.Value = limb.limbMaxHealth;
             limb.ReattachReplacementLimbServerRpc();
         }
 
-        isCrippled = false;
-        NetworkIsCrippled.Value = isCrippled;
+        
 
         SetIsAlerted(false);
 
         SwitchState(idle);
 
-        zombieParent.SetActive(false);
+        //zombieParent.SetActive(isActive);
+        DisableZombieServerRpc();
 
-        
+
 
     }
     [ClientRpc]
@@ -368,9 +419,8 @@ public class ZombieStateManager : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        health -= damage;
+        NetworkHealth.Value = Mathf.Clamp(NetworkHealth.Value - damage, 0, maxHealth);
 
-       
         if (health > 0)
         {
             if (limbName == "torso" || limbName == "belly" && !isDead)

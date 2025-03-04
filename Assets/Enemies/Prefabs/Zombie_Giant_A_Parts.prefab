@@ -2521,6 +2521,7 @@ MonoBehaviour:
   maxHealth: 100
   health: 0
   isDead: 0
+  isActive: 0
   alerted: 0
   isCrippled: 0
   LeftLeg:
@@ -2555,6 +2556,8 @@ MonoBehaviour:
     m_InternalValue: 0
   NetworkIsCrippled:
     m_InternalValue: 0
+  NetworkIsActive:
+    m_InternalValue: 1
 --- !u!82 &3603531615637955658
 AudioSource:
   m_ObjectHideFlags: 0

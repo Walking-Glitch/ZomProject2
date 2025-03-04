@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using Assets.Scripts.Game_Manager;
 using Unity.Netcode;
 using UnityEngine;
@@ -29,6 +28,7 @@ public class EnemyManager : NetworkBehaviour
         StartCoroutine(WaitForPlayer());
     }
 
+   
     private IEnumerator WaitForPlayer()
     {
         while (gameManager.PlayerGameObject == null)

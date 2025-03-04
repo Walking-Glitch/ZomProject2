@@ -64,7 +64,7 @@ public class Limbs : NetworkBehaviour
 
         NetworkLimbHealth.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log("HEALTH IS CHANGING");
+            Debug.Log($"zombie Limb health changed: {prev} ? {curr}");
             limbHealth = curr;
         };
     }
@@ -140,9 +140,10 @@ public class Limbs : NetworkBehaviour
 
         limbReplacement.transform.SetParent(null);
     }
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void ReattachReplacementLimbServerRpc()
     {
+        NetworkLimbHealth.Value = limbMaxHealth;
         ReattachReplacementLimbClientRpc();
     }
     [ClientRpc]

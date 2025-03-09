@@ -353,6 +353,8 @@ public class BuildManager : NetworkBehaviour
         GameObject turretInstance = Instantiate(currentRealList[prefabIndex], position, rotation);
         NetworkObject networkObject = turretInstance.GetComponent<NetworkObject>();
 
+        selectedPrefab = turretInstance;
+
         if (networkObject != null)
         {
             networkObject.Spawn(); // ?? Syncs to all clients
@@ -361,6 +363,8 @@ public class BuildManager : NetworkBehaviour
         {
             Debug.LogError("Placed turret is missing NetworkObject component!");
         }
+
+         
     }
 
 

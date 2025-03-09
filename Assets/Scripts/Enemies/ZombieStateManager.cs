@@ -528,10 +528,18 @@ public class ZombieStateManager : NetworkBehaviour
     }
 
     public void SetPlayerAttackStatus(bool isInAttackArea)
-    {
-        AttackPlayer = isInAttackArea;
-        PlayZombieAnimationBoolClientRpc("IsAttacking", isInAttackArea);
-        //anim.SetBool("IsAttacking", isInAttackArea);
+    {  
+        if(isDead && currentState != attack)
+        {
+            AttackPlayer = false;
+        }
+        else
+        {
+            AttackPlayer = isInAttackArea;
+        }
+           
+        PlayZombieAnimationBoolClientRpc("IsAttacking", AttackPlayer);
+  
     }
 
     [ClientRpc]

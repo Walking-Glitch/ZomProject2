@@ -13,7 +13,7 @@ public class SetAttackStatus : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !_manager.isDead)
         {
 
             float distance = Vector3.Distance(this.transform.position, other.transform.position);

@@ -26,7 +26,7 @@ public class Chasing : ZombieBaseState
             //zombie.anim.SetBool("IsCrippled", true);
         }
   
-        if (zombie.IsPlayerInAttackArea())
+        if (zombie.IsPlayerInAttackArea() && !zombie.isDead)
         {
             zombie.SwitchState(zombie.attack);
         }

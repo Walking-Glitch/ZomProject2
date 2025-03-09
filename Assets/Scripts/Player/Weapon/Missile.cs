@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Missile : MonoBehaviour
+public class Missile : NetworkBehaviour
 {
     // audio variables
     public AudioSource MissileAudioSource;
@@ -70,11 +70,22 @@ public class Missile : MonoBehaviour
     private void OnEnable()
     {
         //exploded = false;     
-       
+        // EnableServerRpc();
 
+        //if (IsServer)
+        //{
         turretAntiTank.missileExploded.Value = false;
-        turretAntiTank.missileBodyActive.Value = true; 
+        turretAntiTank.missileBodyActive.Value = true;
+        //}
     }
+
+    //[ServerRpc]
+    //private void EnableServerRpc()
+    //{
+    //    turretAntiTank.missileExploded.Value = false;
+    //    turretAntiTank.missileBodyActive.Value = true;
+
+    //}
     private void OnDisable()
     {
         exploded = false;        

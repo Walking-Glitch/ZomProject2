@@ -34,9 +34,7 @@ public class EnemyPool : NetworkBehaviour
         if (IsServer)
         {
             NetworkAddEnemiesToPool(poolSize);
-
-        }
-
+        } 
     }
 
 
@@ -116,8 +114,8 @@ public class EnemyPool : NetworkBehaviour
 
                 if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(netObjRef.NetworkObjectId, out NetworkObject enemyNetObj2))
                 {
-                    enemyNetObj2.gameObject.SetActive(false);
-                    //enemyNetObj2.GetComponentInChildren<ZombieStateManager>().DisableZombieRpc();
+                    //enemyNetObj2.gameObject.SetActive(false);
+                    enemyNetObj2.GetComponentInChildren<ZombieStateManager>().NetworkIsActive.Value = false;
                 }
                 else
                 {
@@ -156,7 +154,6 @@ public class EnemyPool : NetworkBehaviour
             NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkList[i].NetworkObjectId, out NetworkObject enemyNetObj);
             if (!enemyNetObj.isActiveAndEnabled)
             {
-
                 return enemyNetObj;
             }
 

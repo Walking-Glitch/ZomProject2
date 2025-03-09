@@ -138,24 +138,14 @@ public class EnemyManager : NetworkBehaviour
         tempEnemy.transform.position = selectedSpawnPoint.position;
         tempEnemy.transform.rotation = selectedSpawnPoint.rotation;
 
-        tempEnemy.gameObject.SetActive(true); // Activate on the server
-
-        // Tell all clients to activate this specific enemy
-        ActivateEnemyClientRpc(tempEnemy.NetworkObjectId);
-
+        tempEnemy.GetComponentInChildren<ZombieStateManager>().NetworkIsActive.Value = true;
+  
         EnemyCtr++;
 
         yield return new WaitForSeconds(Delay);
         isSpawning = false;
     }
-
-    [ClientRpc]
-    private void ActivateEnemyClientRpc(ulong enemyId)
-    {
-        NetworkObject enemyNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[enemyId];
-        enemyNetworkObject.gameObject.SetActive(true);
-    }
-
+     
     Transform GetValidSpawnPoint()
     {
         int i = Random.Range(0, spawnPointsList.Count - 1);

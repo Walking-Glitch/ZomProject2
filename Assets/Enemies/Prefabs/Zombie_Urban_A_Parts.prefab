@@ -1544,6 +1544,7 @@ MonoBehaviour:
   - {fileID: 8533863477245724551}
   - {fileID: 3664685915141613903}
   SkinRig: {fileID: 4783293465957108421}
+  zombieMeshRenderers: []
   ExpDirection: {x: 0, y: 0, z: 0}
   face: {fileID: 1927544540574423451}
   zombieChasingClips:

@@ -68,7 +68,7 @@ public class ZombieStateManager : NetworkBehaviour
 
     //skin mesh object reference
     public GameObject SkinRig;
-    private SkinnedMeshRenderer[] zombieMeshRenderers;
+    [SerializeField]private SkinnedMeshRenderer[] zombieMeshRenderers;
     private Limbs[] zombieLimbs;
 
     //explosion
@@ -126,7 +126,7 @@ public class ZombieStateManager : NetworkBehaviour
     void Start()
     { 
         gameManager = GameManager.Instance;
-
+        
         StartCoroutine(WaitForPlayer());
     }
 
@@ -134,7 +134,14 @@ public class ZombieStateManager : NetworkBehaviour
     {
         base.OnNetworkSpawn();
 
-        NetworkHealth.Value = maxHealth;
+        zombieParent = transform.parent.gameObject;
+
+        if (!IsServer) // Clients only
+        {
+            Debug.Log($"Client joined. Applying initial state: {NetworkIsActive.Value}");
+            zombieParent.SetActive(NetworkIsActive.Value);
+        }
+
 
         NetworkHealth.OnValueChanged += (prev, curr) =>
         {
@@ -159,7 +166,7 @@ public class ZombieStateManager : NetworkBehaviour
         {
             Debug.Log($"zombie is active changed: {prev} ? {curr}");
             isActive = curr;
-            //zombieParent.SetActive(isActive);
+            SetEnableZombieClientRpc(curr);
         };
 
 
@@ -177,7 +184,7 @@ public class ZombieStateManager : NetworkBehaviour
         PlayerTransform = gameManager.PlayerGameObject.transform;
 
         health = maxHealth;
-        zombieParent = transform.parent.gameObject;
+        //zombieParent = transform.parent.gameObject;
         night = gameManager.DayCycle.IsNightTime;
         NightTimeMode(night);
         zombieAudioSource = GetComponent<AudioSource>();
@@ -195,7 +202,8 @@ public class ZombieStateManager : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-      
+
+        if (currentState == null) return; 
         currentState.UpdateState(this);
        
          
@@ -210,27 +218,22 @@ public class ZombieStateManager : NetworkBehaviour
         currentState.EnterState(this);
     }
 
-    [ServerRpc]
-    public void DisableZombieServerRpc()
-    {
-        NetworkIsActive.Value = false;
-        NetworkHealth.Value = maxHealth;
-        SetEnableZombieClientRpc(isActive);
-    }
+    
 
-    [ClientRpc]
+    [ClientRpc(RequireOwnership = false)]
     public void SetEnableZombieClientRpc(bool x)
     {
+        if (zombieParent == null)
+        {
+            Debug.LogError("zombieParent is NULL on client!");
+            return;
+        }
+
         zombieParent.SetActive(x);
-        Debug.Log("disablind worked");
+        Debug.Log("enabled set variable to " + x);
     }
 
-    [ServerRpc]
-    public void EnableZombieServerRpc()
-    {
-        NetworkIsActive.Value = true;
-        SetEnableZombieClientRpc(isActive);
-    }
+
 
     [ServerRpc(RequireOwnership = false)]      
     public void CheckIfCrippledServerRpc()
@@ -239,11 +242,7 @@ public class ZombieStateManager : NetworkBehaviour
         {
             if (limb.limbHealth <= 0)
             {
-                //isCrippled = true;
-               
                 NetworkIsCrippled.Value = true;
-                //Debug.Log($"NetworkIsCrippled.Value: {NetworkIsCrippled.Value}");
-                //Debug.Log(isCrippled);
             }
         }
 
@@ -251,10 +250,7 @@ public class ZombieStateManager : NetworkBehaviour
         {
             if (limb.limbHealth <= 0)
             {
-                //isCrippled = true;
-                NetworkIsCrippled.Value = true;
-                //Debug.Log($"NetworkIsCrippled.Value: {NetworkIsCrippled.Value}");
-                //Debug.Log(isCrippled);
+                NetworkIsCrippled.Value = true;                
             }
         }
     }
@@ -345,14 +341,10 @@ public class ZombieStateManager : NetworkBehaviour
     {
         NetworkIsCrippled.Value = false; // taken out delaydestruction 
         NetworkHealth.Value = maxHealth;
-        PlayerDestroyZombieClientRpc();
-       
-    }
-    [ClientRpc]
-    public void PlayerDestroyZombieClientRpc()
-    {
         StartCoroutine(DelayDestruction(3f));
+
     }
+    
 
     protected virtual IEnumerator DelayDestruction(float delay)
     {
@@ -368,37 +360,47 @@ public class ZombieStateManager : NetworkBehaviour
         gameManager.EnemyManager.DecreaseEnemyCtr();
 
         //health = maxHealth;
-        
 
-        foreach (var skin in zombieMeshRenderers)
-        {
-            skin.enabled = true;
-        }
 
-        foreach (var col in ragdollColliders)
-        {
-            col.enabled = true;
-        }
+        EnableSkinMeshesClientRpc();
+
+        EnableCollidersClientRpc();
 
         foreach (var limb in zombieLimbs)
         {
-            //limb.limbHealth = limb.limbMaxHealth;
-            //limb.NetworkLimbHealth.Value = limb.limbMaxHealth;
             limb.ReattachReplacementLimbServerRpc();
         }
 
-        
+
 
         SetIsAlerted(false);
 
         SwitchState(idle);
 
         //zombieParent.SetActive(isActive);
-        DisableZombieServerRpc();
-
+        NetworkIsActive.Value = false;
 
 
     }
+
+    [ClientRpc]
+    private void EnableCollidersClientRpc()
+    {
+        foreach (var col in ragdollColliders)
+        {
+            col.enabled = true;
+        }
+    }
+
+    [ClientRpc]
+    private void EnableSkinMeshesClientRpc()
+    {
+        foreach (var skin in zombieMeshRenderers)
+        {
+            skin.enabled = true;
+        }
+    }
+
     [ClientRpc]
     public void DismembermentByExplosionClientRpc()
     {
@@ -413,7 +415,6 @@ public class ZombieStateManager : NetworkBehaviour
         }
     }
 
-
     [ServerRpc(RequireOwnership = false)]
     public virtual void TakeDamageServerRpc(int damage, string limbName, bool explosion, bool turret , float force)
     {
@@ -421,7 +422,7 @@ public class ZombieStateManager : NetworkBehaviour
 
         NetworkHealth.Value = Mathf.Clamp(NetworkHealth.Value - damage, 0, maxHealth);
 
-        if (health > 0)
+        if (health > 0 && currentState != Death)
         {
             if (limbName == "torso" || limbName == "belly" && !isDead)
             {

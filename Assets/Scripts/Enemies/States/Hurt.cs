@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Hurt : ZombieBaseState
 {
     public override void EnterState(ZombieStateManager zombie)
     {
+
         zombie.SetIsAlerted(true);
         zombie.SetCanMove(false);
         //zombie.anim.SetTrigger("IsHit");

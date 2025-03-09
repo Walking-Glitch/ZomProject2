@@ -6,7 +6,7 @@ public class Death : ZombieBaseState
      public override void EnterState(ZombieStateManager zombie)
     {
         zombie.NetworkIsDead.Value = true;
-        zombie.NetworkIsActive.Value = false;
+   
         zombie.SetCanMove(false); ;
 
         zombie.zombieAudioSource.Stop();
@@ -34,7 +34,8 @@ public class Death : ZombieBaseState
             //zombie.anim.SetBool("IsDead", true);
         }
 
-        zombie.PlayerDestroyZombieClientRpc();
+        //zombie.PlayerDestroyZombieClientRpc();
+        zombie.PlayerDestroyZombieServerRpc();
     }
 
     public override void UpdateState(ZombieStateManager zombie)

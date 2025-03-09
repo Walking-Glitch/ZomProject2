@@ -281,6 +281,7 @@ public class TurretAntiTank : TurretBase
 
     protected void Fire()
     {
+        if (!IsServer) return; // 
 
         fireRateTimer = 0;
         MissileTraveling = true;

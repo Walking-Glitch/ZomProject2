@@ -408,6 +408,7 @@ protected virtual void AddRecoil()
    
     protected virtual void Fire(bool hasRecoil)
     {
+        if (!IsServer) return; // 
 
         fireRateTimer = 0;
 

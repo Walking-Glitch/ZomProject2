@@ -1,7 +1,6 @@
 using System.Collections;
 using Assets.Scripts.Game_Manager;
 using Assets.Scripts.Player.Weapon;
-using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;

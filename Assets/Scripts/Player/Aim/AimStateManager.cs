@@ -24,7 +24,7 @@ public class AimStateManager : NetworkBehaviour
 
     // camera aim
     public Transform aimPos;
-    public Transform laserPos;
+    public Transform laserPos;    
     [SerializeField] private LayerMask aimMask;
     [SerializeField] private LayerMask laserMask;
     [SerializeField] private LayerMask allMask;
@@ -198,7 +198,8 @@ public class AimStateManager : NetworkBehaviour
 
         brain = Camera.main.GetComponent<CinemachineBrain>();
 
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked; 
+
         SwitchState(AimIdleState);
     }
     public void AdjustConstraintWeight() //originall

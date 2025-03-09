@@ -2,8 +2,10 @@ using Assets.Scripts.Game_Manager;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
+using System.Collections;
 
-public class BuildManager : MonoBehaviour
+public class BuildManager : NetworkBehaviour
 {
     // actual list to return
     private List<GameObject> currentFakeList;
@@ -50,14 +52,32 @@ public class BuildManager : MonoBehaviour
     private Vector3 Center;
     private Vector3 HalfExtents;
 
+    // initialization
+    private bool isInitialized;
+
     private void Start()
     {
         gameManager = GameManager.Instance;
+
+        StartCoroutine(WaitForPlayer());
 
         currentFakeList = fakeTurretPrefabs;
         currentRealList = turretPrefabs;
 
         buildCanvasX = BuildCanvas.GetComponent<BuildCanvas>();   
+    }
+
+    private IEnumerator WaitForPlayer()
+    {
+        while (gameManager.PlayerGameObject == null)
+        {
+            yield return null;
+        }
+
+        AimTransform = gameManager.PlayerGameObject.GetComponent<AimStateManager>().aimPos;
+
+
+        isInitialized = true;
     }
 
     private void Update()
@@ -80,31 +100,11 @@ public class BuildManager : MonoBehaviour
 
                 DisplaySelectedPrefab(AlternateBetweenFakeLists());
 
-                //dimensions = GetPrefabDimensions(currentPreview);
-
-                //if (currentPreview == null) return;
+               
 
                 RotatePreview(currentPreview);
 
-                //Collider[] colliders = Physics.OverlapSphere(currentPreview.transform.position, dimensions, placementObstacle);
-
-                //if (colliders.Length > 0)
-                //{
-                //    // Placement is invalid if any colliders are found
-                //    SetIsValidPlacement(false);
-
-                //    // Debug the colliders found inside the sphere
-                //   // Debug.Log("Colliders found inside the sphere:");
-                //    foreach (Collider collider in colliders)
-                //    {
-                //       // Debug.Log($"Collider Name: {collider.name}, Tag: {collider.tag}, Layer: {LayerMask.LayerToName(collider.gameObject.layer)}");
-                //    }
-                //}
-                //else
-                //{
-
-                //    SetIsValidPlacement(true);
-                //}
+                 
                 if(IsPlacementValidWithBox(currentPreview, placementObstacle))
                 {
                     SetIsValidPlacement(true);
@@ -317,13 +317,18 @@ public class BuildManager : MonoBehaviour
         if (ReturnIsValidPlacement())
         {
 
-            selectedPrefab = Instantiate(currentRealList[currentIndex], AimTransform.position, currentPreview.transform.rotation);
-            selectedPrefab.transform.SetParent(AimTransform);
+            //selectedPrefab = Instantiate(currentRealList[currentIndex], AimTransform.position, currentPreview.transform.rotation);
+            //selectedPrefab.transform.SetParent(AimTransform);
 
-            selectedPrefab.transform.SetParent(null);
+            //selectedPrefab.transform.SetParent(null);
+
+            //gameManager.EconomyManager.AddTurretToEconomyManager(selectedPrefab);
+            //
+
+            RequestPlacePrefabServerRpc(currentIndex, AimTransform.position, currentPreview.transform.rotation);
 
             gameManager.EconomyManager.AddTurretToEconomyManager(selectedPrefab);
-            //
+
             DisableCanvas();
             Destroy(currentPreview);
             isPlacing = false;
@@ -335,6 +340,29 @@ public class BuildManager : MonoBehaviour
 
 
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPlacePrefabServerRpc(int prefabIndex, Vector3 position, Quaternion rotation)
+    {
+        if (prefabIndex < 0 || prefabIndex >= currentRealList.Count)
+        {
+            Debug.LogError("Invalid turret prefab index");
+            return;
+        }
+
+        GameObject turretInstance = Instantiate(currentRealList[prefabIndex], position, rotation);
+        NetworkObject networkObject = turretInstance.GetComponent<NetworkObject>();
+
+        if (networkObject != null)
+        {
+            networkObject.Spawn(); // ?? Syncs to all clients
+        }
+        else
+        {
+            Debug.LogError("Placed turret is missing NetworkObject component!");
+        }
+    }
+
 
     private float GetPrefabDimensions(GameObject prefab)
     {

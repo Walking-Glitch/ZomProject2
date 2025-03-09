@@ -11,6 +11,8 @@ public class TurretShotgun : TurretBase
     
     protected override void Fire(bool hasRecoil)
     {
+        if (!IsServer) return; // 
+
         fireRateTimer = 0;
 
         if(!IsServer && !IsClient)

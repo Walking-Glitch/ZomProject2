@@ -108,6 +108,13 @@ public class ZombieStateManager : NetworkBehaviour
         DayCycle.OnNightTimeChanged += NightTimeMode;
         NightTimeMode(night);
 
+        if(IsServer)
+        {
+            NetworkIsCrippled.Value = false; // taken out delaydestruction 
+            NetworkHealth.Value = maxHealth;
+        }
+       
+
     }
     private void OnDisable()
     {
@@ -339,8 +346,7 @@ public class ZombieStateManager : NetworkBehaviour
     [ServerRpc]
     public void PlayerDestroyZombieServerRpc()
     {
-        NetworkIsCrippled.Value = false; // taken out delaydestruction 
-        NetworkHealth.Value = maxHealth;
+       
         StartCoroutine(DelayDestruction(3f));
 
     }

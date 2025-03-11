@@ -553,7 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1271784120
+  GlobalObjectIdHash: 1603020066
   InScenePlacedSourceGlobalObjectIdHash: 1603020066
   DeferredDespawnTick: 0
   Ownership: 1
@@ -618,15 +618,15 @@ MonoBehaviour:
   CurrentMissileTarget: {fileID: 0}
   MissileTraveling: 0
   missileReference: {fileID: 3941526543316199018}
-  missilePosition:
+  missileNetworkPosition:
     m_InternalValue: {x: 0, y: 0, z: 0}
-  explosionPosition:
+  explosionNetworkPosition:
     m_InternalValue: {x: 0, y: 0, z: 0}
-  missileActive:
+  networkMissileBodyActive:
     m_InternalValue: 0
-  missileBodyActive:
+  networkMissileActive:
     m_InternalValue: 0
-  missileExploded:
+  networkMissileExploded:
     m_InternalValue: 0
 --- !u!64 &1233845559131431712
 MeshCollider:

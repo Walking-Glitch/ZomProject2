@@ -19,26 +19,26 @@ public class TurretAntiTank : TurretBase
     public Missile missileReference;
 
 
+    private bool missileBodyActive;
+    private bool missileActive;
+    private bool missileExploded;
+
     // network variables 
-    public NetworkVariable<Vector3> missilePosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<Vector3> explosionPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<Vector3> missileNetworkPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<Vector3> explosionNetworkPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     
-    public NetworkVariable<bool> missileBodyActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    public NetworkVariable<bool> missileActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<bool> missileExploded = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    public NetworkVariable<bool> networkMissileBodyActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> networkMissileActive = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> networkMissileExploded = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     protected override void Start()
     {
-        base.Start();
-
-        //missileReference = GetComponentInChildren<Missile>();
+        base.Start(); 
         
         if(missileReference == null)
         {
             Debug.Log("this is null");
         }
-
-       
 
     }
     protected override void Update()
@@ -51,35 +51,39 @@ public class TurretAntiTank : TurretBase
     {
         base.OnNetworkSpawn();
 
-        missilePosition.OnValueChanged += (prev, curr) =>
+        missileNetworkPosition.OnValueChanged += (prev, curr) =>
         {
            // Debug.Log($"Missile transform changed: {prev} ? {curr}");
             missileReference.gameObject.transform.position = curr; 
         };
 
-        explosionPosition.OnValueChanged += (prev, curr) =>
+        explosionNetworkPosition.OnValueChanged += (prev, curr) =>
         {
 
             if (missileReference.exploded)
             {
-                missileReference.explosionPosition = missilePosition.Value;
-                //Debug.Log("Missile Explosion Position Set: " + explosionPosition);
+                missileReference.explosionPosition = missileNetworkPosition.Value;
+                //Debug.Log("Missile Explosion Position Set: " + explosionNetworkPosition);
             }
         };
 
-        missileActive.OnValueChanged += (prev, curr) =>
+        networkMissileActive.OnValueChanged += (prev, curr) =>
         {
-            missileReference.gameObject.SetActive(curr);
+            Debug.Log($"Missile active: {prev} ? {curr}");
+            missileActive = curr;
+            missileReference.gameObject.SetActive(missileActive);
         };
 
-        missileBodyActive.OnValueChanged += (prev, curr) =>
+        networkMissileBodyActive.OnValueChanged += (prev, curr) =>
         {
-            missileReference.MissileBody.SetActive(curr);
+            missileBodyActive = curr;
+            missileReference.MissileBody.SetActive(missileBodyActive);
         };
 
-        missileExploded.OnValueChanged += (prev, curr) =>
+        networkMissileExploded.OnValueChanged += (prev, curr) =>
         {
-            //Debug.Log($"Missile exploded changed: {prev} ? {curr}");
+            Debug.Log($"Missile Exploded: {prev} ? {curr}");
+            //missileExploded = curr;
             missileReference.exploded = curr;
         };
 
@@ -192,14 +196,25 @@ public class TurretAntiTank : TurretBase
     {
         if (!IsServer) return;
 
+       
+
         // Check if currentEnemy is still valid before clearing the list
         if (currentEnemy != null)
-        {
+        { 
             float currentEnemyDistance = Vector3.Distance(transform.position, currentEnemy.transform.position);
             if (currentEnemyDistance >= MinWeaponRange && currentEnemyDistance <= MaxWeaponRange && currentEnemy.health > 0)
             {
                 // If currentEnemy is still valid, return early to avoid unnecessary reassignment
                 return;
+            }
+            else
+            {
+                if (currentEnemy.health <= 0)
+                {
+                    Debug.Log($"Removing dead enemy {currentEnemy.name}");
+                    currentEnemy = null;
+                    targetEnemyId.Value = 0; // Reset the synced network target
+                }
             }
         }
 
@@ -286,11 +301,9 @@ public class TurretAntiTank : TurretBase
         fireRateTimer = 0;
         MissileTraveling = true;
 
-        //Missile missile = missilePrefab.GetComponent<Missile>();
-        //missile.gameObject.SetActive(true);
-        //missile.MissileBody.SetActive(true);
-        missileActive.Value = true;
-        missileBodyActive.Value = true;
+ 
+        networkMissileActive.Value = true;
+        networkMissileBodyActive.Value = true;
     }
 
      

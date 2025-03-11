@@ -35,11 +35,8 @@ public class Missile : NetworkBehaviour
     [SerializeField] private float flashIntensity;
     [SerializeField] private float lightReturnSpeed = 20;
 
-
     // antitank reference
     private TurretAntiTank turretAntiTank;
-
-    
 
     // area of effect and detection variables
     public float explosionRadius;
@@ -51,8 +48,7 @@ public class Missile : NetworkBehaviour
     
     private void Awake()
     {
-       gameManager = GameManager.Instance;
-         
+       gameManager = GameManager.Instance;         
     }
     private void Start()
     {
@@ -67,25 +63,7 @@ public class Missile : NetworkBehaviour
         immediateParent = gameObject.transform.parent;
     }
 
-    private void OnEnable()
-    {
-        //exploded = false;     
-        // EnableServerRpc();
-
-        //if (IsServer)
-        //{
-        turretAntiTank.missileExploded.Value = false;
-        turretAntiTank.missileBodyActive.Value = true;
-        //}
-    }
-
-    //[ServerRpc]
-    //private void EnableServerRpc()
-    //{
-    //    turretAntiTank.missileExploded.Value = false;
-    //    turretAntiTank.missileBodyActive.Value = true;
-
-    //}
+    
     private void OnDisable()
     {
         exploded = false;        
@@ -137,22 +115,22 @@ public class Missile : NetworkBehaviour
 
         if (!exploded)
         { 
-            turretAntiTank.missilePosition.Value = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
+            turretAntiTank.missileNetworkPosition.Value = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, currentTarget) < 1f)
             {
                 Debug.Log("Missile hit target! exploded BEFORE: " + exploded);
                
-                turretAntiTank.missileExploded.Value = true;
+                turretAntiTank.networkMissileExploded.Value = true;
 
                 Debug.Log("Missile hit target! exploded AFTER: " + exploded);
 
-                turretAntiTank.explosionPosition.Value = turretAntiTank.missilePosition.Value; 
+                turretAntiTank.explosionNetworkPosition.Value = turretAntiTank.missileNetworkPosition.Value; 
                 FindEnemies();
               
                 turretAntiTank.PlayExplosionVfxClientRpc();
                 turretAntiTank.PlayExplosionSfxClientRpc();
-                turretAntiTank.missileBodyActive.Value = false;
+                turretAntiTank.networkMissileBodyActive.Value = false;
                 StartCoroutine(WaitForAudioToEndAndDisable());
             }
         }
@@ -160,7 +138,7 @@ public class Missile : NetworkBehaviour
         {
            // Debug.Log("INSIDE ELSE! Holding Position. exploded: " + exploded);
             // Keep the missile in place after explosion
-            turretAntiTank.missilePosition.Value = turretAntiTank.explosionPosition.Value;
+            turretAntiTank.missileNetworkPosition.Value = turretAntiTank.explosionNetworkPosition.Value;
         }
     }
 
@@ -211,9 +189,9 @@ public class Missile : NetworkBehaviour
          
         turretAntiTank.ReparentMissileClientRpc();
 
-        turretAntiTank.missilePosition.Value = originalMissilePosition;
+        turretAntiTank.missileNetworkPosition.Value = originalMissilePosition;
 
-        turretAntiTank.missileActive.Value = false;
+        turretAntiTank.networkMissileActive.Value = false;
         
     }
 
@@ -224,6 +202,10 @@ public class Missile : NetworkBehaviour
         Debug.Log("is this repeating?");
         transform.SetLocalPositionAndRotation(originalMissilePosition, Quaternion.LookRotation(immediateParent.forward));
         transform.SetParent(immediateParent);
+
+        turretAntiTank.networkMissileBodyActive.Value = true;
+        turretAntiTank.networkMissileExploded.Value = false;
+
 
     }
 

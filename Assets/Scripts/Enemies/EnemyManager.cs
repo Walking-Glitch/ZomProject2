@@ -20,6 +20,8 @@ public class EnemyManager : NetworkBehaviour
 
     private bool isInitialized = false;
 
+     
+     
 
     void Start()
     {
@@ -28,8 +30,8 @@ public class EnemyManager : NetworkBehaviour
         StartCoroutine(WaitForPlayer());
     }
 
-   
-    private IEnumerator WaitForPlayer()
+     
+        private IEnumerator WaitForPlayer()
     {
         while (gameManager.PlayerGameObject == null)
         {
@@ -134,18 +136,23 @@ public class EnemyManager : NetworkBehaviour
             isSpawning = false;
             yield break;
         }
+         
 
         tempEnemy.transform.position = selectedSpawnPoint.position;
         tempEnemy.transform.rotation = selectedSpawnPoint.rotation;
 
+       
+
         tempEnemy.GetComponentInChildren<ZombieStateManager>().NetworkIsActive.Value = true;
-  
+         
         EnemyCtr++;
 
         yield return new WaitForSeconds(Delay);
         isSpawning = false;
     }
-     
+
+   
+
     Transform GetValidSpawnPoint()
     {
         int i = Random.Range(0, spawnPointsList.Count - 1);

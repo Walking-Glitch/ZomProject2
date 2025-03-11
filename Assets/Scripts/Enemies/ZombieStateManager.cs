@@ -145,33 +145,32 @@ public class ZombieStateManager : NetworkBehaviour
 
         if (!IsServer) // Clients only
         {
-            Debug.Log($"Client joined. Applying initial state: {NetworkIsActive.Value}");
+            //Debug.Log($"Client joined. Applying initial state: {NetworkIsActive.Value}");
             zombieParent.SetActive(NetworkIsActive.Value);
         }
 
 
         NetworkHealth.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"zombie health changed: {prev} ? {curr}");
+            //Debug.Log($"zombie health changed: {prev} ? {curr}");
             health = curr;
         };
 
         NetworkIsCrippled.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"zombie crippled changed: {prev} ? {curr}");
-            //Debug.Log($"zombie crippled changed: {prev} ? {curr} \n{System.Environment.StackTrace}");
+            //Debug.Log($"zombie crippled changed: {prev} ? {curr}");          
             isCrippled = curr;
         };
 
         NetworkIsDead.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"zombie is dead changed: {prev} ? {curr}");
+            //Debug.Log($"zombie is dead changed: {prev} ? {curr}");
             isDead = curr; 
         };
 
         NetworkIsActive.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"zombie is active changed: {prev} ? {curr}");
+            //Debug.Log($"zombie is active changed: {prev} ? {curr}");
             isActive = curr;
             SetEnableZombieClientRpc(curr);
         };
@@ -235,9 +234,8 @@ public class ZombieStateManager : NetworkBehaviour
             Debug.LogError("zombieParent is NULL on client!");
             return;
         }
-
         zombieParent.SetActive(x);
-        Debug.Log("enabled set variable to " + x);
+        //Debug.Log("enabled set variable to " + x);
     }
 
 
@@ -334,9 +332,13 @@ public class ZombieStateManager : NetworkBehaviour
     [ClientRpc]
     public void RagdollModeOffClientRpc()
     { 
-        foreach (Rigidbody rigid in ragdollRigidbodies)
+        if (ragdollColliders.Length > 0)
         {
-            rigid.isKinematic = true;
+            foreach (Rigidbody rigid in ragdollRigidbodies)
+            {
+                rigid.isKinematic = true;
+            }
+        
         }
 
         anim.enabled = true;        
@@ -356,18 +358,13 @@ public class ZombieStateManager : NetworkBehaviour
     {
 
         yield return new WaitForSeconds(delay);
-
-        //NetworkIsDead.Value = true; 
-
+         
         RagdollModeOffServerRpc();
 
         gameManager.EconomyManager.CollectMoney(Reward);
 
         gameManager.EnemyManager.DecreaseEnemyCtr();
-
-        //health = maxHealth;
-
-
+         
         EnableSkinMeshesClientRpc();
 
         EnableCollidersClientRpc();
@@ -378,16 +375,15 @@ public class ZombieStateManager : NetworkBehaviour
         }
 
 
-
         SetIsAlerted(false);
 
         SwitchState(idle);
 
-        //zombieParent.SetActive(isActive);
         NetworkIsActive.Value = false;
 
-
     }
+
+  
 
     [ClientRpc]
     private void EnableCollidersClientRpc()

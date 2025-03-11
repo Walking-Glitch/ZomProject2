@@ -64,7 +64,7 @@ public class Limbs : NetworkBehaviour
 
         NetworkLimbHealth.OnValueChanged += (prev, curr) =>
         {
-            Debug.Log($"zombie Limb health changed: {prev} ? {curr}");
+            //Debug.Log($"zombie Limb health changed: {prev} ? {curr}");
             limbHealth = curr;
         };
     }

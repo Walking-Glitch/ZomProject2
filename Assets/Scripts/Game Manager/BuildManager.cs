@@ -333,9 +333,11 @@ public class BuildManager : NetworkBehaviour
             Destroy(currentPreview);
             isPlacing = false;
 
-             
-            Bounds bounds = selectedPrefab.GetComponent<Collider>().bounds;
-            AstarPath.active.UpdateGraphs(bounds);
+            if (selectedPrefab != null)
+            {
+                Bounds bounds = selectedPrefab.GetComponent<Collider>().bounds;
+                AstarPath.active.UpdateGraphs(bounds);
+            }
         }
 
 

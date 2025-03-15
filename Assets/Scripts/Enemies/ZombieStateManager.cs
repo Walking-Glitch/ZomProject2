@@ -312,13 +312,17 @@ public class ZombieStateManager : NetworkBehaviour
     [ClientRpc]
     public void RagdollModeOnClientRpc()
     {
-     
-        foreach (Rigidbody rigid in ragdollRigidbodies)
-        {
-            rigid.isKinematic = false;
-        }
 
-        anim.enabled = false;
+        if(ragdollColliders != null)
+        {
+            foreach (Rigidbody rigid in ragdollRigidbodies)
+            {
+                rigid.isKinematic = false;
+            }
+
+            anim.enabled = false;
+        }
+        
 
     }
 
@@ -332,7 +336,7 @@ public class ZombieStateManager : NetworkBehaviour
     [ClientRpc]
     public void RagdollModeOffClientRpc()
     { 
-        if (ragdollColliders.Length > 0)
+        if (ragdollColliders!=null && ragdollColliders.Length > 0)
         {
             foreach (Rigidbody rigid in ragdollRigidbodies)
             {
@@ -388,10 +392,14 @@ public class ZombieStateManager : NetworkBehaviour
     [ClientRpc]
     private void EnableCollidersClientRpc()
     {
-        foreach (var col in ragdollColliders)
+        if(ragdollColliders != null)
         {
-            col.enabled = true;
+            foreach (var col in ragdollColliders)
+            {
+                col.enabled = true;
+            }
         }
+       
     }
 
     [ClientRpc]

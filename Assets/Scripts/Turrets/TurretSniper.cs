@@ -15,5 +15,13 @@ public class TurretSniper : TurretBase
     {
         base.Fire(true);
     }
-   
+
+
+    protected override void SetAimDispersion()
+    {
+        minSpreadX = -0.2f;
+        maxSpreadX = 0.2f;
+        minSpreadY = 0.5f;
+        maxSpreadY = 1.5f;
+    }
 }

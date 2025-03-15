@@ -14,6 +14,12 @@ public class TurretBase : NetworkBehaviour
     public float WeaponFireRate;
     public float AimingSpeed;
 
+    // offset var
+    protected float minSpreadX;
+    protected float maxSpreadX;
+    protected float minSpreadY;
+    protected float maxSpreadY;
+
     // firing variables    
     protected float fireRateTimer;
 
@@ -77,6 +83,8 @@ public class TurretBase : NetworkBehaviour
     // barrel rotation variables
     [SerializeField] protected bool rotatoryBarrel;
 
+    
+
     // optimization attempts
     private float checkInterval = 0.2f;
     private float checkTimer;
@@ -89,6 +97,7 @@ public class TurretBase : NetworkBehaviour
     private NetworkVariable<bool> laserNetworkReady = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private NetworkVariable<Vector3> laserEndPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     private NetworkVariable<Vector3> laserStartPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<Vector3> aimNetworkPosition = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
 
     protected virtual void Start()
@@ -98,7 +107,17 @@ public class TurretBase : NetworkBehaviour
         turretAudioSource = GetComponent<AudioSource>();
 
         CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
-          
+
+        SetAimDispersion();
+
+    }
+
+    protected virtual void SetAimDispersion()
+    {
+        minSpreadX = -0.4f;
+        maxSpreadX = 0.4f;
+        minSpreadY = 1f;
+        maxSpreadY = 2f;
     }
 
     public override void OnNetworkSpawn()
@@ -145,6 +164,11 @@ public class TurretBase : NetworkBehaviour
         {
             laserLine.SetPosition(0, curr);
         };
+
+        aimNetworkPosition.OnValueChanged += (prev, curr) =>
+        {
+            LaserAimTransform.position = curr;
+        };
     }
 
     // Update is called once per frame
@@ -190,12 +214,14 @@ public class TurretBase : NetworkBehaviour
                 if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ShootMask))
                 {
                     LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
-                    LaserAimTransform.position = hit.point;
-                  
+                    //LaserAimTransform.position = hit.point;
+                    aimNetworkPosition.Value = hit.point;
+
                 }
                 laserNetworkReady.Value = true;
                 laserStartPosition.Value = laserOrigin.position;
                 laserEndPosition.Value = hit.point;
+                
 
 
                 if (WeaponSpotLight != null)
@@ -330,7 +356,7 @@ protected virtual void AddRecoil()
             float verticalAlignment = Vector3.Dot(PitchTransform.up, verticalDirection);
 
          
-            if (horizontalAlignment >= 0.98f && CanFire())
+            if (horizontalAlignment >= 0.99f && CanFire())
             {
                 Fire(false);
                 //Debug.Log("FIRING");
@@ -433,7 +459,7 @@ protected virtual void AddRecoil()
             AddRecoil();
         }
 
-        Vector3 enemyMediumHeight = currentEnemy.transform.parent.position + Vector3.up * Random.Range(1f, 2f) + Vector3.right * Random.Range(-0.5f, 0.5f);
+        Vector3 enemyMediumHeight = currentEnemy.transform.parent.position + Vector3.up * Random.Range(minSpreadY, maxSpreadY) + Vector3.right * Random.Range(minSpreadX, maxSpreadX);
         Vector3 direction = (enemyMediumHeight - GunEndTransform.position).normalized;
 
         if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,

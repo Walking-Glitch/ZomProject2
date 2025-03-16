@@ -55,6 +55,9 @@ public class BuildManager : NetworkBehaviour
     // initialization
     private bool isInitialized;
 
+    // network variable
+    private NetworkVariable<bool> networkUpdateNavGraph = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
     private void Start()
     {
         gameManager = GameManager.Instance;
@@ -67,6 +70,19 @@ public class BuildManager : NetworkBehaviour
         buildCanvasX = BuildCanvas.GetComponent<BuildCanvas>();   
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        networkUpdateNavGraph.OnValueChanged += (prev, curr) =>
+        {
+            if (selectedPrefab != null && curr)
+            {
+                Bounds bounds = selectedPrefab.GetComponent<Collider>().bounds;
+                AstarPath.active.UpdateGraphs(bounds);
+            }
+        };
+    }
     private IEnumerator WaitForPlayer()
     {
         while (gameManager.PlayerGameObject == null)
@@ -186,7 +202,7 @@ public class BuildManager : NetworkBehaviour
             //disable previous object while keeping the index
             DestroyPreview();
             isPlacing = false;
-
+             
         }
 
         else if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -199,7 +215,7 @@ public class BuildManager : NetworkBehaviour
             //disable previous object while keeping the index
             DestroyPreview();
             isPlacing = false;
-             
+          
         }
 
         if (currentFakeList == null) Debug.Log("CURRENT LIST IS NULL");
@@ -207,12 +223,10 @@ public class BuildManager : NetworkBehaviour
          
         return currentFakeList;
     }
-    public List<GameObject> AlternateBetweenLists(List<GameObject> list)
-    { 
-        currentRealList = list;
 
-        return currentRealList;
-    }// this can be deleted later
+   
+
+
     public void DisplaySelectedPrefab(List<GameObject> list)
     {
 
@@ -316,43 +330,41 @@ public class BuildManager : NetworkBehaviour
     {
         if (ReturnIsValidPlacement())
         {
+            int listType = (currentRealList == turretPrefabs) ? 0 : 1; // Identify which list the client is using
 
-            //selectedPrefab = Instantiate(currentRealList[currentIndex], AimTransform.position, currentPreview.transform.rotation);
-            //selectedPrefab.transform.SetParent(AimTransform);
-
-            //selectedPrefab.transform.SetParent(null);
-
-            //gameManager.EconomyManager.AddTurretToEconomyManager(selectedPrefab);
-            //
-
-            RequestPlacePrefabServerRpc(currentIndex, AimTransform.position, currentPreview.transform.rotation);
+            RequestPlacePrefabServerRpc(currentIndex, AimTransform.position, currentPreview.transform.rotation, listType);
 
             gameManager.EconomyManager.AddTurretToEconomyManager(selectedPrefab);
 
             DisableCanvas();
             Destroy(currentPreview);
             isPlacing = false;
+            setGraphUpdateFalseServerRpc();
 
-            if (selectedPrefab != null)
-            {
-                Bounds bounds = selectedPrefab.GetComponent<Collider>().bounds;
-                AstarPath.active.UpdateGraphs(bounds);
-            }
         }
 
 
     }
+    [ServerRpc(RequireOwnership = false)]
+    private void setGraphUpdateFalseServerRpc()
+    {
+        networkUpdateNavGraph.Value = false;
+    }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RequestPlacePrefabServerRpc(int prefabIndex, Vector3 position, Quaternion rotation)
+    private void RequestPlacePrefabServerRpc(int prefabIndex, Vector3 position, Quaternion rotation, int listType)
     {
+        // Get the correct list based on the player who sent the request
+        List<GameObject> selectedList = (listType == 0) ? turretPrefabs : barriersPrefabs;
+
+
         if (prefabIndex < 0 || prefabIndex >= currentRealList.Count)
         {
-            Debug.LogError("Invalid turret prefab index");
+            Debug.LogError("Invalid prefab index");
             return;
         }
 
-        GameObject turretInstance = Instantiate(currentRealList[prefabIndex], position, rotation);
+        GameObject turretInstance = Instantiate(selectedList[prefabIndex], position, rotation);//
         NetworkObject networkObject = turretInstance.GetComponent<NetworkObject>();
 
         selectedPrefab = turretInstance;
@@ -360,34 +372,17 @@ public class BuildManager : NetworkBehaviour
         if (networkObject != null)
         {
             networkObject.Spawn(); // ?? Syncs to all clients
+            networkUpdateNavGraph.Value = true;
         }
         else
         {
             Debug.LogError("Placed turret is missing NetworkObject component!");
         }
 
-         
+
     }
 
 
-    private float GetPrefabDimensions(GameObject prefab)
-    {
-        if (prefab == null)
-            return 10f; // Default dimensions if no prefab exists
-
-        Bounds bounds = new Bounds(prefab.transform.position, Vector3.zero);
-
-        // Combine bounds of all child MeshRenderers
-        foreach (var meshRenderer in prefab.GetComponentsInChildren<MeshRenderer>())
-        {
-            bounds.Encapsulate(meshRenderer.bounds);
-        }
-
-        
-        // Use the largest dimension of the bounds as the dimensions
-        return bounds.extents.magnitude;
-    }
- 
     public void DestroyPreview()
     {
       

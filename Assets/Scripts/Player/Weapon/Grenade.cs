@@ -202,8 +202,15 @@ public class Grenade : MonoBehaviour
         {
             ZombieStateManager zombie = col.gameObject.GetComponentInParent<ZombieStateManager>();
 
-            if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
-                enemies.Add(col.GetComponentInParent<ZombieStateManager>());
+            if(zombie != null)
+            {
+                //if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
+                //    enemies.Add(col.GetComponentInParent<ZombieStateManager>());
+                if (zombie.health > 0 && !enemies.Contains(zombie))
+                    enemies.Add(zombie);
+            }
+
+           
         }
 
         KillEnemiesInBlastRadius();

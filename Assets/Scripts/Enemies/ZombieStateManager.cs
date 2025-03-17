@@ -92,10 +92,11 @@ public class ZombieStateManager : NetworkBehaviour
     // targeting 
 
     public IAttackable currentTarget;
+    private IAttackable targetToDamage;
     private float aggroRange = 15f;    
     private float maxDetectionRange = 1000f;
     public LayerMask AttackableLayer;
-    private bool priorityFound; 
+    
 
 
 
@@ -475,17 +476,17 @@ public class ZombieStateManager : NetworkBehaviour
         return ExpDirection;
     }
 
-    public void DealDamage()
+    public void DealDamage() // called by anim event
     {
-        if (IsPlayerInDamageArea())
+        if (IsAttackableInDamageArea())
         {
-            if (gameManager.PlayerStats == null)
+            if (targetToDamage == null)
             {
-                Debug.Log("player is null");
+                Debug.Log("target is null");
             }
             else
             {
-                gameManager.PlayerStats.PlayerTakeDamage(10);
+                targetToDamage.TakeDamage(10);
             }
         }
     }
@@ -611,12 +612,10 @@ public class ZombieStateManager : NetworkBehaviour
             currentTarget = bestTarget;
         }
 
-        Debug.Log(currentTarget);
+       // Debug.Log(currentTarget);
 
         destinationSetter.target = currentTarget.GetTransform();
     }
-
-
 
 
     [ClientRpc]
@@ -657,12 +656,13 @@ public class ZombieStateManager : NetworkBehaviour
         return alerted;
     }
 
-    public void SetIsInDamageArea(bool isInDamageArea)
+    public void SetIsInDamageArea(bool isInDamageArea, IAttackable attackable)
     {
         CanDamagePlayer = isInDamageArea;
+        targetToDamage = attackable;
     }
 
-    public bool IsPlayerInDamageArea()
+    public bool IsAttackableInDamageArea()
     {
         return CanDamagePlayer;
     }

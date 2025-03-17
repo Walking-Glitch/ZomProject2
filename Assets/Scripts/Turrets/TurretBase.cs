@@ -89,6 +89,11 @@ public class TurretBase : NetworkBehaviour, IAttackable
     private float checkInterval = 0.2f;
     private float checkTimer;
 
+    // health 
+    public int MaxHealth;
+    public int Health;
+
+
     [Header("Networked Variables")]
     public NetworkVariable<ulong> targetEnemyId = new NetworkVariable<ulong>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     protected NetworkVariable<Vector3> panRotation = new NetworkVariable<Vector3>();
@@ -661,5 +666,22 @@ protected virtual void AddRecoil()
     public int GetPriority()
     {
         return 1;
+    }
+
+    public void TakeDamage(int amount) // to be called
+    {
+        Health -= amount;
+        Health = Mathf.Clamp(Health, 0, MaxHealth);
+        gameManager.UIManager.UpdateHealthUI();
+
+        if(Health <= 0)
+        {
+            Death();
+        }
+    }
+    public void Death()
+    {
+        Debug.Log("dead called");
+        gameObject.SetActive(false);
     }
 }

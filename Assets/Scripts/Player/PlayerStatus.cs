@@ -69,5 +69,23 @@ namespace Assets.Scripts.Player
         {
             return 1;
         }
+
+        public void TakeDamage(int amount) // to be called
+        {
+            Health -= amount;
+            Health = Mathf.Clamp(Health, 0, MaxHealth);
+            gameManager.UIManager.UpdateHealthUI();
+
+            if (Health <= 0)
+            {
+                Death();
+            }
+        }
+
+        public void Death()
+        {
+            Debug.Log("dead called");
+            //
+        }
     }
 }

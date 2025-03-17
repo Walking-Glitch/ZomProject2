@@ -11,20 +11,40 @@ public class SetDamageArea : MonoBehaviour
     void Update()
     {
     }
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        _manager.SetIsInDamageArea(true);
+    //    }
+    //}
+
+
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.CompareTag("Player"))
+    //    {
+    //        _manager.SetIsInDamageArea(false);
+    //    }
+    //}
+
     private void OnTriggerStay(Collider other)
     {
-        if (other.CompareTag("Player"))
+        IAttackable attackable = other.GetComponentInParent<IAttackable>();
+
+        if (attackable != null)
         {
-            _manager.SetIsInDamageArea(true);
+            _manager.SetIsInDamageArea(true, attackable); // Pass the attackable target
         }
     }
 
-
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        IAttackable attackable = other.GetComponentInParent<IAttackable>();
+
+        if (attackable != null)
         {
-            _manager.SetIsInDamageArea(false);
+            _manager.SetIsInDamageArea(false, attackable);
         }
     }
 }

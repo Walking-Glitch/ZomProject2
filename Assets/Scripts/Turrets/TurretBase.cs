@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 
 
-public class TurretBase : NetworkBehaviour
+public class TurretBase : NetworkBehaviour, IAttackable
 {
     // weapon stats
     [Header("Weapon Stats")]
@@ -653,4 +653,13 @@ protected virtual void AddRecoil()
         Gizmos.DrawWireSphere(transform.position, MinWeaponRange);
     }
 
+    public Transform GetTransform()
+    {
+        return transform;
+    }
+
+    public int GetPriority()
+    {
+        return 1;
+    }
 }

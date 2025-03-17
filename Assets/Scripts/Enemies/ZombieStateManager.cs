@@ -89,6 +89,16 @@ public class ZombieStateManager : NetworkBehaviour
     // reward 
     [HideInInspector] public int Reward;
 
+    // targeting 
+
+    public IAttackable currentTarget;
+    private float aggroRange = 15f;    
+    private float maxDetectionRange = 1000f;
+    public LayerMask AttackableLayer;
+    private bool priorityFound; 
+
+
+
     //Network variables 
     public NetworkVariable<int> NetworkHealth = new NetworkVariable<int>(0,
        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -102,6 +112,7 @@ public class ZombieStateManager : NetworkBehaviour
     public NetworkVariable<bool> NetworkIsActive = new NetworkVariable<bool>(true,
       NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+     
 
     private void OnEnable()
     {
@@ -135,6 +146,8 @@ public class ZombieStateManager : NetworkBehaviour
         gameManager = GameManager.Instance;
         
         StartCoroutine(WaitForPlayer());
+
+        //InvokeRepeating(nameof(UpdateTarget), 0f, checkInterval);
     }
 
     public override void OnNetworkSpawn()
@@ -189,8 +202,7 @@ public class ZombieStateManager : NetworkBehaviour
         // Now it's safe to assign the player transform
         PlayerTransform = gameManager.PlayerGameObject.transform;
 
-        health = maxHealth;
-        //zombieParent = transform.parent.gameObject;
+        health = maxHealth;       
         night = gameManager.DayCycle.IsNightTime;
         NightTimeMode(night);
         zombieAudioSource = GetComponent<AudioSource>();
@@ -545,6 +557,67 @@ public class ZombieStateManager : NetworkBehaviour
         PlayZombieAnimationBoolClientRpc("IsAttacking", AttackPlayer);
   
     }
+
+
+    public void UpdateTarget()
+    {         
+        if (!IsServer) return;
+
+        IAttackable bestTarget = null;
+
+        float closestDistance = Mathf.Infinity;
+        int highestPriority = 0;
+
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, maxDetectionRange, AttackableLayer);
+
+        foreach (Collider col in colliders)
+        {
+            IAttackable attackable = col.GetComponentInParent<IAttackable>();
+            //Debug.Log($"Overlap detected: {col.gameObject.name}, Layer: {LayerMask.LayerToName(col.gameObject.layer)}");
+
+            if (attackable != null)
+            {
+                float distance = Vector3.Distance(transform.position, attackable.GetTransform().position);
+                int priority = attackable.GetPriority();
+
+                 
+
+                if (priority == 1 && distance <= aggroRange)
+                {
+                    if (bestTarget == null || distance < closestDistance)
+                    {
+                        bestTarget = attackable;
+                        closestDistance = distance;
+                    }
+                }
+
+                else if (priority != 1 && (bestTarget == null || distance < closestDistance || priority > highestPriority))
+                {
+                    // Update best target and priority
+                    bestTarget = attackable;
+                    highestPriority = priority;
+                    closestDistance = distance;
+                }
+
+             
+  
+            }
+        }
+
+        // Update the target only once at the end
+        if (bestTarget != null && bestTarget != currentTarget)
+        {
+            currentTarget = bestTarget;
+        }
+
+        Debug.Log(currentTarget);
+
+        destinationSetter.target = currentTarget.GetTransform();
+    }
+
+
+
 
     [ClientRpc]
     public void PlayZombieAnimationBoolClientRpc(string animationName, bool setBool)

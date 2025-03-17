@@ -1564,6 +1564,9 @@ MonoBehaviour:
   zombieAudioSource: {fileID: 0}
   night: 0
   Reward: 0
+  AttackableLayer:
+    serializedVersion: 2
+    m_Bits: 48641
   NetworkHealth:
     m_InternalValue: 100
   NetworkIsDead:

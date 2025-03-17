@@ -2,17 +2,17 @@ using Pathfinding;
 using UnityEngine;
 
 public class Chasing : ZombieBaseState
-{ 
+{
+    float cooldown = 0.5f;
+    float elapsed;
     public override void EnterState(ZombieStateManager zombie)
     {
- 
+        elapsed = 0;
         zombie.SetIsAlerted(true);
         zombie.destinationSetter.enabled = true;
-        zombie.destinationSetter.target = zombie.PlayerTransform;
+        zombie.UpdateTarget();
         zombie.SetCanMove(true);
-
-        //zombie.aiPath.maxSpeed = 0.3f;
-
+         
         zombie.SetIsAlerted(true);
     }
 
@@ -29,6 +29,16 @@ public class Chasing : ZombieBaseState
         if (zombie.IsPlayerInAttackArea() && !zombie.isDead)
         {
             zombie.SwitchState(zombie.attack);
+        }
+
+        if(elapsed <= cooldown)
+        {
+            elapsed += Time.deltaTime;
+        }
+        else
+        {
+            zombie.UpdateTarget();
+            elapsed = 0;
         }
     }
 

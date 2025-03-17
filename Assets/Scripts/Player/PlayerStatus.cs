@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Player
 {
-    public class PlayerStatus : NetworkBehaviour
+    public class PlayerStatus : NetworkBehaviour, IAttackable
     {
         public int MaxHealth;
         public int Health;
@@ -60,5 +60,14 @@ namespace Assets.Scripts.Player
             isInInteractableRange = isInRange;
         }
 
+        public Transform GetTransform()
+        {
+            return transform;
+        }
+
+        public int GetPriority()
+        {
+            return 1;
+        }
     }
 }

@@ -800,6 +800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3db1b9f849c79b742854189cda8dc77b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &906638108322731216
 GameObject:
   m_ObjectHideFlags: 0
@@ -1364,6 +1365,8 @@ MonoBehaviour:
     m_InternalValue: 0
   NetworkIsActive:
     m_InternalValue: 1
+  NetworkIsAttacking:
+    m_InternalValue: 0
 --- !u!82 &28881005421257327
 AudioSource:
   m_ObjectHideFlags: 0

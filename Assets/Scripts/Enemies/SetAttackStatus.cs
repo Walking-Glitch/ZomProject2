@@ -1,6 +1,7 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class SetAttackStatus : MonoBehaviour
+public class SetAttackStatus : NetworkBehaviour
 {
     private ZombieStateManager _manager;
     void Start()
@@ -8,56 +9,42 @@ public class SetAttackStatus : MonoBehaviour
         _manager = GetComponentInParent<ZombieStateManager>();
     }
 
-    void Update()
-    {
-    }
-    //private void OnTriggerStay(Collider other)
-    //{
-    //    if (other.CompareTag("Player") && !_manager.isDead)
-    //    {
-
-    //        float distance = Vector3.Distance(this.transform.position, other.transform.position);
-    //        if (distance < 0.8f)
-    //        {
-    //            //Debug.Log("inside 0.95f");
-    //            _manager.SetPlayerAttackStatus(true);
-    //        }
-
-    //    }
-    //}
-
-
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-    //        _manager.SetPlayerAttackStatus(false);
-    //    }
-    //}
-
+  
     private void OnTriggerStay(Collider other)
     {
-        IAttackable attackable = other.GetComponentInParent<IAttackable>();
+        if (!IsServer) return;
 
-        if (attackable != null && !_manager.isDead)
+        IAttackable attackable = other.GetComponentInParent<IAttackable>();
+     
+
+        if (attackable != null && attackable.GetTransform().gameObject.activeInHierarchy && !_manager.isDead)
         {
+            Debug.Log("we detected attackable");
+            
             float distance = Vector3.Distance(transform.position, attackable.GetTransform().position);
             if (distance < 0.8f)
             {
-                //Debug.Log("inside 0.95f");
-                _manager.SetPlayerAttackStatus(true);
+                //Debug.Log("inside 0.95f");                
+                _manager.SetAttackStatus(true);
             }
+        }
+        else
+        {
+            _manager.SetAttackStatus(false);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (!IsServer) return;
+
         IAttackable attackable = other.GetComponentInParent<IAttackable>();
 
         if (attackable != null)
         {
-            _manager.SetPlayerAttackStatus(false);
+            _manager.SetAttackStatus(false);
         }
     }
+     
 
 }

@@ -3099,6 +3099,8 @@ MonoBehaviour:
     m_InternalValue: 0
   NetworkIsActive:
     m_InternalValue: 1
+  NetworkIsAttacking:
+    m_InternalValue: 0
 --- !u!82 &640344819451491029
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7266,6 +7268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3db1b9f849c79b742854189cda8dc77b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &7344175503859839698
 GameObject:
   m_ObjectHideFlags: 0

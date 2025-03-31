@@ -2598,6 +2598,8 @@ MonoBehaviour:
     m_InternalValue: 0
   NetworkIsActive:
     m_InternalValue: 1
+  NetworkIsAttacking:
+    m_InternalValue: 0
 --- !u!82 &5105836329922190706
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4698,8 +4700,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0.7}
+  m_Radius: 0.6
+  m_Center: {x: 0, y: 0.21, z: 0.6}
 --- !u!114 &3644279399420178973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4712,6 +4714,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3db1b9f849c79b742854189cda8dc77b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &7151651549828517063
 GameObject:
   m_ObjectHideFlags: 0
@@ -6616,7 +6619,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  endReachedDistance: 1
+  endReachedDistance: 0.5
   whenCloseToDestination: 0
   rvoDensityBehavior:
     enabled: 0

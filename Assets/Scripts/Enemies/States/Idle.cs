@@ -25,7 +25,7 @@ public class Idle : ZombieBaseState
         }
        
 
-        if (zombie.IsPlayerInAttackArea() && !zombie.isDead)
+        if (zombie.IsAttackableInAttackArea() && !zombie.isDead)
         {
             zombie.SwitchState(zombie.attack);
         }

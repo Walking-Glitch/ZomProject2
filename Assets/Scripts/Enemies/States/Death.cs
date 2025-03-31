@@ -11,6 +11,8 @@ public class Death : ZombieBaseState
 
         zombie.zombieAudioSource.Stop();
 
+        zombie.PlayZombieAnimationBoolClientRpc("IsDead", zombie.isDead);
+
         if (zombie.IsKilledByTurret())
         {
             zombie.RagdollModeOnClientRpc();
@@ -30,8 +32,9 @@ public class Death : ZombieBaseState
         }
         else
         {
-            zombie.PlayZombieAnimationBoolClientRpc("IsDead", true);
-            //zombie.anim.SetBool("IsDead", true);
+            zombie.PlayZombieAnimationBoolClientRpc("IsActive", true);
+           
+            //zombie.anim.SetBool("IsActive", true);
         }
 
         //zombie.PlayerDestroyZombieClientRpc();

@@ -7,7 +7,7 @@ public class Chasing : ZombieBaseState
     float elapsed;
     public override void EnterState(ZombieStateManager zombie)
     {
-        elapsed = 0;
+        elapsed = 0;      
         zombie.SetIsAlerted(true);
         zombie.destinationSetter.enabled = true;
         zombie.UpdateTarget();
@@ -23,10 +23,9 @@ public class Chasing : ZombieBaseState
         if (zombie.isCrippled)
         {
             zombie.PlayZombieAnimationBoolClientRpc("IsCrippled", zombie.isCrippled);
-            //zombie.anim.SetBool("IsCrippled", true);
         }
   
-        if (zombie.IsPlayerInAttackArea() && !zombie.isDead)
+        if (zombie.IsAttackableInAttackArea() && !zombie.isDead)
         {
             zombie.SwitchState(zombie.attack);
         }

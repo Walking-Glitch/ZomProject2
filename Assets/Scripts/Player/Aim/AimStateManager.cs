@@ -241,7 +241,13 @@ public class AimStateManager : NetworkBehaviour
             else if (CurrentState == AimingState && actionStateManager.CurrentState == actionStateManager.Default)
             {                
                 TransitionFromMainToShootingLayer();
-            } 
+            }
+
+
+            else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
+            {
+                TransitionFromMainToShootingLayer();
+            }
 
             else
             {

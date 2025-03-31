@@ -40,7 +40,7 @@ public class ZombieStateManager : NetworkBehaviour
 
     // detection variables
     private bool PlayerDetected;
-    private bool AttackPlayer;
+    private bool AttackAttackable;
     private bool CanDamagePlayer;
     private bool HurtByExplosion;
     private bool HurtByTurret;
@@ -113,7 +113,11 @@ public class ZombieStateManager : NetworkBehaviour
     public NetworkVariable<bool> NetworkIsActive = new NetworkVariable<bool>(true,
       NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-     
+
+    public NetworkVariable<bool> NetworkIsAttacking = new NetworkVariable<bool>(false,
+    NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+
 
     private void OnEnable()
     {
@@ -189,6 +193,12 @@ public class ZombieStateManager : NetworkBehaviour
             SetEnableZombieClientRpc(curr);
         };
 
+        NetworkIsAttacking.OnValueChanged += (prev, curr) =>
+        {
+            //Debug.Log($"zombie is active changed: {prev} ? {curr}");
+            AttackAttackable = curr;
+        };
+
 
     }
 
@@ -229,6 +239,7 @@ public class ZombieStateManager : NetworkBehaviour
         CheckIfCrippledServerRpc();
 
         //Debug.Log(currentState);
+        //Debug.Log(IsAttackableInAttackArea());
     }
 
     public void SwitchState(ZombieBaseState state)
@@ -544,26 +555,13 @@ public class ZombieStateManager : NetworkBehaviour
         //anim.SetBool("CanMove", canMove);
     }
 
-    public void SetPlayerAttackStatus(bool isInAttackArea)
-    {  
-        if(isDead && currentState != attack)
-        {
-            AttackPlayer = false;
-        }
-        else
-        {
-            AttackPlayer = isInAttackArea;
-        }
-           
-        PlayZombieAnimationBoolClientRpc("IsAttacking", AttackPlayer);
-  
-    }
+   
 
 
     public void UpdateTarget()
     {         
         if (!IsServer) return;
-
+         
         IAttackable bestTarget = null;
 
         float closestDistance = Mathf.Infinity;
@@ -612,7 +610,7 @@ public class ZombieStateManager : NetworkBehaviour
             currentTarget = bestTarget;
         }
 
-       // Debug.Log(currentTarget);
+        Debug.Log(currentTarget);
 
         destinationSetter.target = currentTarget.GetTransform();
     }
@@ -630,9 +628,23 @@ public class ZombieStateManager : NetworkBehaviour
         if (!IsOwner || IsServer)
             anim.SetTrigger(animationName);
     }
-    public bool IsPlayerInAttackArea()
+
+    public void SetAttackStatus(bool isInAttackArea)
     {
-        return AttackPlayer;
+        if (isDead && currentState != attack)
+        {
+            NetworkIsAttacking.Value = false;
+        }
+        else
+        {
+            NetworkIsAttacking.Value = isInAttackArea;
+        }
+         
+    }
+
+    public bool IsAttackableInAttackArea()
+    {
+        return AttackAttackable;
     }
     public void SetPlayerDetectionStatus(bool isDetected)
     {

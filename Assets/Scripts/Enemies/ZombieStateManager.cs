@@ -238,7 +238,7 @@ public class ZombieStateManager : NetworkBehaviour
          
         CheckIfCrippledServerRpc();
 
-        //Debug.Log(currentState);
+        Debug.Log(currentState);
         //Debug.Log(IsAttackableInAttackArea());
     }
 
@@ -610,7 +610,7 @@ public class ZombieStateManager : NetworkBehaviour
             currentTarget = bestTarget;
         }
 
-        Debug.Log(currentTarget);
+        //Debug.Log(currentTarget);
 
         destinationSetter.target = currentTarget.GetTransform();
     }
@@ -635,6 +635,12 @@ public class ZombieStateManager : NetworkBehaviour
         {
             NetworkIsAttacking.Value = false;
         }
+
+        else if (currentTarget.GetHealth() <= 0)
+        {
+            NetworkIsAttacking.Value = false;
+        }
+
         else
         {
             NetworkIsAttacking.Value = isInAttackArea;

@@ -65,16 +65,22 @@ public class Obstacle : NetworkBehaviour, IAttackable
         if (Health <= 0)
         {
            
-            Debug.Log("inside if health < 0");
+            //Debug.Log("inside if health < 0");
             Death();
         }
 
-        Debug.Log(Health);
+        //Debug.Log(Health);
     }
 
     public void Death()
     {
         Debug.Log("dead called");
         NetworkIsActive.Value = false;
+
+    }
+
+    public int GetHealth()
+    {
+        return Health;
     }
 }

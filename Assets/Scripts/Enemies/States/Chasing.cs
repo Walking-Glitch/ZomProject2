@@ -27,6 +27,7 @@ public class Chasing : ZombieBaseState
   
         if (zombie.IsAttackableInAttackArea() && !zombie.isDead)
         {
+            Debug.Log("we made transition to attack");
             zombie.SwitchState(zombie.attack);
         }
 

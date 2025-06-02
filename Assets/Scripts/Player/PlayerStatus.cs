@@ -86,6 +86,13 @@ namespace Assets.Scripts.Player
         {
             Debug.Log("dead called");
             //
+
+            
+        }
+
+        public int GetHealth()
+        {
+            return Health;
         }
     }
 }

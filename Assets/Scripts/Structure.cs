@@ -38,6 +38,11 @@ public class Structure : NetworkBehaviour, IAttackable
     public void Death()
     {
         Debug.Log("dead called");
-        gameObject.SetActive(false);
+        gameObject.SetActive(false); 
+    }
+
+    public int GetHealth()
+    {
+        return Health;
     }
 }

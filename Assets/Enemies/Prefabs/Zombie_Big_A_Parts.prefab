@@ -5403,8 +5403,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8439997811014606098}
-  - component: {fileID: 3914098837957072553}
   - component: {fileID: 3948515374994066198}
+  - component: {fileID: 8287237358130484777}
   m_Layer: 2
   m_Name: 'Damage Area  '
   m_TagString: Untagged
@@ -5427,8 +5427,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5483058073758984739}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &3914098837957072553
-SphereCollider:
+--- !u!114 &3948515374994066198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7634491388091251896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c38c0451c184ac54c80b0ce81f140dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!136 &8287237358130484777
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5445,21 +5457,11 @@ SphereCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.4
-  m_Center: {x: 0, y: 1.33, z: 0.6}
---- !u!114 &3948515374994066198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7634491388091251896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c38c0451c184ac54c80b0ce81f140dda, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.94, z: 0.6}
 --- !u!1 &7793235213839141594
 GameObject:
   m_ObjectHideFlags: 0

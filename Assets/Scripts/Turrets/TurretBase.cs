@@ -683,5 +683,11 @@ protected virtual void AddRecoil()
     {
         Debug.Log("dead called");
         gameObject.SetActive(false);
+
+        
+    }
+    public int GetHealth()
+    {
+        return Health;
     }
 }

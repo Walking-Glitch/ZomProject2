@@ -22,15 +22,17 @@ public class SetAttackStatus : NetworkBehaviour
             return;
         }
 
-        float distance = Vector3.Distance(transform.position, _currentTarget.GetTransform().position);
-        if (distance < 0.85f)
-        {
-            _manager.SetAttackStatus(true);
-        }
-        else
-        {
-            _manager.SetAttackStatus(false);
-        }
+
+        _manager.SetAttackStatus(true);
+        //float distance = Vector3.Distance(transform.position, _currentTarget.GetTransform().position);
+        //if (distance < 0.85f)
+        //{
+        //    _manager.SetAttackStatus(true);
+        //}
+        //else
+        //{
+        //    _manager.SetAttackStatus(false);
+        //}
     }
 
     private void OnTriggerEnter(Collider other)

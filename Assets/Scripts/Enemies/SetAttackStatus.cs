@@ -15,7 +15,7 @@ public class SetAttackStatus : NetworkBehaviour
     {
         if (!IsServer || _manager.isDead) return;
 
-        if (_currentTarget == null || !_currentTarget.GetTransform().gameObject.activeInHierarchy || _currentTarget.GetHealth() <= 0)
+        if (_currentTarget == null || !_currentTarget.GetTransform().gameObject.activeInHierarchy || _currentTarget.GetHealth() <= 0 || _manager.isDead)
         {
             _currentTarget = null;
             _manager.SetAttackStatus(false);

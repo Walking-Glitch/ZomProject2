@@ -28,7 +28,7 @@ public class Attack : ZombieBaseState
         if (zombie.currentTarget.GetHealth() <= 0)
         {
             zombie.currentTarget = null;
-            zombie.PlayZombieAnimationBoolClientRpc("IsAttacking", false);
+            zombie.PlayZombieAnimationBoolClientRpc("IsAttacking", zombie.IsAttackableInAttackArea());
             zombie.SwitchState(zombie.chasing);
 
 

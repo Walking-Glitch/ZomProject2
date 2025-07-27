@@ -636,6 +636,8 @@ public class ZombieStateManager : NetworkBehaviour
             NetworkIsAttacking.Value = false;
         }
 
+        
+
         else if (currentTarget.GetHealth() <= 0)
         {
             NetworkIsAttacking.Value = false;

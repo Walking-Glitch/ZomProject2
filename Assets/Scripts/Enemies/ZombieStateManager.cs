@@ -94,6 +94,10 @@ public class ZombieStateManager : MonoBehaviour
     private void OnEnable()
     {
         DayCycle.OnNightTimeChanged += NightTimeMode;
+
+        // pooled zombies miss day/night events while disabled, so read the current time on every respawn
+        GameManager gm = GameManager.Instance;
+        if (gm != null && gm.DayCycle != null) night = gm.DayCycle.IsNightTime;
         NightTimeMode(night);
 
     }
@@ -319,6 +323,9 @@ public class ZombieStateManager : MonoBehaviour
 
     public virtual void TakeDamage(int damage, string limbName, bool explosion, bool turret , float force)
     {
+        // corpse stays hittable until DelayDestruction resets it; ignore hits so death isn't processed twice
+        if (isDead) return;
+
         health -= damage;
 
        

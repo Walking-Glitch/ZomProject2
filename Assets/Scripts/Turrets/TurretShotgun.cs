@@ -28,7 +28,6 @@ public class TurretShotgun : TurretBase
 
         for (int i = 0; i < pelletCount; i++)
         {
-            gameManager.EconomyManager.SpendAmmoFromPooledResources(8);
             // Calculate random spread
             Vector3 randomOffset = Random.insideUnitCircle * Mathf.Tan(spreadAngle * Mathf.Deg2Rad);
             Vector3 pelletDirection = ((currentEnemy.transform.position + Vector3.up * Random.Range(0.8f, 1.8f)) - GunEndTransform.position).normalized;

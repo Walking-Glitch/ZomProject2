@@ -296,7 +296,7 @@ public class AimStateManager : MonoBehaviour
                     SwitchToZoomedCamera();
 
                     // Calculate the direction from the character to the hit point
-                    direction = hit3.point - transform.position;
+                    direction = hit2.point - transform.position;
                     direction.y = 0; // Keep the rotation on the y-axis only
 
                     // Calculate the target rotation and smoothly rotate the character towards it

@@ -77,7 +77,7 @@ public class EnemyManager : MonoBehaviour
 
     Transform GetValidSpawnPoint()
     {
-        int i = Random.Range(0, spawnPointsList.Count - 1);
+        int i = Random.Range(0, spawnPointsList.Count); // int max is exclusive
         
         return spawnPointsList[i];
     }

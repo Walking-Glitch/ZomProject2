@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3703554605717817810}
   - component: {fileID: 1477563321816349976}
   - component: {fileID: -3269088772883463224}
+  - component: {fileID: 8568132868251311886}
   m_Layer: 0
   m_Name: Concrete
   m_TagString: Concrete
@@ -109,3 +110,17 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 5152419814547591676, guid: 9698de6e0dda00e489db0d4b1abb5b47, type: 3}
+--- !u!114 &8568132868251311886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117350600303828173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f6aa6bc3601cc744b09021f39eac3c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxHealth: 100
+  Health: 0

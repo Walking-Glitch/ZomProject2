@@ -15,7 +15,8 @@ public class Attack : ZombieBaseState
     {
         zombie.PlayZombieAttackSfx();
 
-        if (!zombie.IsPlayerInAttackArea())
+        // also covers the target dying: dead targets drop out of reach
+        if (!zombie.IsAttackableInAttackArea())
         {
             zombie.SwitchState(zombie.chasing);
         }

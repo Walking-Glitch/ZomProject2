@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using Assets.Scripts.Game_Manager;
+using Assets.Scripts.Player;
 using Pathfinding;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -43,8 +44,6 @@ public class ZombieStateManager : MonoBehaviour
 
     // detection variables
     private bool PlayerDetected;
-    private bool AttackPlayer;
-    private bool CanDamagePlayer;
     private bool HurtByExplosion;
     private bool HurtByTurret;
     // ragdoll
@@ -88,11 +87,41 @@ public class ZombieStateManager : MonoBehaviour
     // private reference to night just for initialization
     [SerializeField]private bool night;
 
-    // reward 
+    // reward
     [HideInInspector] public int Reward;
+
+    // targeting: march on the nearest cabin, divert to nearby player/turrets/barriers
+    [Header("Targeting")]
+    public float MinAggroRange = 10f;
+    public float MaxAggroRange = 20f;
+    [Range(0f, 1f)] public float BeelineChance = 0.2f;
+    public float RetargetInterval = 0.5f;
+    public float TargetStickiness = 3f;
+    public LayerMask AttackableLayer;
+
+    // how close a zombie's feet must be to a barrier/turret/cabin surface to hit it;
+    // pathfinding keeps zombies a margin away from obstacles, beyond the small swing triggers
+    public float AttackReach = 1.5f;
+
+    [HideInInspector] public IAttackable currentTarget;
+    private IAttackable attackTarget;
+    private float aggroRange;
+    private bool beeline;
+    private float retargetTimer;
+    private float targetLockedUntil;
+    private bool isAttacking;
+
+    // attackables currently touching the attack and damage triggers
+    private readonly HashSet<IAttackable> attackablesInReach = new HashSet<IAttackable>();
+    private readonly HashSet<IAttackable> attackablesInDamageArea = new HashSet<IAttackable>();
+
+    // shared scan buffer, zombies update on the main thread one at a time
+    private static readonly Collider[] targetScanBuffer = new Collider[256];
 
     private void OnEnable()
     {
+        RollTargetingTraits();
+
         DayCycle.OnNightTimeChanged += NightTimeMode;
 
         // pooled zombies miss day/night events while disabled, so read the current time on every respawn
@@ -114,6 +143,9 @@ public class ZombieStateManager : MonoBehaviour
         destinationSetter = GetComponentInParent<AIDestinationSetter>();
         patrol = GetComponentInParent<Patrol>();
         agent = GetComponentInParent<IAstarAI>();
+
+        // player, barriers and cabins (Default), turrets
+        if (AttackableLayer.value == 0) AttackableLayer = LayerMask.GetMask("Default", "Player", "Obstacles", "Turret");
     }
     void Start()
     {
@@ -150,6 +182,7 @@ public class ZombieStateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UpdateAttackTarget();
 
         currentState.UpdateState(this);
        
@@ -360,18 +393,174 @@ public class ZombieStateManager : MonoBehaviour
         return ExpDirection;
     }
 
-    public void DealDamage()
+    public void DealDamage() // called by the attack animation events
     {
-        if (IsPlayerInDamageArea())
+        if (!attackTarget.IsAlive()) return;
+
+        // the player can dodge a swing by leaving the damage area; static targets only need to be within reach
+        bool connects = attackablesInDamageArea.Contains(attackTarget) || (!UsesSwingTriggers(attackTarget) && IsWithinReach(attackTarget));
+
+        if (connects)
         {
-            if (gameManager.PlayerStats == null)
+            attackTarget.TakeDamage(10);
+        }
+    }
+
+    private static bool UsesSwingTriggers(IAttackable target)
+    {
+        return target is PlayerStatus;
+    }
+
+    private bool IsWithinReach(IAttackable target)
+    {
+        Vector3 closest = target.GetClosestPoint(transform.position);
+
+        return (closest - transform.position).sqrMagnitude <= AttackReach * AttackReach;
+    }
+
+    private void RollTargetingTraits()
+    {
+        aggroRange = Random.Range(MinAggroRange, MaxAggroRange);
+        beeline = Random.value < BeelineChance;
+
+        // spread target scans across frames instead of every zombie scanning at once
+        retargetTimer = Random.Range(0f, RetargetInterval);
+
+        currentTarget = null;
+        attackTarget = null;
+        attackablesInReach.Clear();
+        attackablesInDamageArea.Clear();
+    }
+
+    public void TickTargeting()
+    {
+        retargetTimer -= Time.deltaTime;
+        if (retargetTimer > 0f) return;
+
+        retargetTimer = RetargetInterval;
+        UpdateTarget();
+    }
+
+    public void UpdateTarget()
+    {
+        // beeline zombies ignore diversions and head straight for the cabins
+        IAttackable best = beeline ? null : FindNearestDiversion();
+
+        if (best == null) best = FindNearestStructure();
+
+        if (best == null && gameManager.PlayerStats.IsAlive()) best = gameManager.PlayerStats;
+
+        if (ShouldSwitchTarget(best))
+        {
+            currentTarget = best;
+            targetLockedUntil = Time.time + TargetStickiness;
+        }
+
+        if (!currentTarget.IsAlive())
+        {
+            destinationSetter.target = null;
+        }
+        else if (UsesSwingTriggers(currentTarget))
+        {
+            destinationSetter.target = currentTarget.GetTransform();
+        }
+        else
+        {
+            // walk to the near side: the centre of a barrier or cabin sits in unwalkable space
+            destinationSetter.target = null;
+            aiPath.destination = currentTarget.GetClosestPoint(transform.position);
+        }
+    }
+
+    private bool ShouldSwitchTarget(IAttackable best)
+    {
+        if (!currentTarget.IsAlive()) return true;
+
+        if (best == null || best == currentTarget) return false;
+
+        // heading for a cabin and something worth attacking turned up nearby: divert right away
+        if (currentTarget.GetPriority() == TargetPriority.Objective && best.GetPriority() == TargetPriority.Diversion) return true;
+
+        // otherwise commit to the current target for a while so zombies don't flip back and forth
+        return Time.time >= targetLockedUntil;
+    }
+
+    private IAttackable FindNearestDiversion()
+    {
+        int count = Physics.OverlapSphereNonAlloc(transform.position, aggroRange, targetScanBuffer, AttackableLayer, QueryTriggerInteraction.Ignore);
+
+        IAttackable nearest = null;
+        float nearestSqrDistance = float.MaxValue;
+
+        for (int i = 0; i < count; i++)
+        {
+            IAttackable candidate = targetScanBuffer[i].GetComponentInParent<IAttackable>();
+
+            if (candidate == null || candidate.GetPriority() != TargetPriority.Diversion || !candidate.IsAlive()) continue;
+
+            float sqrDistance = (candidate.GetTransform().position - transform.position).sqrMagnitude;
+            if (sqrDistance < nearestSqrDistance)
             {
-                Debug.Log("player is null");
+                nearest = candidate;
+                nearestSqrDistance = sqrDistance;
+            }
+        }
+
+        return nearest;
+    }
+
+    private IAttackable FindNearestStructure()
+    {
+        Structure nearest = null;
+        float nearestSqrDistance = float.MaxValue;
+
+        foreach (Structure structure in Structure.Active)
+        {
+            if (!structure.IsAlive()) continue;
+
+            float sqrDistance = (structure.transform.position - transform.position).sqrMagnitude;
+            if (sqrDistance < nearestSqrDistance)
+            {
+                nearest = structure;
+                nearestSqrDistance = sqrDistance;
+            }
+        }
+
+        return nearest;
+    }
+
+    private void UpdateAttackTarget()
+    {
+        attackTarget = null;
+
+        if (!isDead)
+        {
+            attackablesInReach.RemoveWhere(target => !target.IsAlive());
+
+            // prefer what we were heading for; otherwise hit whatever is blocking the way
+            if (attackablesInReach.Contains(currentTarget))
+            {
+                attackTarget = currentTarget;
+            }
+            else if (currentTarget.IsAlive() && !UsesSwingTriggers(currentTarget) && IsWithinReach(currentTarget))
+            {
+                attackTarget = currentTarget;
             }
             else
             {
-                gameManager.PlayerStats.PlayerTakeDamage(10);
+                foreach (IAttackable target in attackablesInReach)
+                {
+                    attackTarget = target;
+                    break;
+                }
             }
+        }
+
+        bool attacking = attackTarget != null;
+        if (attacking != isAttacking)
+        {
+            isAttacking = attacking;
+            anim.SetBool("IsAttacking", attacking);
         }
     }
 
@@ -427,15 +616,15 @@ public class ZombieStateManager : MonoBehaviour
         anim.SetBool("CanMove", canMove);
     }
 
-    public void SetPlayerAttackStatus(bool isInAttackArea)
+    public void SetAttackableInReach(IAttackable attackable, bool inReach)
     {
-        AttackPlayer = isInAttackArea;
-        anim.SetBool("IsAttacking", isInAttackArea);
+        if (inReach) attackablesInReach.Add(attackable);
+        else attackablesInReach.Remove(attackable);
     }
 
-    public bool IsPlayerInAttackArea()
+    public bool IsAttackableInAttackArea()
     {
-        return AttackPlayer;
+        return attackTarget != null;
     }
     public void SetPlayerDetectionStatus(bool isDetected)
     {
@@ -458,14 +647,10 @@ public class ZombieStateManager : MonoBehaviour
         return alerted;
     }
 
-    public void SetIsInDamageArea(bool isInDamageArea)
+    public void SetAttackableInDamageArea(IAttackable attackable, bool inArea)
     {
-        CanDamagePlayer = isInDamageArea;
-    }
-
-    public bool IsPlayerInDamageArea()
-    {
-        return CanDamagePlayer;
+        if (inArea) attackablesInDamageArea.Add(attackable);
+        else attackablesInDamageArea.Remove(attackable);
     }
 
     public void SetKilledByExplosion(bool isHurtByExplosion)

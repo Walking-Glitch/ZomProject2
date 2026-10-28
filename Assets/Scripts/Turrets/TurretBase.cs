@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class TurretBase : MonoBehaviour
+public class TurretBase : MonoBehaviour, IAttackable
 {
+    // health, zombies can destroy turrets
+    [Header("Health")]
+    public int MaxHealth = 200;
+    public int Health;
+    private Collider[] solidColliders;
+
     // weapon stats
     [Header("Weapon Stats")]
     public int WeaponDamage;
@@ -84,6 +90,9 @@ public class TurretBase : MonoBehaviour
     protected virtual void Start()
     {
         gameManager = GameManager.Instance;
+
+        Health = MaxHealth;
+        solidColliders = Targeting.GetSolidColliders(gameObject);
 
         turretAudioSource = GetComponent<AudioSource>();
 
@@ -436,7 +445,48 @@ protected virtual void AddRecoil()
             int index = Random.Range(0, fireSound.Length);
             turretAudioSource.PlayOneShot(fireSound[index]);
         }
-       
+
+    }
+
+    public Transform GetTransform()
+    {
+        return transform;
+    }
+
+    public Vector3 GetClosestPoint(Vector3 from)
+    {
+        return Targeting.ClosestPointOnColliders(solidColliders, from, transform.position);
+    }
+
+    public int GetHealth()
+    {
+        return Health;
+    }
+
+    public int GetPriority()
+    {
+        return TargetPriority.Diversion;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        if (Health <= 0) return;
+
+        Health -= amount;
+        Health = Mathf.Clamp(Health, 0, MaxHealth);
+
+        if (Health <= 0)
+        {
+            Death();
+        }
+    }
+
+    public void Death()
+    {
+        // stop the destroyed turret from draining fuel
+        gameManager.EconomyManager.RemoveTurret(this);
+
+        TargetCleanup.RemoveAndRefreshGraph(gameObject, true);
     }
 
 

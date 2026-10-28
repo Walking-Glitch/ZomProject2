@@ -71,6 +71,27 @@ public class EconomyManager : MonoBehaviour
             VulcanTurretList.Add(turretBase);
         }
     }
+
+    public void RemoveTurret(TurretBase turret)
+    {
+        // mirrors AddTurretToEconomyManager: each turret lives in exactly one list
+        if (turret is TurretAntiTank antiTank)
+        {
+            AntiTankTurretList.Remove(antiTank);
+        }
+        else if (turret is TurretShotgun turretShotgun)
+        {
+            ShotgunTurretList.Remove(turretShotgun);
+        }
+        else if (turret is TurretSniper turretSniper)
+        {
+            SniperTurretList.Remove(turretSniper);
+        }
+        else
+        {
+            VulcanTurretList.Remove(turret);
+        }
+    }
     
     public void SpendFuelFromPooledResources()
     {

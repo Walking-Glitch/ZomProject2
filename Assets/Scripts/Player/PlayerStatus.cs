@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Player
 {
-    public class PlayerStatus : MonoBehaviour
+    public class PlayerStatus : MonoBehaviour, IAttackable
     {
         public int MaxHealth;
         public int Health;
@@ -57,6 +57,37 @@ namespace Assets.Scripts.Player
         public void setIsInInteractableRange(bool isInRange)
         {
             isInInteractableRange = isInRange;
+        }
+
+        public Transform GetTransform()
+        {
+            return transform;
+        }
+
+        public Vector3 GetClosestPoint(Vector3 from)
+        {
+            // the player is reached through the swing triggers, so the pivot is enough
+            return transform.position;
+        }
+
+        public int GetHealth()
+        {
+            return Health;
+        }
+
+        public int GetPriority()
+        {
+            return TargetPriority.Diversion;
+        }
+
+        public void TakeDamage(int amount)
+        {
+            PlayerTakeDamage(amount);
+        }
+
+        public void Death()
+        {
+            // game over is still pending; at 0 health zombies simply stop targeting the player
         }
 
     }

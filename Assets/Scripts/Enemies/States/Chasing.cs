@@ -8,7 +8,7 @@ public class Chasing : ZombieBaseState
  
         zombie.SetIsAlerted(true);
         zombie.destinationSetter.enabled = true;
-        zombie.destinationSetter.target = zombie.PlayerTransform;
+        zombie.UpdateTarget();
         zombie.SetCanMove(true);
 
         //zombie.aiPath.maxSpeed = 0.3f;
@@ -24,8 +24,10 @@ public class Chasing : ZombieBaseState
         {
             zombie.anim.SetBool("IsCrippled", true);
         }
-  
-        if (zombie.IsPlayerInAttackArea())
+
+        zombie.TickTargeting();
+
+        if (zombie.IsAttackableInAttackArea())
         {
             zombie.SwitchState(zombie.attack);
         }

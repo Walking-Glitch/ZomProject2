@@ -5230,11 +5230,16 @@ MonoBehaviour:
   destinationSetter: {fileID: 0}
   patrol: {fileID: 0}
   currentSpeed: 0
+  walkSpeed: 1
+  runSpeed: 3
   anim: {fileID: 0}
   rig: {fileID: 8407869301654448875}
   maxHealth: 100
   health: 0
   isDead: 0
+  AttackDamage: 10
+  Reward: 50
+  CorpseDespawnDelay: 3
   alerted: 0
   isCrippled: 0
   LeftLeg:
@@ -5262,7 +5267,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e7f7ab74bfb71e24ebfdd29a4e122fae, type: 3}
   zombieAudioSource: {fileID: 0}
   night: 0
-  Reward: 0
   MinAggroRange: 10
   MaxAggroRange: 20
   BeelineChance: 0.2

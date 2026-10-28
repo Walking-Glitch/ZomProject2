@@ -12,25 +12,37 @@ public class MovementStateManager : MonoBehaviour
 
     private CharacterController characterController;
     private InputSystem_Actions actionSystem;
+    [Tooltip("Current movement speed (runtime).")]
     public float currentSpeed;
 
+    [Tooltip("True while sprinting (runtime).")]
     public bool isRunning;
 
     //Speed variables
-
-    public float walkSpeed = 3, walkBackSpeed = 2;
-    public float runSpeed = 7, runBackSpeed = 5;
+    [Header("Speed")]
+    [Tooltip("Walking speed in m/s.")]
+    public float walkSpeed = 3;
+    [Tooltip("Walking backwards speed in m/s (currently unused).")]
+    public float walkBackSpeed = 2;
+    [Tooltip("Sprinting speed in m/s.")]
+    public float runSpeed = 7;
+    [Tooltip("Sprinting backwards speed in m/s (currently unused).")]
+    public float runBackSpeed = 5;
 
 
     // Jump & grounded variables
-
+    [Header("Jump & Ground")]
+    [Tooltip("How far below the player pivot the ground check sphere sits.")]
     [SerializeField] private float groundYoffSet;
+    [Tooltip("Layers that count as ground for the grounded check.")]
     [SerializeField] private LayerMask groundMask;
     private Vector3 spherePos;
     [SerializeField]private Vector3 velocity;
 
+    [Tooltip("Downward acceleration in m/s². More negative = heavier, shorter jumps.")]
     [SerializeField] private float gravity = -9.81f;
-    [SerializeField] private float jumpForce; 
+    [Tooltip("Upward speed added when jumping. Higher = higher jumps.")]
+    [SerializeField] private float jumpForce;
 
     // Animator variables
     [HideInInspector] public Animator anim;

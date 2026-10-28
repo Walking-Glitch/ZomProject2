@@ -3,6 +3,12 @@ using UnityEngine;
 
 public class TurretShotgun : TurretBase
 {
+    [Header("Shotgun")]
+    [Tooltip("Pellets per shot. Each pellet deals Weapon Damage and costs 1 ammo.")]
+    [SerializeField] private int pelletCount = 8;
+    [Tooltip("Pellet spread cone in degrees. Higher = wider spread, fewer pellets on target at long range.")]
+    [SerializeField] private float spreadAngle = 5f;
+
     protected override void Start()
     {
         base.Start();
@@ -21,21 +27,24 @@ public class TurretShotgun : TurretBase
             AddRecoil();
         }
 
-        int pelletCount = 8; // Number of pellets per shot
-        float spreadAngle = 5f; // Spread angle in degrees
-
         gameManager.EconomyManager.SpendAmmoFromPooledResources(pelletCount);
 
         for (int i = 0; i < pelletCount; i++)
         {
             // Calculate random spread
             Vector3 randomOffset = Random.insideUnitCircle * Mathf.Tan(spreadAngle * Mathf.Deg2Rad);
-            Vector3 pelletDirection = ((currentEnemy.transform.position + Vector3.up * Random.Range(0.8f, 1.8f)) - GunEndTransform.position).normalized;
+            Vector3 pelletDirection = ((AimPoint(currentEnemy) + Vector3.up * Random.Range(-ShotSpread, ShotSpread)) - GunEndTransform.position).normalized;
             pelletDirection += GunEndTransform.TransformDirection(randomOffset);
 
             // Perform raycast for each pellet
-            if (Physics.Raycast(GunEndTransform.position, pelletDirection.normalized, out RaycastHit hit, Mathf.Infinity,
-                 ShootMask))
+            pelletDirection.Normalize();
+
+            bool hitSomething = Physics.Raycast(GunEndTransform.position, pelletDirection, out RaycastHit hit, Mathf.Infinity,
+                 ShootMask, QueryTriggerInteraction.Ignore);
+
+            SpawnTracer(hitSomething ? hit.point : GunEndTransform.position + pelletDirection * MaxWeaponRange);
+
+            if (hitSomething)
             {
                 if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("Environment"))
                 {
@@ -109,12 +118,8 @@ public class TurretShotgun : TurretBase
                         {
 
                             Rigidbody rb = limb.limbReplacement.GetComponent<Rigidbody>();
-                            Transform trans = limb.limbReplacement.transform;
                             Vector3 backwardForce = pelletDirection * 10f;
                             rb.AddForce(backwardForce, ForceMode.Impulse);
-                            Debug.Log("force added");
-                            Debug.Log("Force direction: " + pelletDirection);
-                            Debug.DrawRay(trans.position, pelletDirection, Color.red, 2f);
                         }
                        // Debug.Log(limb.limbName);
                     }

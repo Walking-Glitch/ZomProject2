@@ -6,19 +6,25 @@ using static UnityEngine.LightAnchor;
 public class Limbs : MonoBehaviour
 {
     [Header("ID")]
+    [Tooltip("head, torso, belly, leg, foot, hand or lowerArm. Sets the multipliers below automatically on spawn.")]
     public string limbName;
 
     [Header(("Damage variables"))]
+    [Tooltip("Zombie damage multiplier for hits on this limb. Overwritten on spawn from Limb Name (head 10, torso 2, belly 1.5, leg 0.8, lowerArm 0.5, hand/foot 0.2).")]
     public float damageMultiplier;
 
+    [Tooltip("How much of a hit goes to the limb's own health (dismemberment). Overwritten on spawn from Limb Name.")]
     public float limbDamageMultiplier;
 
+    [Tooltip("Current limb health (runtime). At 0 the limb comes off.")]
     public int limbHealth;
+    [Tooltip("Limb health on spawn (always 100, set in code).")]
     public int limbMaxHealth;
 
     private Collider limbCollider;
 
     [Header("To hide Skin")]
+    [Tooltip("Whether the limb can be shot off. Overwritten on spawn from Limb Name (torso/belly can't).")]
     public bool isDestructible;
     public SkinnedMeshRenderer [] limbMesh;
 

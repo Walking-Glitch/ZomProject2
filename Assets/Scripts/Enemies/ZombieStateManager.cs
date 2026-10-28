@@ -24,9 +24,13 @@ public class ZombieStateManager : MonoBehaviour
     [HideInInspector] public Patrol patrol;
     [HideInInspector] public IAstarAI agent;
 
+    [Header("Movement")]
+    [Tooltip("Current movement speed (read-only, for debugging).")]
     public float currentSpeed;
-    private float walkSpeed = 1;
-    private float runSpeed = 3;
+    [Tooltip("Max pathing speed during the day (zombies walk).")]
+    [SerializeField] private float walkSpeed = 1;
+    [Tooltip("Max pathing speed at night (zombies run).")]
+    [SerializeField] private float runSpeed = 3;
 
     // animator
     [HideInInspector] public Animator anim;
@@ -51,15 +55,28 @@ public class ZombieStateManager : MonoBehaviour
     protected Collider[] ragdollColliders;
     protected Rigidbody[] ragdollRigidbodies;
 
-    // health 
+    // health
+    [Header("Health")]
+    [Tooltip("Health the zombie spawns with. Rifle body shots deal ~40 x limb multiplier (head x10).")]
     public int maxHealth;
+    [Tooltip("Current health (runtime). Editing it does not kill; only damage triggers death.")]
     public int health;
+    [Tooltip("True from the moment the zombie dies until it returns to the pool (runtime).")]
     public bool isDead;
 
+    [Header("Combat")]
+    [Tooltip("Damage dealt per swing to the player, turrets, barriers and cabins.")]
+    public int AttackDamage = 10;
+    [Tooltip("Money paid to the player when this zombie is killed.")]
+    public int Reward = 50;
+    [Tooltip("Seconds a corpse stays on the ground before the zombie returns to the pool.")]
+    public float CorpseDespawnDelay = 3f;
+
     // alerted
-    public bool alerted; 
+    public bool alerted;
 
     // legs
+    [Tooltip("True once a leg limb is destroyed; the zombie ragdolls when it dies (runtime).")]
     public bool isCrippled;
     public Limbs [] LeftLeg;
     public Limbs [] RightLeg;
@@ -71,6 +88,7 @@ public class ZombieStateManager : MonoBehaviour
     public GameObject SkinRig;
     private SkinnedMeshRenderer[] zombieMeshRenderers;
     private Limbs[] zombieLimbs;
+    private Collider torsoCollider;
 
     //explosion
     public Vector3 ExpDirection;
@@ -87,20 +105,23 @@ public class ZombieStateManager : MonoBehaviour
     // private reference to night just for initialization
     [SerializeField]private bool night;
 
-    // reward
-    [HideInInspector] public int Reward;
-
     // targeting: march on the nearest cabin, divert to nearby player/turrets/barriers
     [Header("Targeting")]
+    [Tooltip("Lower bound of the random aggro range rolled on each spawn. Player/turrets/barriers inside it divert the zombie from the cabin.")]
     public float MinAggroRange = 10f;
+    [Tooltip("Upper bound of the random aggro range rolled on each spawn.")]
     public float MaxAggroRange = 20f;
+    [Tooltip("Chance (0-1) a spawned zombie ignores diversions and walks straight to the cabin.")]
     [Range(0f, 1f)] public float BeelineChance = 0.2f;
+    [Tooltip("Seconds between target re-evaluations. Lower = more responsive, more CPU.")]
     public float RetargetInterval = 0.5f;
+    [Tooltip("Seconds a zombie commits to a target before switching to a closer one of the same priority.")]
     public float TargetStickiness = 3f;
+    [Tooltip("Layers scanned for attackable targets. Empty = Default, Player, Obstacles, Turret.")]
     public LayerMask AttackableLayer;
 
-    // how close a zombie's feet must be to a barrier/turret/cabin surface to hit it;
     // pathfinding keeps zombies a margin away from obstacles, beyond the small swing triggers
+    [Tooltip("How close (m) the zombie must be to a barrier/turret/cabin surface to hit it. Raise if zombies stand next to obstacles without attacking.")]
     public float AttackReach = 1.5f;
 
     [HideInInspector] public IAttackable currentTarget;
@@ -163,8 +184,6 @@ public class ZombieStateManager : MonoBehaviour
         NightTimeMode(night);
 
         zombieAudioSource = GetComponent<AudioSource>();
-
-        Reward = 50;
 
 
         GetSkinMeshBits();
@@ -265,6 +284,25 @@ public class ZombieStateManager : MonoBehaviour
     protected void GetZombieLimbs()
     {
         zombieLimbs = rig.GetComponentsInChildren<Limbs>();
+
+        foreach (Limbs limb in zombieLimbs)
+        {
+            if (limb.limbName == "torso")
+            {
+                torsoCollider = limb.GetComponent<Collider>();
+                break;
+            }
+        }
+    }
+
+    // center of the torso, so turrets aim at the body whether the zombie stands, crawls or is a giant
+    public Vector3 GetAimPoint()
+    {
+        // a disabled collider reports empty bounds at the world origin
+        if (torsoCollider != null && torsoCollider.enabled && torsoCollider.gameObject.activeInHierarchy)
+            return torsoCollider.bounds.center;
+
+        return transform.parent.position + Vector3.up * 1.1f;
     }
     public void RagdollModeOn()
     {
@@ -294,7 +332,7 @@ public class ZombieStateManager : MonoBehaviour
 
     public void PlayerDestroyZombie()
     {
-        StartCoroutine(DelayDestruction(3f));
+        StartCoroutine(DelayDestruction(CorpseDespawnDelay));
 
     }
 
@@ -402,7 +440,7 @@ public class ZombieStateManager : MonoBehaviour
 
         if (connects)
         {
-            attackTarget.TakeDamage(10);
+            attackTarget.TakeDamage(AttackDamage);
         }
     }
 
@@ -625,6 +663,12 @@ public class ZombieStateManager : MonoBehaviour
     public bool IsAttackableInAttackArea()
     {
         return attackTarget != null;
+    }
+
+    // lets turrets prioritize zombies that are hitting a cabin
+    public bool IsAttackingObjective()
+    {
+        return attackTarget != null && attackTarget.GetPriority() == TargetPriority.Objective;
     }
     public void SetPlayerDetectionStatus(bool isDetected)
     {

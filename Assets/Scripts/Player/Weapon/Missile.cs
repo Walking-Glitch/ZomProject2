@@ -20,11 +20,20 @@ public class Missile : MonoBehaviour
     [SerializeField] private bool exploded;
     private Vector3 explosionPosition;
 
+    // target tracking
+    private ZombieStateManager target;
+    private Vector3 targetPoint;
+    private bool launched;
+
     // zombies in area of effect 
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
 
     // missile stats
+    [Header("Missile Stats")]
+    [Tooltip("Flight speed in m/s. The AntiTank can't fire again until the missile lands, so slower = longer reload.")]
     [SerializeField] float missileSpeed;
+    [Tooltip("Damage to every zombie inside the explosion radius.")]
+    [SerializeField] int explosionDamage = 100;
 
     //game manager
     private GameManager gameManager;
@@ -39,6 +48,7 @@ public class Missile : MonoBehaviour
     private TurretAntiTank turretAntiTank;
 
     // area of effect and detection variables
+    [Tooltip("Explosion radius in m. Every zombie inside takes Explosion Damage and is blown apart if it dies.")]
     public float explosionRadius;
     public LayerMask ZombieLayerMask;
 
@@ -66,7 +76,16 @@ public class Missile : MonoBehaviour
     }
     private void OnDisable()
     {
-        exploded = false;  
+        exploded = false;
+        launched = false;
+        target = null;
+    }
+
+    public void Launch(ZombieStateManager zombie)
+    {
+        target = zombie;
+        targetPoint = zombie.GetAimPoint();
+        launched = true;
     }
     // Update is called once per frame
     void Update()
@@ -90,25 +109,28 @@ public class Missile : MonoBehaviour
         {
             ExplosionVFX.Play();
             missileFlash.intensity = flashIntensity;
-            Debug.Log("WE HAVE LIGHT" + flashIntensity);
-        }
-        else
-        {
-            Debug.Log("NULL LIGHT");
         }
     }
 
     public void MissileInterpolation()
     {
-        if (turretAntiTank.CurrentMissileTarget == null) return;
-
-        Vector3 currentTarget = turretAntiTank.CurrentMissileTarget.transform.position + Vector3.up * 1.1f;
+        if (!launched) return;
 
         if (!exploded)
         {
-            transform.position = Vector3.MoveTowards(transform.position, currentTarget, missileSpeed * Time.deltaTime);
+            // follow the zombie while it lives; once it dies it goes back to the pool and
+            // would respawn elsewhere, so keep flying to the spot where it fell
+            if (target != null)
+            {
+                if (target.gameObject.activeInHierarchy && !target.isDead)
+                    targetPoint = target.GetAimPoint();
+                else
+                    target = null;
+            }
 
-            if (Vector3.Distance(transform.position, currentTarget) < 1f)
+            transform.position = Vector3.MoveTowards(transform.position, targetPoint, missileSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, targetPoint) < 1f)
             {
                 exploded = true;
                 explosionPosition = transform.position; 
@@ -131,12 +153,10 @@ public class Missile : MonoBehaviour
 
         foreach (ZombieStateManager zombie in enemies)
         {
-            Limbs[] limbs = zombie.GetComponentsInChildren<Limbs>();
-
             if (zombie != null && zombie.health > 0)
             {
                 zombie.SetExplosionDirection(transform.position, zombie.transform.position);
-                zombie.TakeDamage(100, "all", true, false, 500f);
+                zombie.TakeDamage(explosionDamage, "all", true, false, 500f);
             }
         }
 
@@ -168,12 +188,10 @@ public class Missile : MonoBehaviour
     IEnumerator WaitForAudioToEndAndDisable()
     {
         yield return new WaitWhile(() => MissileAudioSource.isPlaying);
-        Debug.Log("Audio clip has finished playing.");
 
         transform.position = originalMissileTransform;
-        
+
         gameObject.SetActive(false);
-        Debug.Log("Wait for audio done");
     }
  
 

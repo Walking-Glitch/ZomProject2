@@ -7,17 +7,32 @@ public class TurretBase : MonoBehaviour, IAttackable
 {
     // health, zombies can destroy turrets
     [Header("Health")]
+    [Tooltip("Health the turret is built with. Zombies hit for their Attack Damage (10) per swing.")]
     public int MaxHealth = 200;
+    [Tooltip("Current health (runtime). Editing it does not kill; only damage triggers death.")]
     public int Health;
     private Collider[] solidColliders;
 
     // weapon stats
     [Header("Weapon Stats")]
+    [Tooltip("Damage per hit before the limb multiplier (head x10, torso x2, belly x1.5, legs x0.8, arms x0.5, hands/feet x0.2).")]
     public int WeaponDamage;
-    public float MinWeaponRange;  
-    public float MaxWeaponRange;  
+    [Tooltip("Zombies closer than this (m) are ignored; the long barrel can't aim at its own base.")]
+    public float MinWeaponRange;
+    [Tooltip("Zombies farther than this (m) are ignored.")]
+    public float MaxWeaponRange;
+    [Tooltip("Seconds between shots.")]
     public float WeaponFireRate;
+    [Tooltip("How fast the turret swings toward a far-off target. Higher = snappier turn-in.")]
     public float AimingSpeed;
+    [Tooltip("Minimum turn speed in degrees/second once close to the target. Lets the barrel land exactly on a moving zombie and stay on it; must beat how fast zombies cross the turret's view.")]
+    public float TrackingSpeed = 90f;
+    [Tooltip("The turret only fires when the barrel points within this many degrees of the target.")]
+    public float FireAngleTolerance = 2f;
+    [Tooltip("Random miss offset in meters around the zombie's torso for each shot (realism). 0 = every shot dead center.")]
+    public float ShotSpread = 0.5f;
+    [Tooltip("Seconds between target scans. Lower = reacts faster to new zombies, costs more CPU.")]
+    [SerializeField] private float checkInterval = 0.2f;
 
     // firing variables    
     protected float fireRateTimer;
@@ -25,7 +40,9 @@ public class TurretBase : MonoBehaviour, IAttackable
 
     //  layers
     [Header("Raycasting Layers")]
+    [Tooltip("Layers scanned for zombies in range.")]
     public LayerMask ZombieLayer;
+    [Tooltip("Layers that stop bullets and block line of sight (Ground, Environment, Zombie). Layers left out are shot through.")]
     public LayerMask ShootMask;
 
     // game manager reference
@@ -33,7 +50,9 @@ public class TurretBase : MonoBehaviour, IAttackable
 
     // list of enemies in firing area
     [Header("Enemy Tracker")]
+    [Tooltip("Zombie the turret is currently aiming at (runtime).")]
     public ZombieStateManager currentEnemy;
+    [Tooltip("Live zombies inside the weapon range from the last scan (runtime).")]
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
     
 
@@ -56,6 +75,7 @@ public class TurretBase : MonoBehaviour, IAttackable
     public LineRenderer laserLine;
     public Transform laserOrigin;
     public Transform LaserAimTransform;
+    private MeshRenderer laserAimRenderer;
     private bool isOnTarget;
 
     // spot light 
@@ -65,14 +85,32 @@ public class TurretBase : MonoBehaviour, IAttackable
     // muzzle flash 
     public Transform ParentMuzzleVFX;
     [SerializeField] private List<Transform> muzzleFlashList = new List<Transform>();
+    private List<FPSLightCurves> muzzleLightCurves = new List<FPSLightCurves>();
 
     //[SerializeField] protected Light muzzleFlashLight;
     //[SerializeField] protected GameObject [] muzzleFlashParticleObject;
     protected float lightIntensity;
+    [Tooltip("Brightest muzzle flash light (random between min and max per shot).")]
     [SerializeField] private float maxLightIntensity;
+    [Tooltip("Dimmest muzzle flash light.")]
     [SerializeField] private float minLightIntensity;
     [SerializeField] private float lightReturnSpeed = 20;
 
+
+    // tracers
+    [Header("Tracers")]
+    [Tooltip("Draw a tracer streak for every shot.")]
+    public bool ShowTracers = true;
+    [Tooltip("Tracer material. Empty = a neutral copy of the laser's glow material, colored by Tracer Color. A custom material's own tint/texture multiplies Tracer Color, so keep its tint white/grey.")]
+    public Material TracerMaterial;
+    [Tooltip("Tracer color; alpha sets brightness.")]
+    public Color TracerColor = new Color(1f, 0.75f, 0.35f, 1f);
+    [Tooltip("Tracer thickness in meters.")]
+    public float TracerWidth = 0.04f;
+    [Tooltip("How fast the streak flies, in m/s. Visual only; damage is still instant.")]
+    public float TracerSpeed = 300f;
+    [Tooltip("Length of the streak in meters.")]
+    public float TracerLength = 4f;
 
     // audio
     [Header("Weapon SFX")]
@@ -81,20 +119,28 @@ public class TurretBase : MonoBehaviour, IAttackable
 
 
     // barrel rotation variables
+    [Header("Rotary Barrel")]
+    [Tooltip("Spin the barrel continuously (Vulcan).")]
     [SerializeField] protected bool rotatoryBarrel;
+    [Tooltip("Barrel spin speed in degrees per second.")]
+    [SerializeField] protected float barrelSpinSpeed = 100f;
 
     // optimization attempts
-    private float checkInterval = 0.2f;
     private float checkTimer;
+    private System.Comparison<ZombieStateManager> targetOrder;
 
     protected virtual void Start()
     {
         gameManager = GameManager.Instance;
 
+        targetOrder = CompareTargets;
+
         Health = MaxHealth;
         solidColliders = Targeting.GetSolidColliders(gameObject);
 
         turretAudioSource = GetComponent<AudioSource>();
+
+        laserAimRenderer = LaserAimTransform.GetComponent<MeshRenderer>();
 
         CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
          
@@ -119,8 +165,6 @@ public class TurretBase : MonoBehaviour, IAttackable
 
         RotateToDefaultPosition();
 
-        CanFire();
-
         RotateBarrel(rotatoryBarrel);
 
         DisplayLaser();
@@ -133,15 +177,19 @@ public class TurretBase : MonoBehaviour, IAttackable
         if (currentEnemy != null)
         {
 
-            Vector3 laserDirection = GunEndTransform.forward;
+            // the laser shows where the barrel really points; tracking keeps that on the zombie
+            Ray ray = new Ray(GunEndTransform.position, GunEndTransform.forward);
 
-
-            Ray ray = new Ray(GunEndTransform.position, laserDirection);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ShootMask))
+            if (Physics.Raycast(ray, out RaycastHit hit, MaxWeaponRange * 2f, ShootMask, QueryTriggerInteraction.Ignore))
             {
-                LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                laserAimRenderer.enabled = true;
                 LaserAimTransform.position = hit.point;
+            }
+            else
+            {
+                // nothing hit (sky): end the beam in the air instead of leaving the dot at an old spot
+                laserAimRenderer.enabled = false;
+                LaserAimTransform.position = ray.GetPoint(MaxWeaponRange);
             }
 
             laserLine.enabled = true;
@@ -157,7 +205,7 @@ public class TurretBase : MonoBehaviour, IAttackable
         }
         else
         {
-            LaserAimTransform.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            laserAimRenderer.enabled = false;
             laserLine.enabled = false;
 
             if (WeaponSpotLight != null) WeaponSpotLight.gameObject.SetActive(false);
@@ -197,51 +245,16 @@ protected virtual void AddRecoil()
     {
         if(enemies.Count > 0 && gameManager.EconomyManager.CheckEnoughFuel())
         {
-            if (currentEnemy == null || !enemies.Contains(currentEnemy))
+            // target died between scans
+            if (!IsValidTarget(currentEnemy))
             {
-                currentEnemy = enemies[0];
+                SelectTarget();
+                if (currentEnemy == null) return;
             }
 
-            Vector3 direction = (currentEnemy.transform.position - transform.position).normalized;
-
-            Vector3 horizontalDirection = new Vector3(direction.x, 0, direction.z);
-
-            Vector3 verticalDirection = new Vector3(0, direction.y, 0);
-
-
-            if (horizontalDirection != Vector3.zero)
-            {
-                Quaternion horizontalRotation = Quaternion.LookRotation(horizontalDirection);
-                PanTransform.rotation = Quaternion.Slerp(PanTransform.rotation, horizontalRotation, Time.deltaTime * AimingSpeed);
-            }
-
-            if (PitchTransform != null)
-            {
-                Vector3 targetPosition = currentEnemy.transform.parent.position + Vector3.up * 1.1f;
-                Vector3 barrelDirection = (targetPosition - PitchTransform.position).normalized;
-
-                Quaternion verticalRotation = Quaternion.LookRotation(barrelDirection);
-                PitchTransform.rotation = Quaternion.Slerp(PitchTransform.rotation, verticalRotation, Time.deltaTime * AimingSpeed);
-
-                // Lock the barrel's horizontal rotation to match the turret base
-                PitchTransform.rotation = Quaternion.Euler(PitchTransform.rotation.eulerAngles.x, PanTransform.rotation.eulerAngles.y, 0);
-            }
-
-
-            // Check alignment for firing
-            float horizontalAlignment = Vector3.Dot(PanTransform.forward, horizontalDirection);
-            float verticalAlignment = Vector3.Dot(PitchTransform.up, verticalDirection);
-
-         
-            if (horizontalAlignment >= 0.98f && CanFire())
+            if (TrackTarget(currentEnemy) && CanFire())
             {
                 Fire(false);
-                //Debug.Log("FIRING");
-            }
-            else
-            {
-                //Debug.Log("NOT ALIGNED");
-                //Debug.Log(horizontalAlignment + " " + verticalAlignment);
             }
         }
 
@@ -252,6 +265,48 @@ protected virtual void AddRecoil()
 
     }
        
+
+    // pans and tilts toward the zombie's torso; returns true once the barrel is on target
+    protected bool TrackTarget(ZombieStateManager target)
+    {
+        Vector3 aimPoint = AimPoint(target);
+
+        Vector3 toTarget = aimPoint - PanTransform.position;
+        Vector3 horizontalDirection = new Vector3(toTarget.x, 0, toTarget.z);
+
+        if (horizontalDirection != Vector3.zero)
+        {
+            PanTransform.rotation = TurnTowards(PanTransform.rotation, Quaternion.LookRotation(horizontalDirection));
+        }
+
+        float panYaw = PanTransform.rotation.eulerAngles.y;
+
+        if (PitchTransform == null)
+        {
+            return Vector3.Angle(PanTransform.forward, horizontalDirection) <= FireAngleTolerance;
+        }
+
+        // pitch only; the yaw always follows the pan so the two rotations never fight
+        Vector3 toTargetFromPitch = aimPoint - PitchTransform.position;
+        float horizontalDistance = new Vector2(toTargetFromPitch.x, toTargetFromPitch.z).magnitude;
+        float pitchAngle = -Mathf.Atan2(toTargetFromPitch.y, horizontalDistance) * Mathf.Rad2Deg;
+
+        Quaternion currentPitch = Quaternion.Euler(PitchTransform.rotation.eulerAngles.x, panYaw, 0);
+        PitchTransform.rotation = TurnTowards(currentPitch, Quaternion.Euler(pitchAngle, panYaw, 0));
+
+        // also waits for the barrel to settle after recoil
+        return Vector3.Angle(PitchTransform.forward, toTargetFromPitch) <= FireAngleTolerance;
+    }
+
+    // swings fast while far off (like a slerp), but never slower than TrackingSpeed, so the barrel
+    // lands exactly on the target and keeps up with it instead of trailing a moving zombie
+    protected Quaternion TurnTowards(Quaternion from, Quaternion to)
+    {
+        float angle = Quaternion.Angle(from, to);
+        float step = Mathf.Max(angle * AimingSpeed, TrackingSpeed) * Time.deltaTime;
+
+        return Quaternion.RotateTowards(from, to, step);
+    }
 
     protected virtual void FindEnemiesInRange()
     {
@@ -267,22 +322,77 @@ protected virtual void AddRecoil()
             {
                 ZombieStateManager zombie = col.gameObject.GetComponentInParent<ZombieStateManager>();
 
-                if (zombie != null)
-                {
-                    if (col.gameObject.GetComponentInParent<ZombieStateManager>().health > 0 && !enemies.Contains(zombie))
-                        enemies.Add(col.GetComponentInParent<ZombieStateManager>());
-                }
+                if (IsValidTarget(zombie) && !enemies.Contains(zombie))
+                    enemies.Add(zombie);
             }
-
-                
-            
         }
+
+        SelectTarget();
+    }
+
+    // keeps the current target unless it's gone or hidden, or a zombie hitting a cabin shows up;
+    // otherwise takes the closest visible zombie, cabin attackers first
+    protected virtual void SelectTarget()
+    {
+        bool currentValid = IsValidTarget(currentEnemy) && enemies.Contains(currentEnemy) && HasLineOfSight(currentEnemy);
+
+        if (currentValid && currentEnemy.IsAttackingObjective()) return;
+
+        enemies.Sort(targetOrder);
+
+        foreach (ZombieStateManager zombie in enemies)
+        {
+            // only a cabin attacker is worth pulling the turret off a valid target
+            if (currentValid && !zombie.IsAttackingObjective()) return;
+
+            if (!IsValidTarget(zombie) || zombie == currentEnemy) continue;
+
+            if (HasLineOfSight(zombie))
+            {
+                currentEnemy = zombie;
+                return;
+            }
+        }
+
+        if (!currentValid) currentEnemy = null;
+    }
+
+    private int CompareTargets(ZombieStateManager a, ZombieStateManager b)
+    {
+        bool aObjective = a.IsAttackingObjective();
+        bool bObjective = b.IsAttackingObjective();
+        if (aObjective != bObjective) return aObjective ? -1 : 1;
+
+        float aDistance = (a.transform.position - transform.position).sqrMagnitude;
+        float bDistance = (b.transform.position - transform.position).sqrMagnitude;
+        return aDistance.CompareTo(bDistance);
+    }
+
+    protected bool IsValidTarget(ZombieStateManager zombie)
+    {
+        return zombie != null && zombie.gameObject.activeInHierarchy && !zombie.isDead && zombie.health > 0;
+    }
+
+    protected Vector3 AimPoint(ZombieStateManager zombie)
+    {
+        return zombie.GetAimPoint();
+    }
+
+    // terrain and props block the shot; another zombie in the way still takes the bullet
+    protected bool HasLineOfSight(ZombieStateManager zombie)
+    {
+        Vector3 origin = PitchTransform != null ? PitchTransform.position : GunEndTransform.position;
+        Vector3 toTarget = AimPoint(zombie) - origin;
+
+        if (!Physics.Raycast(origin, toTarget, out RaycastHit hit, toTarget.magnitude, ShootMask, QueryTriggerInteraction.Ignore))
+            return true;
+
+        return (ZombieLayer.value & (1 << hit.collider.gameObject.layer)) != 0;
     }
 
     protected virtual bool CanFire()
     {
-        fireRateTimer += Time.deltaTime;
-        if (fireRateTimer < WeaponFireRate) return false;   
+        if (fireRateTimer < WeaponFireRate) return false;
         if(!gameManager.EconomyManager.CheckEnoughAmmo()) return false;
         if(!gameManager.EconomyManager.CheckEnoughFuel()) return false;
         if (currentEnemy != null) return true;
@@ -305,11 +415,18 @@ protected virtual void AddRecoil()
             AddRecoil();
         }
 
-        Vector3 enemyMediumHeight = currentEnemy.transform.parent.position + Vector3.up * Random.Range(1f, 2f) + Vector3.right * Random.Range(-0.5f, 0.5f);
-        Vector3 direction = (enemyMediumHeight - GunEndTransform.position).normalized;
+        // realism: each shot lands somewhere around the torso, sideways relative to the barrel
+        Vector3 shotPoint = AimPoint(currentEnemy)
+            + Vector3.up * Random.Range(-ShotSpread, ShotSpread)
+            + GunEndTransform.right * Random.Range(-ShotSpread, ShotSpread);
+        Vector3 direction = (shotPoint - GunEndTransform.position).normalized;
 
-        if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
-                ShootMask))
+        bool hitSomething = Physics.Raycast(GunEndTransform.position, direction, out RaycastHit hit, Mathf.Infinity,
+                ShootMask, QueryTriggerInteraction.Ignore);
+
+        SpawnTracer(hitSomething ? hit.point : GunEndTransform.position + direction * MaxWeaponRange);
+
+        if (hitSomething)
         {
             if (hit.collider.CompareTag("Ground") || hit.collider.CompareTag("Environment"))
             {
@@ -382,12 +499,8 @@ protected virtual void AddRecoil()
                     {
 
                         Rigidbody rb = limb.limbReplacement.GetComponent<Rigidbody>();
-                        Transform trans = limb.limbReplacement.transform;
                         Vector3 backwardForce = direction * 10f;
                         rb.AddForce(backwardForce, ForceMode.Impulse);
-                        //Debug.Log("force added");
-                        //Debug.Log("Force direction: " + direction);
-                        //Debug.DrawRay(trans.position, direction, Color.red, 2f);
                     }
                     //Debug.Log(limb.limbName);
                 }
@@ -403,12 +516,23 @@ protected virtual void AddRecoil()
          
     }
 
+    protected void SpawnTracer(Vector3 end)
+    {
+        if (!ShowTracers) return;
+
+        // falls back to a neutral copy of the laser's glow material so tracers work without extra setup
+        Material material = TracerMaterial != null
+            ? TracerMaterial
+            : TracerPool.GetDefaultMaterial(laserLine != null ? laserLine.sharedMaterial : null);
+
+        TracerPool.Spawn(GunEndTransform.position, end, material, TracerColor, TracerWidth, TracerSpeed, TracerLength);
+    }
+
     protected virtual void RotateBarrel(bool rotatoryBarrel)
     {
         if (rotatoryBarrel && BarrelTransform != null)
         {
-            float rotationSpeed = 100f;
-            BarrelTransform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+            BarrelTransform.Rotate(0, 0, barrelSpinSpeed * Time.deltaTime);
         }
        
     }
@@ -420,6 +544,9 @@ protected virtual void AddRecoil()
             foreach (Transform muzzle in parentMuzzleFlash)
             {
                 muzzleFlashList.Add(muzzle.transform);
+
+                // flashes start inactive, so include inactive children
+                muzzleLightCurves.Add(muzzle.GetComponentInChildren<FPSLightCurves>(true));
             }
         }
     }
@@ -430,7 +557,7 @@ protected virtual void AddRecoil()
 
         lightIntensity = Random.Range(minLightIntensity, maxLightIntensity);
 
-        FPSLightCurves lightCurves = GetComponentInChildren<FPSLightCurves>();
+        FPSLightCurves lightCurves = muzzleLightCurves[index];
 
         if (lightCurves != null)
         {

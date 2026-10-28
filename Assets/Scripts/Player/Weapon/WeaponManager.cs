@@ -61,8 +61,15 @@ namespace Assets.Scripts.Player.Weapon
 
         // firing variables
         [Header("Fire Rate")]
+        [Tooltip("Seconds between rifle shots in full-auto.")]
         [SerializeField] float fireRate;
         private float fireRateTimer;
+
+        [Header("Damage")]
+        [Tooltip("Rifle damage per hit before the limb multiplier (head x10, torso x2, belly x1.5, legs x0.8, arms x0.5, hands/feet x0.2).")]
+        [SerializeField] private float baseDamage = 40f;
+        [Tooltip("Damage to the limb itself per hit, scaled by the limb's dismember multiplier. Limbs have 100 HP; at 0 they come off.")]
+        [SerializeField] private float baseLimbDamage = 100f;
 
         
 
@@ -82,6 +89,7 @@ namespace Assets.Scripts.Player.Weapon
         ZombieStateManager zombieStateManager;
 
         // toggle firing mode
+        [Tooltip("Semi-auto (one shot per click) instead of full-auto. Toggled in game with the fire-mode key.")]
         [SerializeField] private bool semiAuto;
         private bool isFiring = false;
 
@@ -229,7 +237,6 @@ namespace Assets.Scripts.Player.Weapon
 
                     if (limb != null)
                     {
-                        float baseDamage = 40;
                         float finalDamage = baseDamage * limb.damageMultiplier;
 
                         if (limb.limbName == "head")
@@ -251,8 +258,7 @@ namespace Assets.Scripts.Player.Weapon
                     }
 
 
-                    float baseLimbDmg = 100f;
-                        float finalLimbDmg = baseLimbDmg * limb.limbDamageMultiplier;
+                        float finalLimbDmg = baseLimbDamage * limb.limbDamageMultiplier;
 
                         limb.LimbTakeDamage((int)finalLimbDmg);
                          
@@ -260,12 +266,8 @@ namespace Assets.Scripts.Player.Weapon
                         {
                             
                             Rigidbody rb = limb.limbReplacement.GetComponent<Rigidbody>();
-                            Transform trans = limb.limbReplacement.transform;
                             Vector3 backwardForce = direction * 10f;
                             rb.AddForce(backwardForce, ForceMode.Impulse);
-                            Debug.Log("force added");
-                            Debug.Log("Force direction: " + direction);
-                            Debug.DrawRay(trans.position, direction, Color.red, 2f);
                         }
                         //Debug.Log(limb.limbName);
                     }

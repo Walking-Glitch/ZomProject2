@@ -1218,11 +1218,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2529bf5c3ce73b4e8244b9ff8d663e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxHealth: 200
+  Health: 0
   WeaponDamage: 10
   MinWeaponRange: 10
   MaxWeaponRange: 50
-  WeaponFireRate: 0.5
+  WeaponFireRate: 0.17
   AimingSpeed: 3.5
+  TrackingSpeed: 90
+  FireAngleTolerance: 2
+  ShotSpread: 0.5
+  checkInterval: 0.2
   ZombieLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -1246,9 +1252,16 @@ MonoBehaviour:
   maxLightIntensity: 100
   minLightIntensity: 30
   lightReturnSpeed: 30
+  ShowTracers: 1
+  TracerMaterial: {fileID: 0}
+  TracerColor: {r: 1, g: 0.75, b: 0.35, a: 1}
+  TracerWidth: 0.08
+  TracerSpeed: 300
+  TracerLength: 4
   fireSound:
   - {fileID: 8300000, guid: 52e7f05b54519244788d19484506101e, type: 3}
   rotatoryBarrel: 1
+  barrelSpinSpeed: 100
 --- !u!82 &4197431791533596800
 AudioSource:
   m_ObjectHideFlags: 0

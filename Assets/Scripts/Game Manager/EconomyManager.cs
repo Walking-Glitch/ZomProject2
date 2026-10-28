@@ -5,12 +5,25 @@ using UnityEngine;
 public class EconomyManager : MonoBehaviour
 {
     // resources
+    [Header("Resources")]
+    [Tooltip("Shared fuel. Turrets and spotlights burn it every second; at 0 turrets stop aiming and firing.")]
     public float Fuel;
     public int Generators;
-    public int Ammo; 
+    [Tooltip("Shared turret ammo. Each turret shot spends 1 (shotgun spends 8); at 0 turrets stop firing.")]
+    public int Ammo;
+    [Tooltip("Player money, earned from zombie kills.")]
     public int CurrentMoney;
+    [Tooltip("Fuel barrels carried by the truck.")]
     public int FuelBarrels;
+    [Tooltip("Spare parts carried by the truck.")]
     public int SpareParts;
+
+    //Consumtion rate
+    [Header("Fuel Consumption (per second)")]
+    [Tooltip("Fuel burned per second by each Vulcan, Shotgun and Sniper turret (the AntiTank burns none).")]
+    [SerializeField] private int turretsRate = 5;
+    [Tooltip("Fuel burned per second by each spotlight.")]
+    [SerializeField] private int lightsRate = 1;
 
     // lists of turrets 
     public List<TurretBase> VulcanTurretList;
@@ -21,18 +34,10 @@ public class EconomyManager : MonoBehaviour
     //lists of lights
     public List<GameObject> spotLightsList;
 
-    //Consumtion rate
-    private int turretsRate;
-    private int lightsRate; 
-
-    // lists of ligts 
     private GameManager gameManager;
     void Start()
     {
         gameManager = GameManager.Instance;
-
-        turretsRate = 5;
-        lightsRate = 1;
     }
 
     private void Update()

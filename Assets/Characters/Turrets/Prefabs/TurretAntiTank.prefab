@@ -550,11 +550,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dba19c066a1a7df4eb8d615f1337c4ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxHealth: 200
+  Health: 0
   WeaponDamage: 300
   MinWeaponRange: 30
   MaxWeaponRange: 200
-  WeaponFireRate: 50
+  WeaponFireRate: 20
   AimingSpeed: 3.5
+  TrackingSpeed: 90
+  FireAngleTolerance: 2
+  ShotSpread: 0.5
+  checkInterval: 0.2
   ZombieLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -578,13 +584,20 @@ MonoBehaviour:
   maxLightIntensity: 100
   minLightIntensity: 30
   lightReturnSpeed: 30
+  ShowTracers: 1
+  TracerMaterial: {fileID: 0}
+  TracerColor: {r: 1, g: 0.75, b: 0.35, a: 1}
+  TracerWidth: 0.04
+  TracerSpeed: 300
+  TracerLength: 4
   fireSound: []
   rotatoryBarrel: 0
+  barrelSpinSpeed: 100
   enemiesInBlast: []
   blastRadius: 11
+  minZombiesInBlast: 4
   missilePrefab: {fileID: 8395904391705877947}
   index: 0
-  CurrentMissileTarget: {fileID: 0}
   MissileTraveling: 0
 --- !u!64 &1233845559131431712
 MeshCollider:

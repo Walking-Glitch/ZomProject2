@@ -3,8 +3,11 @@ using UnityEngine;
 
 public class WeaponAmmo : MonoBehaviour
 {
+    [Tooltip("Rounds per magazine.")]
     public int clipSize;
+    [Tooltip("Reserve rounds carried for reloads. Raise it for long test sessions.")]
     public int extraAmmo;
+    [Tooltip("Rounds in the current magazine (runtime; reset to Clip Size on start).")]
     public int currentAmmo;
 
     public AudioClip magInClip;

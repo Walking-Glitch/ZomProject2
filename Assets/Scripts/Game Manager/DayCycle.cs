@@ -8,9 +8,13 @@ public class DayCycle : MonoBehaviour
 {
 
 
+    [Tooltip("Real seconds for a full 24h day at multiplier 1. Raise to slow the whole cycle down.")]
     public float dayDuration = 24f;  
+    [Tooltip("Current time as 0-1 (0 = midnight, 0.25 = 6 AM, 0.5 = noon). Change it in Play mode to jump in time.")]
     [SerializeField]private float timeOfDay;  
+    [Tooltip("Sun intensity over the day (x = time of day 0-1).")]
     public AnimationCurve lightIntensityCurve;  
+    [Tooltip("Sun color over the day (left = midnight, middle = noon).")]
     public Gradient lightColorGradient;  
     public Light directionalLight; // Reference to the directional light
     public Transform lightTransform;  
@@ -18,11 +22,16 @@ public class DayCycle : MonoBehaviour
     public TextMeshProUGUI timeText;
 
 
+    [Tooltip("How fast time runs during the day. Higher = shorter days.")]
     public float daySpeedMultiplier = 2f; // Speed multiplier for daytime
+    [Tooltip("How fast time runs at night. Lower = longer nights (zombies run at night).")]
     public float nightSpeedMultiplier = 0.5f; // Speed multiplier for nighttime
+    [Tooltip("Hour (0-24) when day starts: zombies walk, day speed applies.")]
     public float dayStartHour = 6f; // Start of daytime (6 AM)
+    [Tooltip("Hour (0-24) when night starts: zombies run and glow, night speed applies.")]
     public float nightStartHour = 19f; // Start of nighttime (6 PM)
 
+    [Tooltip("Hour (0-24) the game starts at. Set to ~18 to test the night quickly.")]
     public float startHour = 8f;
 
 

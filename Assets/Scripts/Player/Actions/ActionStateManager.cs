@@ -40,6 +40,11 @@ namespace Assets.Scripts.Player.Actions
         //Grenades
         public GameObject GrenadePrefab;
         private GameObject grenadeClone;
+        [Header("Grenade Throw")]
+        [Tooltip("Impulse toward the crosshair when throwing a grenade. Higher = farther throw.")]
+        [SerializeField] private float grenadeThrowForce = 100f;
+        [Tooltip("Extra upward impulse on the throw. Higher = higher arc.")]
+        [SerializeField] private float grenadeUpForce = 25f;
 
         //game manager
         public GameManager gameManager;
@@ -191,8 +196,8 @@ namespace Assets.Scripts.Player.Actions
            Vector3 direction = (WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position).normalized;
             grenadeClone.transform.SetParent(null);
             grenadeClone.GetComponent<Rigidbody>().isKinematic = false;
-            grenadeClone.GetComponent<Rigidbody>().AddForce(direction * 100f, ForceMode.Impulse);
-            grenadeClone.GetComponent<Rigidbody>().AddForce(new Vector3(0, 0.5f, 0) * 50f, ForceMode.Impulse);
+            grenadeClone.GetComponent<Rigidbody>().AddForce(direction * grenadeThrowForce, ForceMode.Impulse);
+            grenadeClone.GetComponent<Rigidbody>().AddForce(Vector3.up * grenadeUpForce, ForceMode.Impulse);
         }
 
         public void PlayGrenadeReleasePin()

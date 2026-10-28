@@ -19,11 +19,17 @@ public class TruckController : MonoBehaviour
 
   
 
+    [Header("Driving")]
+    [Tooltip("Currently unused.")]
     public float MaxAcceleration;
+    [Tooltip("Currently unused.")]
     public float OutFuelAcceleration;
 
+    [Tooltip("Motor torque applied to the wheels at full throttle. Higher = faster truck.")]
     public float acceleration;
+    [Tooltip("Brake torque applied while braking.")]
     public float brakingForce;
+    [Tooltip("Max steering angle of the front wheels in degrees.")]
     public float maxTurnAngle;
 
     private float currentAcceleration = 0f;
@@ -36,6 +42,7 @@ public class TruckController : MonoBehaviour
 
 
    
+    [Tooltip("True while the player is driving (runtime).")]
     public bool isPlayerIn;
 
 
@@ -44,7 +51,9 @@ public class TruckController : MonoBehaviour
 
     public MeshCollider CarMeshCollider;
 
+    [Tooltip("Visual offset for the front wheel meshes, to line them up with the wheel colliders.")]
     public Vector3 adjustVectorFrontWheel;
+    [Tooltip("Visual offset for the back wheel meshes.")]
     public Vector3 adjustVectorBackWheel;
 
     public Rigidbody CarRigidbody;

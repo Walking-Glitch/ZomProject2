@@ -5,12 +5,16 @@ using UnityEngine;
 
 public class EnemyManager : MonoBehaviour
 {
+    [Tooltip("Parent object whose children are the zombie spawn points.")]
     public Transform parentSpawnPoint;
 
     [SerializeField] private List<Transform> spawnPointsList = new List<Transform>();
 
+    [Tooltip("Zombies currently on the map, alive or corpse (runtime).")]
     public int EnemyCtr = 0;
+    [Tooltip("Max zombies on the map at once. Grows every morning (see DifficultyManager). Effectively capped by the EnemyPool's Max Pool Size.")]
     public int MaxEnemy;
+    [Tooltip("Seconds between spawns while below Max Enemy.")]
     public float Delay;
 
     private bool isSpawning;
@@ -64,6 +68,15 @@ public class EnemyManager : MonoBehaviour
         }
 
         GameObject tempEnemy = gameManager.EnemyPool.RequestEnemy();
+
+        if (tempEnemy == null)
+        {
+            // pool is at its cap; wait for a corpse to despawn instead of stalling the spawner
+            yield return new WaitForSeconds(Delay);
+            isSpawning = false;
+            yield break;
+        }
+
         tempEnemy.transform.position = selectedSpawnPoint.position;
         tempEnemy.transform.rotation = selectedSpawnPoint.rotation;
         

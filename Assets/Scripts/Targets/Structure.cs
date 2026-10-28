@@ -10,7 +10,9 @@ public class Structure : MonoBehaviour, IAttackable
     public delegate void AllStructuresDestroyed();
     public static event AllStructuresDestroyed OnAllStructuresDestroyed;
 
+    [Tooltip("Cabin health. Zombies march to the nearest cabin and hit it for their Attack Damage (10) per swing.")]
     public int MaxHealth = 1000;
+    [Tooltip("Current health (runtime). Editing it does not kill; only damage triggers death.")]
     public int Health;
 
     private Collider[] solidColliders;

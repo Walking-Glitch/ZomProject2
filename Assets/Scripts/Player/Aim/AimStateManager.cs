@@ -9,7 +9,10 @@ public class AimStateManager : MonoBehaviour
 {
 
     // recoil test 
+    [Header("Recoil")]
+    [Tooltip("How far the aim point kicks per rifle shot. Higher = less accurate full-auto.")]
     [SerializeField] private float recoilAmount = 0.1f; // Magnitude of the recoil
+    [Tooltip("How fast the aim point settles back after a shot.")]
     [SerializeField] private float recoilDecaySpeed = 5f; // Speed at which recoil dissipates
     private Vector3 recoilOffset; // Current recoil offset
 
@@ -17,6 +20,8 @@ public class AimStateManager : MonoBehaviour
     // camera rotation
     private Vector2 lookInput;
     private Vector3 direction;
+    [Header("Aim")]
+    [Tooltip("How fast the character body turns to face where the camera aims.")]
     [SerializeField] private float aimRotationSpeed;
 
     private InputSystem_Actions actionSystem;
@@ -29,6 +34,7 @@ public class AimStateManager : MonoBehaviour
     [SerializeField] private LayerMask allMask;
 
     // camera zoom
+    [Tooltip("How fast the aim point follows the crosshair. Lower = smoother but laggier aim.")]
     [SerializeField] private float aimSmoothSpeed;
 
     // states

@@ -5,9 +5,12 @@ namespace Assets.Scripts.Player
 {
     public class PlayerStatus : MonoBehaviour, IAttackable
     {
+        [Tooltip("Player starting health. Zombies hit for their Attack Damage (10) per swing.")]
         public int MaxHealth;
+        [Tooltip("Current health (runtime). Damage clamps it to Max Health, so raise Max Health for a tankier test run.")]
         public int Health;
 
+        [Tooltip("True while the player is next to something they can interact with, like the truck (runtime).")]
         public bool isInInteractableRange;
 
         private GameManager gameManager;

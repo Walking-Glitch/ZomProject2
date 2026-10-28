@@ -16,7 +16,13 @@ public class Grenade : MonoBehaviour
     public AudioClip GrenadeExplosion;
 
     // area of effect and detection variables
+    [Header("Grenade Stats")]
+    [Tooltip("Explosion radius in m. Every zombie inside takes Explosion Damage.")]
     public float explosionRadius;
+    [Tooltip("Damage to every zombie inside the explosion radius.")]
+    [SerializeField] private int explosionDamage = 100;
+    [Tooltip("Fuse time in seconds from throw to explosion.")]
+    [SerializeField] private float timeToexplode = 5f;
     public LayerMask ZombieLayerMask;
 
     // game object references
@@ -30,7 +36,6 @@ public class Grenade : MonoBehaviour
 
     // timer variables
     private float elapsed;
-    private float timeToexplode = 5f;
 
     // zombies in area of effect 
     [SerializeField] protected List<ZombieStateManager> enemies = new List<ZombieStateManager>();
@@ -186,7 +191,7 @@ public class Grenade : MonoBehaviour
             if (zombie != null && zombie.health > 0)
             {
                 zombie.SetExplosionDirection(transform.position, zombie.transform.position);
-                zombie.TakeDamage(100, "all", true, false, 500f);
+                zombie.TakeDamage(explosionDamage, "all", true, false, 500f);
 
             }
         }      

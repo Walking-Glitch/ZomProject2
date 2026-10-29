@@ -5,6 +5,9 @@ namespace Assets.Scripts.Player
 {
     public class PlayerStatus : MonoBehaviour, IAttackable
     {
+        // GameOverManager handles the respawn
+        public static event System.Action OnPlayerDied;
+
         [Tooltip("Player starting health. Zombies hit for their Attack Damage (10) per swing.")]
         public int MaxHealth;
         [Tooltip("Current health (runtime). Damage clamps it to Max Health, so raise Max Health for a tankier test run.")]
@@ -14,6 +17,7 @@ namespace Assets.Scripts.Player
         public bool isInInteractableRange;
 
         private GameManager gameManager;
+        private float invulnerableUntil;
 
         //torso light 
         public Light TorsoLight;
@@ -47,9 +51,24 @@ namespace Assets.Scripts.Player
 
         public void PlayerTakeDamage(int damage)
         {
+            if (Health <= 0 || Time.time < invulnerableUntil) return;
+
             Health -= damage;
             Health = Mathf.Clamp(Health, 0, MaxHealth);
             gameManager.UIManager.UpdateHealthUI();
+
+            if (Health <= 0) Death();
+        }
+
+        public void Revive()
+        {
+            Health = MaxHealth;
+            gameManager.UIManager.UpdateHealthUI();
+        }
+
+        public void SetInvulnerable(float seconds)
+        {
+            invulnerableUntil = Time.time + seconds;
         }
 
         private void ToggleLight(bool isNight)
@@ -90,7 +109,8 @@ namespace Assets.Scripts.Player
 
         public void Death()
         {
-            // game over is still pending; at 0 health zombies simply stop targeting the player
+            // at 0 health zombies stop targeting the player until the respawn
+            OnPlayerDied?.Invoke();
         }
 
     }

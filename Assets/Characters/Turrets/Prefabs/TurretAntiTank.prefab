@@ -550,7 +550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dba19c066a1a7df4eb8d615f1337c4ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxHealth: 200
+  MaxHealth: 400
   Health: 0
   WeaponDamage: 300
   MinWeaponRange: 30

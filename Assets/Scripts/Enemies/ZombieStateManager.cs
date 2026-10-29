@@ -12,6 +12,9 @@ using UnityEngine.Animations.Rigging;
 [RequireComponent(typeof(AudioSource))]
 public class ZombieStateManager : MonoBehaviour
 {
+    // counted for the game over stats
+    public static event System.Action OnZombieKilled;
+
     // player reference    
     [SerializeField] public Transform PlayerTransform;
 
@@ -423,6 +426,7 @@ public class ZombieStateManager : MonoBehaviour
             SetKilledByExplosion(explosion);
             SetKilledByTurret(turret);
             SwitchState(Death);
+            OnZombieKilled?.Invoke();
         }
     }
 

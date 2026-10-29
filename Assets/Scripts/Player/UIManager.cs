@@ -58,6 +58,6 @@ public class UIManager : MonoBehaviour
     }
     public void UpdateHealthUI()
     {
-        HealthFill.fillAmount = (float)(player.Health * 0.01);
+        HealthFill.fillAmount = player.MaxHealth > 0 ? (float)player.Health / player.MaxHealth : 0f;
     }
 }

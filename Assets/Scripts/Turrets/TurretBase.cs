@@ -8,7 +8,7 @@ public class TurretBase : MonoBehaviour, IAttackable
     // health, zombies can destroy turrets
     [Header("Health")]
     [Tooltip("Health the turret is built with. Zombies hit for their Attack Damage (10) per swing.")]
-    public int MaxHealth = 200;
+    public int MaxHealth = 400;
     [Tooltip("Current health (runtime). Editing it does not kill; only damage triggers death.")]
     public int Health;
     private Collider[] solidColliders;

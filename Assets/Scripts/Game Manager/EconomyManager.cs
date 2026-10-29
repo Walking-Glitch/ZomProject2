@@ -13,6 +13,8 @@ public class EconomyManager : MonoBehaviour
     public int Ammo;
     [Tooltip("Player money, earned from zombie kills.")]
     public int CurrentMoney;
+    [Tooltip("All money earned this run, before death penalties (runtime). Shown on the game over screen.")]
+    public int TotalMoneyEarned;
     [Tooltip("Fuel barrels carried by the truck.")]
     public int FuelBarrels;
     [Tooltip("Spare parts carried by the truck.")]
@@ -48,6 +50,13 @@ public class EconomyManager : MonoBehaviour
     public void CollectMoney(int money)
     {
         CurrentMoney += money;
+        TotalMoneyEarned += money;
+        gameManager.UIManager.UpdateMoneyUI(CurrentMoney);
+    }
+
+    public void LoseMoney(int money)
+    {
+        CurrentMoney = Mathf.Max(0, CurrentMoney - money);
         gameManager.UIManager.UpdateMoneyUI(CurrentMoney);
     }
 

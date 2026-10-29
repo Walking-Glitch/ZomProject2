@@ -18,8 +18,28 @@ public class BuildManager : MonoBehaviour
     public List<GameObject> fakeBarriersPrefabs;
 
     //valid layers for placement
+    [Tooltip("Layers the preview can be placed on (Ground).")]
     public LayerMask placementLayer;
-    public LayerMask placementObstacle; 
+    [Tooltip("Layers that block placement when they overlap the preview (barriers, turrets, cabins, player, zombies, scenery). Trigger zones never block.")]
+    public LayerMask placementObstacle;
+
+    [Header("Placement Rules")]
+    [Tooltip("Max distance (m) from the player to the placement point.")]
+    public float MaxBuildDistance = 20f;
+    [Tooltip("Builds must be within this distance (m) of a standing cabin, like a settlement area. 0 = build anywhere.")]
+    public float BuildAreaRadius = 90f;
+    [Tooltip("Off = building is only allowed during the day.")]
+    public bool AllowBuildingAtNight = true;
+    [Tooltip("How fast (degrees/s) Q and E rotate the preview.")]
+    public float RotationSpeed = 90f;
+
+    // preview renderers, cached so the valid/invalid tint isn't looked up and reapplied every frame
+    private MeshRenderer[] previewRenderers;
+    private bool? appliedValidMaterial;
+
+    // build cost of the current preview, read from its SpawnRequirements
+    private SpawnRequirements previewRequirements;
+    private static readonly Collider[] placementOverlapBuffer = new Collider[64];
 
     //materials to switch depending on availability  
     public Material validMaterial;
@@ -105,14 +125,7 @@ public class BuildManager : MonoBehaviour
 
                 //    SetIsValidPlacement(true);
                 //}
-                if(IsPlacementValidWithBox(currentPreview, placementObstacle))
-                {
-                    SetIsValidPlacement(true);
-                }
-                else
-                {
-                    SetIsValidPlacement(false);
-                }
+                SetIsValidPlacement(CanAffordPreview() && IsPlacementValidWithBox(currentPreview, placementObstacle) && IsWithinBuildRules(currentPreview.transform.position));
 
 
             }
@@ -149,26 +162,49 @@ public class BuildManager : MonoBehaviour
         Center = center;
         HalfExtents = halfExtents;
 
-        // Perform overlap check
-        Collider[] colliders = Physics.OverlapBox(center, halfExtents, prefab.transform.rotation, placementObstacle);
+        // Perform overlap check; trigger zones (zombie reach/detection areas) aren't solid, so they don't block
+        int count = Physics.OverlapBoxNonAlloc(center, halfExtents, placementOverlapBuffer, prefab.transform.rotation, placementObstacle, QueryTriggerInteraction.Ignore);
 
-        // Return true if no overlaps, false otherwise
-        return colliders.Length == 0;
+        for (int i = 0; i < count; i++)
+        {
+            // the preview always sits on a terrain; the Environment terrain is in the obstacle layers for its props, not its ground
+            if (placementOverlapBuffer[i] is TerrainCollider) continue;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    // range from the player, settlement area around the cabins, and day-only building
+    private bool IsWithinBuildRules(Vector3 point)
+    {
+        Vector3 player = gameManager.PlayerGameObject.transform.position;
+        if ((point - player).sqrMagnitude > MaxBuildDistance * MaxBuildDistance) return false;
+
+        if (!AllowBuildingAtNight && gameManager.DayCycle != null && gameManager.DayCycle.IsNightTime) return false;
+
+        if (BuildAreaRadius <= 0f) return true;
+
+        foreach (Structure cabin in Structure.Active)
+        {
+            if (!cabin.IsAlive()) continue;
+
+            if ((cabin.GetClosestPoint(point) - point).sqrMagnitude <= BuildAreaRadius * BuildAreaRadius) return true;
+        }
+
+        return false;
     }
 
     public void RotatePreview(GameObject currentPreview)
     {
         if (Input.GetKey(KeyCode.Q))
         {
-            float rotateRate = -30;
-
-            currentPreview.transform.Rotate(0, rotateRate * Time.deltaTime, 0);
+            currentPreview.transform.Rotate(0, -RotationSpeed * Time.deltaTime, 0);
         }
         else if (Input.GetKey(KeyCode.E))
         {
-            float rotateRate = 30;
-
-            currentPreview.transform.Rotate(0, rotateRate * Time.deltaTime, 0);
+            currentPreview.transform.Rotate(0, RotationSpeed * Time.deltaTime, 0);
         }
 
         previewEulerAngles = currentPreview.transform.eulerAngles;
@@ -220,6 +256,9 @@ public class BuildManager : MonoBehaviour
         {
             currentPreview = Instantiate(list[currentIndex], AimTransform.position, Quaternion.Euler(previewEulerAngles));
             currentPreview.transform.SetParent(AimTransform);
+            previewRenderers = currentPreview.GetComponentsInChildren<MeshRenderer>();
+            appliedValidMaterial = null;
+            previewRequirements = currentPreview.GetComponentInChildren<SpawnRequirements>();
 
             if(currentPreview != null)
             {
@@ -237,25 +276,22 @@ public class BuildManager : MonoBehaviour
 
     public void AssignMaterial(GameObject currentPreview, Material valid, Material invalid)
     {
-        if (currentPreview != null)
+        if (currentPreview == null || previewRenderers == null) return;
+
+        // only swap when validity changes
+        if (appliedValidMaterial == isPlacementValid) return;
+        appliedValidMaterial = isPlacementValid;
+
+        Material tint = isPlacementValid ? valid : invalid;
+
+        foreach (MeshRenderer meshRenderer in previewRenderers)
         {
-            MeshRenderer[] meshRenderers = currentPreview.GetComponentsInChildren<MeshRenderer>();
+            if (meshRenderer == null) continue;
 
-            if (isPlacementValid)
-            {
-                foreach (MeshRenderer meshRenderer in meshRenderers)
-                {
-                    meshRenderer.material = valid;
-                }
-
-            }
-            else
-            {
-                foreach (MeshRenderer meshRenderer in meshRenderers)
-                {
-                    meshRenderer.material = invalidMaterial;
-                }
-            }
+            // every slot, so multi-material models are tinted completely
+            Material[] materials = meshRenderer.sharedMaterials;
+            for (int i = 0; i < materials.Length; i++) materials[i] = tint;
+            meshRenderer.sharedMaterials = materials;
         }
     }
 
@@ -314,8 +350,10 @@ public class BuildManager : MonoBehaviour
 
     public void PlacePrefab()
     {
-        if (ReturnIsValidPlacement())
+        // affordability is checked again here: resources may have changed since the last placement check
+        if (ReturnIsValidPlacement() && CanAffordPreview())
         {
+            gameManager.EconomyManager.SpendBuildCost(previewRequirements);
 
             selectedPrefab = Instantiate(currentRealList[currentIndex], AimTransform.position, currentPreview.transform.rotation);
             selectedPrefab.transform.SetParent(AimTransform);
@@ -334,6 +372,12 @@ public class BuildManager : MonoBehaviour
         }
 
 
+    }
+
+    // previews without a SpawnRequirements are free
+    private bool CanAffordPreview()
+    {
+        return previewRequirements == null || gameManager.EconomyManager.CanAfford(previewRequirements);
     }
 
     private float GetPrefabDimensions(GameObject prefab)

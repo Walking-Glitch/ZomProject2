@@ -188,6 +188,9 @@ public class TruckController : MonoBehaviour
 
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
+        // E rotates the build preview while building
+        if (gameManager.PlayerGameObject.GetComponent<ActionStateManager>().IsBuilding) return;
+
         if (isPlayerIn)
         {
             gameManager.Truck.isPlayerIn = false;

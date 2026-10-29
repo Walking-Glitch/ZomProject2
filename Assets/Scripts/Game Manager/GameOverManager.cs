@@ -178,6 +178,9 @@ public class GameOverManager : MonoBehaviour
 
     private void SetPlayerAlive(bool alive)
     {
+        // close build mode before its state stops updating, or the preview stays floating
+        if (!alive) gameManager.PlayerGameObject.GetComponent<ActionStateManager>().CancelBuild();
+
         SetPlayerControls(alive);
 
         if (playerController != null) playerController.enabled = alive;

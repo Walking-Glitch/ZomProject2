@@ -10,6 +10,13 @@ public class Structure : MonoBehaviour, IAttackable
     public delegate void AllStructuresDestroyed();
     public static event AllStructuresDestroyed OnAllStructuresDestroyed;
 
+    // HUD warnings
+    public static event System.Action<Structure> OnStructureDamaged;
+    public static event System.Action<Structure> OnStructureDestroyed;
+
+    [Tooltip("Time.time of the last hit (runtime). The HUD flashes the cabin's bar while it's being hit.")]
+    public float LastDamagedTime = -100f;
+
     [Tooltip("Cabin health. Zombies march to the nearest cabin and hit it for their Attack Damage (10) per swing.")]
     public int MaxHealth = 2000;
     [Tooltip("Current health (runtime). Editing it does not kill; only damage triggers death.")]
@@ -60,16 +67,23 @@ public class Structure : MonoBehaviour, IAttackable
 
         Health -= amount;
         Health = Mathf.Clamp(Health, 0, MaxHealth);
+        LastDamagedTime = Time.time;
 
         if (Health <= 0)
         {
             Death();
+        }
+        else
+        {
+            OnStructureDamaged?.Invoke(this);
         }
     }
 
     public void Death()
     {
         TargetCleanup.RemoveAndRefreshGraph(gameObject, false);
+
+        OnStructureDestroyed?.Invoke(this);
 
         if (Active.Count == 0)
         {

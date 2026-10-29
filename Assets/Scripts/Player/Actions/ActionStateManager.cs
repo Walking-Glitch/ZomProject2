@@ -245,8 +245,22 @@ namespace Assets.Scripts.Player.Actions
             CurrentState?.OnFire(this);
         }
 
+        public bool IsBuilding => CurrentState == Build;
+
+        // drops the preview and leaves build mode, e.g. when the player dies mid-build
+        public void CancelBuild()
+        {
+            if (CurrentState != Build) return;
+
+            gameManager.BuildManager.DestroyPreview();
+            SwitchState(Default);
+        }
+
         private void OnInteractPerformed(InputAction.CallbackContext context)
         {
+            // E rotates the build preview, so it can't double as the truck interact while building
+            if (CurrentState == Build) return;
+
             //Debug.Log("E pressed");
             if (gameManager.PlayerStats.isInInteractableRange)
             {

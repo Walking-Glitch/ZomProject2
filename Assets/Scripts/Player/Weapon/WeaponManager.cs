@@ -91,6 +91,7 @@ namespace Assets.Scripts.Player.Weapon
         // toggle firing mode
         [Tooltip("Semi-auto (one shot per click) instead of full-auto. Toggled in game with the fire-mode key.")]
         [SerializeField] private bool semiAuto;
+        public bool IsSemiAuto => semiAuto;
         private bool isFiring = false;
 
 

@@ -60,6 +60,23 @@ public class EconomyManager : MonoBehaviour
         gameManager.UIManager.UpdateMoneyUI(CurrentMoney);
     }
 
+    public bool CanAfford(SpawnRequirements cost)
+    {
+        return Generators >= cost.GeneratorCost
+            && FuelBarrels >= cost.FuelBarrelCost
+            && SpareParts >= cost.SparePartsCost;
+    }
+
+    // generators are spent like the other resources: each build uses up the ones it needs
+    public void SpendBuildCost(SpawnRequirements cost)
+    {
+        if (cost == null) return;
+
+        Generators -= cost.GeneratorCost;
+        FuelBarrels -= cost.FuelBarrelCost;
+        SpareParts -= cost.SparePartsCost;
+    }
+
     public void AddTurretToEconomyManager(GameObject turret)
     {
         if (turret == null)

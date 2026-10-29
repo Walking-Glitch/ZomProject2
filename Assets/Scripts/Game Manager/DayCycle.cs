@@ -111,6 +111,30 @@ public class DayCycle : MonoBehaviour
         timeText.text = timeString;
     }
 
+    // real seconds until night falls (during the day) or dawn breaks (at night), for the HUD
+    public float SecondsUntilPhaseChange()
+    {
+        float currentHour = timeOfDay * 24f;
+        float hoursLeft;
+        float speed;
+
+        if (IsNightTime)
+        {
+            hoursLeft = currentHour >= nightStartHour ? 24f - currentHour + dayStartHour : dayStartHour - currentHour;
+            speed = nightSpeedMultiplier;
+        }
+        else
+        {
+            hoursLeft = nightStartHour - currentHour;
+            speed = daySpeedMultiplier;
+        }
+
+        if (speed <= 0f) return 0f;
+
+        // timeOfDay advances by deltaTime / dayDuration * speed (a full day = 1)
+        return Mathf.Max(0f, hoursLeft / 24f * dayDuration / speed);
+    }
+
     private bool DetermineIfNightTime(float currentHour)
     {
         return currentHour < dayStartHour || currentHour >= nightStartHour;

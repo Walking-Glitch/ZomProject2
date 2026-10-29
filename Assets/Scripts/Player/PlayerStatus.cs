@@ -19,6 +19,8 @@ namespace Assets.Scripts.Player
         private GameManager gameManager;
         private float invulnerableUntil;
 
+        public bool IsInvulnerable => Time.time < invulnerableUntil;
+
         //torso light 
         public Light TorsoLight;
 

@@ -146,8 +146,22 @@ public class ZombieStateManager : MonoBehaviour
     // shared scan buffer, zombies update on the main thread one at a time
     private static readonly Collider[] targetScanBuffer = new Collider[256];
 
+    // living zombies on the map (corpses not included), shown on the HUD
+    public static int AliveCount { get; private set; }
+    private bool countedAlive;
+
+    private void MarkAlive(bool alive)
+    {
+        if (alive == countedAlive) return;
+
+        countedAlive = alive;
+        AliveCount += alive ? 1 : -1;
+    }
+
     private void OnEnable()
     {
+        MarkAlive(true);
+
         RollTargetingTraits();
 
         DayCycle.OnNightTimeChanged += NightTimeMode;
@@ -160,6 +174,8 @@ public class ZombieStateManager : MonoBehaviour
     }
     private void OnDisable()
     {
+        MarkAlive(false);
+
         DayCycle.OnNightTimeChanged -= NightTimeMode;
         NightTimeMode(night);
     }
@@ -426,6 +442,7 @@ public class ZombieStateManager : MonoBehaviour
             SetKilledByExplosion(explosion);
             SetKilledByTurret(turret);
             SwitchState(Death);
+            MarkAlive(false);
             OnZombieKilled?.Invoke();
         }
     }

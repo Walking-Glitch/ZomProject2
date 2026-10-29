@@ -40,36 +40,26 @@ public class BuildCanvas : MonoBehaviour
         {
             
             PrefabId.text = spawnRequirements.PrefabName;
-            if (spawnRequirements.FuelBarrelCost == 0) 
-            {
-                FuelBarrels.gameObject.SetActive(false);
-            }
-            else
-            {
-                FuelBarrels.gameObject.SetActive(true);
-                FuelBarrels.text = fuelBarrelPreText + spawnRequirements.FuelBarrelCost + " / " + gameManager.EconomyManager.FuelBarrels;
-            }
 
-            if(spawnRequirements.GeneratorCost == 0)
-            {
-                Generators.gameObject.SetActive (false);
-            }
-            else
-            {
-                Generators.gameObject.SetActive(true);
-                Generators.text = generatorPreText + spawnRequirements.GeneratorCost + " / " + gameManager.EconomyManager.Generators;
-            }
-
-            if (spawnRequirements.SparePartsCost == 0)
-            {
-                SpareParts.gameObject.SetActive(false);
-            }
-            else
-            {
-                SpareParts.gameObject.SetActive(true);
-                SpareParts.text = sparePartsPreText + spawnRequirements.SparePartsCost + " / " + gameManager.EconomyManager.SpareParts;
-            }
-
+            EconomyManager economy = gameManager.EconomyManager;
+            DisplayCost(FuelBarrels, fuelBarrelPreText, spawnRequirements.FuelBarrelCost, economy.FuelBarrels);
+            DisplayCost(Generators, generatorPreText, spawnRequirements.GeneratorCost, economy.Generators);
+            DisplayCost(SpareParts, sparePartsPreText, spawnRequirements.SparePartsCost, economy.SpareParts);
         }
+    }
+
+    // "cost / available", with the line in red when there isn't enough
+    private static void DisplayCost(TextMeshProUGUI label, string preText, int cost, int available)
+    {
+        if (cost == 0)
+        {
+            label.gameObject.SetActive(false);
+            return;
+        }
+
+        label.gameObject.SetActive(true);
+
+        string line = preText + cost + " / " + available;
+        label.text = available >= cost ? line : "<color=#FF5050>" + line + "</color>";
     }
 }

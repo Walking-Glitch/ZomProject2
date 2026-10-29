@@ -3741,6 +3741,7 @@ MonoBehaviour:
   AttackDamage: 10
   Reward: 50
   CorpseDespawnDelay: 3
+  MaxStaggerTime: 3
   alerted: 0
   isCrippled: 0
   LeftLeg:
@@ -3777,6 +3778,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   AttackReach: 1.5
+  AttackTurnSpeed: 240
 --- !u!82 &2608907518788483061
 AudioSource:
   m_ObjectHideFlags: 0

@@ -555,7 +555,7 @@ MonoBehaviour:
   WeaponDamage: 300
   MinWeaponRange: 30
   MaxWeaponRange: 200
-  WeaponFireRate: 20
+  WeaponFireRate: 15
   AimingSpeed: 3.5
   TrackingSpeed: 90
   FireAngleTolerance: 2

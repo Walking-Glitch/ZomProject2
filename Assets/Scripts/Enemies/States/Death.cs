@@ -6,7 +6,10 @@ public class Death : ZombieBaseState
      public override void EnterState(ZombieStateManager zombie)
     {
         zombie.isDead = true;
-        zombie.SetCanMove(false); ;
+        zombie.SetCanMove(false);
+
+        // a pending hit would win over the death transition and play first
+        zombie.anim.ResetTrigger("IsHit");
 
         zombie.zombieAudioSource.Stop();
 

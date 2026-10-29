@@ -71,6 +71,8 @@ public class ZombieStateManager : MonoBehaviour
     public int Reward = 50;
     [Tooltip("Seconds a corpse stays on the ground before the zombie returns to the pool.")]
     public float CorpseDespawnDelay = 3f;
+    [Tooltip("Longest a zombie can stay stopped by a hit before it moves again, in case the hit animation never plays. Normally the animation ends it sooner.")]
+    public float MaxStaggerTime = 3f;
 
     // alerted
     public bool alerted;
@@ -123,6 +125,8 @@ public class ZombieStateManager : MonoBehaviour
     // pathfinding keeps zombies a margin away from obstacles, beyond the small swing triggers
     [Tooltip("How close (m) the zombie must be to a barrier/turret/cabin surface to hit it. Raise if zombies stand next to obstacles without attacking.")]
     public float AttackReach = 1.5f;
+    [Tooltip("How fast (degrees/s) an attacking zombie turns to keep facing its target. 0 = doesn't turn while attacking.")]
+    public float AttackTurnSpeed = 240f;
 
     [HideInInspector] public IAttackable currentTarget;
     private IAttackable attackTarget;
@@ -402,12 +406,15 @@ public class ZombieStateManager : MonoBehaviour
        
         if (health > 0)
         {
-            if (limbName == "torso" || limbName == "belly" && !isDead)
+            // crawlers have no hit animation, so they keep crawling
+            if ((limbName == "torso" || limbName == "belly") && !isCrippled)
             {
                 SwitchState(hurt);
             }
-            else
+            else if (currentState == idle || currentState == roaming)
             {
+                // a hit wakes an idle zombie; one already staggered or attacking carries on,
+                // switching to chasing here let a staggered zombie walk off mid-animation
                 SwitchState(chasing);
             }
         }
@@ -442,6 +449,22 @@ public class ZombieStateManager : MonoBehaviour
         {
             attackTarget.TakeDamage(AttackDamage);
         }
+    }
+
+    // movement (and with it the path's turning) is off while attacking, so turn by hand toward the target
+    public void FaceAttackTarget()
+    {
+        if (attackTarget == null || AttackTurnSpeed <= 0f) return;
+
+        Vector3 position = aiPath.position;
+        Vector3 targetPoint = UsesSwingTriggers(attackTarget) ? attackTarget.GetTransform().position : attackTarget.GetClosestPoint(position);
+
+        Vector3 toTarget = targetPoint - position;
+        toTarget.y = 0f;
+        if (toTarget.sqrMagnitude < 0.0001f) return;
+
+        Quaternion facing = Quaternion.LookRotation(toTarget);
+        aiPath.rotation = Quaternion.RotateTowards(aiPath.rotation, facing, AttackTurnSpeed * Time.deltaTime);
     }
 
     private static bool UsesSwingTriggers(IAttackable target)

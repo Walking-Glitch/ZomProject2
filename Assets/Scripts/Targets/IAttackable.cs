@@ -58,7 +58,12 @@ public static class Targeting
         {
             if (col == null || !col.enabled) continue;
 
-            Vector3 point = col.ClosestPointOnBounds(from);
+            // the box is never farther than the real surface, so a collider whose box is already
+            // farther than the best point so far can be skipped without the more expensive surface check
+            Vector3 boundsPoint = col.ClosestPointOnBounds(from);
+            if ((boundsPoint - from).sqrMagnitude >= closestSqrDistance) continue;
+
+            Vector3 point = ClosestPointOnSurface(col, from, boundsPoint);
             float sqrDistance = (point - from).sqrMagnitude;
 
             if (sqrDistance < closestSqrDistance)
@@ -69,6 +74,30 @@ public static class Targeting
         }
 
         return closest;
+    }
+
+    // exact for boxes, spheres, capsules and convex meshes. Non-convex meshes (barriers, cabins) only offer the
+    // axis-aligned box, which on rotated or spiky models sits meters off the real surface (zombies swung from 5 m away),
+    // so cast toward the model's centre and take the first point of its surface instead
+    private static Vector3 ClosestPointOnSurface(Collider col, Vector3 from, Vector3 boundsPoint)
+    {
+        if (!(col is MeshCollider mesh) || mesh.convex) return col.ClosestPoint(from);
+
+        Bounds bounds = col.bounds;
+        Vector3 toCenter = bounds.center - from;
+        float distance = toCenter.magnitude;
+
+        if (distance > 0.0001f && col.Raycast(new Ray(from, toCenter / distance), out RaycastHit hit, distance))
+        {
+            // keep the surface's horizontal position but the height nearest to us, as the box did:
+            // the centre of a raised cabin is meters up, and the hit there shouldn't count as out of reach
+            Vector3 point = hit.point;
+            point.y = Mathf.Clamp(from.y, bounds.min.y, bounds.max.y);
+            return point;
+        }
+
+        // no surface between us and the centre: we're inside the mesh (touching), or the cast slipped past a thin part
+        return boundsPoint;
     }
 
     // trigger events need a rigidbody on one side; barriers and cabins have none,

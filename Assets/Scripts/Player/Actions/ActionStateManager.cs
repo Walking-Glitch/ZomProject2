@@ -167,7 +167,6 @@ namespace Assets.Scripts.Player.Actions
                         yield return null;
                     }
 
-                    Debug.Log("Progress reached 0.6f - LeftHandIKConstraint.weight set to 1");
                     yield break;
                 }
 
@@ -218,7 +217,14 @@ namespace Assets.Scripts.Player.Actions
       
         private void OnReloadPerformed(InputAction.CallbackContext context)
         {
-            if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default) SwitchState(Reload);
+            if (AimStateManager.CurrentState == AimStateManager.AimingState && CurrentState == Default && CanReload()) SwitchState(Reload);
+        }
+
+        // only when it would add rounds: not with a full magazine or an empty reserve
+        private bool CanReload()
+        {
+            WeaponAmmo ammo = gameManager.WeaponAmmo;
+            return ammo.currentAmmo < ammo.clipSize && ammo.extraAmmo > 0;
         }
 
         private void OnThrowGrenadePerformed(InputAction.CallbackContext context)

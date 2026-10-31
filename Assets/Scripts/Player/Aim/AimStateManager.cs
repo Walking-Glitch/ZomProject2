@@ -29,7 +29,12 @@ public class AimStateManager : MonoBehaviour
     // camera aim
     public Transform aimPos;
     public Transform laserPos;
+    [Tooltip("What the crosshair aim point can land on: ground, scenery, defenses and zombies. Not the player.")]
     [SerializeField] private LayerMask aimMask;
+    [Tooltip("How far (m) the crosshair ray reaches; aiming at the sky puts the aim point this far out.")]
+    [SerializeField] private float maxAimDistance = 150f;
+    private MeshRenderer aimPosRenderer;
+    private MeshRenderer laserPosRenderer;
     [SerializeField] private LayerMask laserMask;
     [SerializeField] private LayerMask allMask;
 
@@ -98,7 +103,10 @@ public class AimStateManager : MonoBehaviour
         LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
 
         brain = Camera.main.GetComponent<CinemachineBrain>();
-        
+
+        aimPosRenderer = aimPos.GetComponent<MeshRenderer>();
+        laserPosRenderer = laserPos.GetComponent<MeshRenderer>();
+
         Cursor.lockState = CursorLockMode.Locked;
         SwitchState(AimIdleState);
     }
@@ -122,32 +130,26 @@ public class AimStateManager : MonoBehaviour
     {
         if (isTransitioning) return;
 
-        if (actionStateManager.CurrentState == actionStateManager.Reload)
+        if (actionStateManager.CurrentState == actionStateManager.Reload || actionStateManager.CurrentState == actionStateManager.Grenade)
         {
+            // the reload blend re-runs while the animation plays (its hand IK timing relies on it)
+            lastPoseBlend = PoseBlend.None;
             actionStateManager.TransitionToReload();
+            return;
         }
 
-        else if (actionStateManager.CurrentState == actionStateManager.Grenade)
-        {
-            actionStateManager.TransitionToReload();
-        }
+        // hip and aim poses only blend when the target changes, instead of restarting a no-op blend every frame
+        PoseBlend target = CurrentState == AimingState ? PoseBlend.Shooting : PoseBlend.Main;
+        if (target == lastPoseBlend) return;
 
-        else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Grenade)
-        {
-            TransitionFromMainToShootingLayer();
-        }
+        lastPoseBlend = target;
 
-        else if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload)
-        {
-            TransitionFromMainToShootingLayer();
-        }
-
-        else 
-        {
-            TransitionFromShootingToMainLayer();
-        }
-      
+        if (target == PoseBlend.Shooting) TransitionFromMainToShootingLayer();
+        else TransitionFromShootingToMainLayer();
     }
+
+    private enum PoseBlend { None, Main, Shooting }
+    private PoseBlend lastPoseBlend = PoseBlend.None;
 
     public void TransitionFromShootingToMainLayer()
     {
@@ -242,29 +244,30 @@ public class AimStateManager : MonoBehaviour
         Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
         Ray ray = Camera.main.ScreenPointToRay(screenCentre);
         
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, aimMask))
-        {
-            Vector3 targetPosition = hit.point + recoilOffset; // Apply recoil offset
-            //aimPos.position = Vector3.Lerp(aimPos.position, hit.point, aimSmoothSpeed * Time.deltaTime);
-            aimPos.position = Vector3.Lerp(aimPos.position, targetPosition, aimSmoothSpeed * Time.deltaTime);
-        }
+        // the aim point lands on whatever is under the crosshair (zombies, defenses, scenery, ground); the gun sits
+        // lower than the camera, so aiming past a zombie at the ground behind it made close shots miss high or low
+        Vector3 aimPoint = Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, aimMask, QueryTriggerInteraction.Ignore)
+            ? hit.point
+            : ray.GetPoint(maxAimDistance); // sky: aim far along the crosshair instead of keeping a stale point
+
+        aimPos.position = Vector3.Lerp(aimPos.position, aimPoint + recoilOffset, aimSmoothSpeed * Time.deltaTime);
 
         Vector3 laserDirection = (aimPos.position - weaponLaser.laserOrigin.position);
         Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection );
 
-        if (Physics.Raycast( ray2  , out RaycastHit hit2, Mathf.Infinity, laserMask))
+        if (Physics.Raycast( ray2  , out RaycastHit hit2, Mathf.Infinity, laserMask, QueryTriggerInteraction.Ignore))
         {
-            aimPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            aimPosRenderer.enabled = false;
 
-            laserPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+            laserPosRenderer.enabled = true;
             laserPos.position = hit2.point;
             IsOnTarget = true;
         }
         else
         {
-            aimPos.gameObject.GetComponent<MeshRenderer>().enabled = true;
+            aimPosRenderer.enabled = true;
 
-            laserPos.gameObject.GetComponent<MeshRenderer>().enabled = false;
+            laserPosRenderer.enabled = false;
             IsOnTarget = false;
         }
 

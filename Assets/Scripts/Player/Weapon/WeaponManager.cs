@@ -106,7 +106,6 @@ namespace Assets.Scripts.Player.Weapon
             inputSystemActions.Player.Attack.canceled += OnFireCanceled;
 
 
-            gameManager = GameManager.Instance;
             anim = GetComponent<Animator>();
             aimStateManager = GetComponent<AimStateManager>();
             moveStateManager = GetComponent<MovementStateManager>();
@@ -124,6 +123,9 @@ namespace Assets.Scripts.Player.Weapon
 
         void Start()
         {
+            // read in Start: in Awake the GameManager may not have registered itself yet
+            gameManager = GameManager.Instance;
+
             CollectMuzzleFlashChildObjects(ParentMuzzleVFX);
             //lightIntensity = muzzleFlashLight.intensity;
             //muzzleFlashLight.intensity = 0;
@@ -194,7 +196,7 @@ namespace Assets.Scripts.Player.Weapon
 
             Vector3 direction = TargetTransform.position - GunEndTransform.position;
             if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
-                    shootMask))
+                    shootMask, QueryTriggerInteraction.Ignore))
             {
                 if (hit.collider.CompareTag("Ground")|| hit.collider.CompareTag("Environment"))
                 {
@@ -284,24 +286,19 @@ namespace Assets.Scripts.Player.Weapon
             aimStateManager.AddRecoil();
         }
 
+        // the timer only advances in Update; advancing it here too made full-auto fire twice as fast as Fire Rate
         bool CanFire()
         {
-            fireRateTimer += Time.deltaTime;
             if (fireRateTimer < fireRate) return false;
-            if (gameManager.WeaponAmmo.currentAmmo == 0)
+            if (gameManager.WeaponAmmo.currentAmmo <= 0)
             {
+                // one click per trigger pull (reset on press for semi, on release for full-auto)
                 if (!playedEmptySound)
                 {
                     RifleAudioSource.PlayOneShot(emptyClip);
                     playedEmptySound = true;
                 }
-                else
-                {
-                    if(semiAuto) playedEmptySound = false;
-                }
                 return false;
-
-
             }
             if (moveStateManager.currentState == moveStateManager.Run) return false;            
             if (actionStateManager.CurrentState != actionStateManager.Default) return false;
@@ -317,6 +314,7 @@ namespace Assets.Scripts.Player.Weapon
                 if (semiAuto)
                 {
                     //Debug.Log("Semi-Auto: Quick Press Detected");
+                    playedEmptySound = false;
                     if (CanFire()) Fire();
                 }
                 else
@@ -338,6 +336,9 @@ namespace Assets.Scripts.Player.Weapon
                 isFiring = false;
                 playedEmptySound = false;
             }
+
+            // shots come faster than the firing animation's blend; drop a queued one so it doesn't play after release
+            anim.ResetTrigger("Firing");
         }
 
         private void ToogleFireRate()

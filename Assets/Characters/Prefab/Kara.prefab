@@ -7860,7 +7860,7 @@ MonoBehaviour:
   laserPos: {fileID: 0}
   aimMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 15425
   laserMask:
     serializedVersion: 2
     m_Bits: 7168
@@ -8010,7 +8010,7 @@ MonoBehaviour:
   Mag: {fileID: 7253260778945551770}
   shootMask:
     serializedVersion: 2
-    m_Bits: 6131
+    m_Bits: 5235
   GunEndTransform: {fileID: 6400285457780160504}
   TargetTransform: {fileID: 0}
   weaponTransform: {fileID: 7905550566003219262}
@@ -8029,7 +8029,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0b20be5986260ca4c85502a81e909294, type: 3}
   - {fileID: 8300000, guid: 1310d427592642448a37bc747b103556, type: 3}
   emptyClip: {fileID: 8300000, guid: a80facfad2e06644e9f8947a43a6fdad, type: 3}
-  fireRate: 0.4
+  fireRate: 0.2
   muzzleFlashLight: {fileID: 3906839616583473143}
   maxLightIntensity: 10
   minLightIntensity: 50

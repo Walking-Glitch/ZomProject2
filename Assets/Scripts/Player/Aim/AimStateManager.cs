@@ -33,8 +33,14 @@ public class AimStateManager : MonoBehaviour
     [SerializeField] private LayerMask aimMask;
     [Tooltip("How far (m) the crosshair ray reaches; aiming at the sky puts the aim point this far out.")]
     [SerializeField] private float maxAimDistance = 150f;
-    private MeshRenderer aimPosRenderer;
-    private MeshRenderer laserPosRenderer;
+    [Tooltip("Closest distance (m) from the camera the arms and gun aim at. Higher = less gun swing on close objects, but the laser leaves the muzzle at more of an angle. Bullets and the laser dot still use the real aim point.")]
+    [SerializeField] private float minPoseDistance = 8f;
+    [Tooltip("Laser dot diameter (m). Matches the visible laser beam, so like the beam it looks bigger up close and smaller far away.")]
+    [SerializeField] private float laserDotSize = 0.008f;
+    [Tooltip("Smallest the laser dot gets on screen, as diameter per metre from the camera, so it stays visible at range.")]
+    [SerializeField] private float laserDotMinSizePerMetre = 0.002f;
+    // what's really under the crosshair; bullets, grenades and the laser use this, the rig uses aimPos
+    public Vector3 AimPoint { get; private set; }
     [SerializeField] private LayerMask laserMask;
     [SerializeField] private LayerMask allMask;
 
@@ -76,8 +82,6 @@ public class AimStateManager : MonoBehaviour
     // blend variables
     public float blendDuration; // Duration for blending layers
 
-    // bool to set laser
-    [HideInInspector] public bool IsOnTarget;
     private WeaponLaser weaponLaser;
 
     
@@ -104,8 +108,10 @@ public class AimStateManager : MonoBehaviour
 
         brain = Camera.main.GetComponent<CinemachineBrain>();
 
-        aimPosRenderer = aimPos.GetComponent<MeshRenderer>();
-        laserPosRenderer = laserPos.GetComponent<MeshRenderer>();
+        // aimPos can sit past what the crosshair is on, so only the laser dot is drawn
+        AimPoint = aimPos.position;
+        aimPos.GetComponent<MeshRenderer>().enabled = false;
+        laserPos.GetComponent<MeshRenderer>().enabled = true;
 
         Cursor.lockState = CursorLockMode.Locked;
         SwitchState(AimIdleState);
@@ -250,26 +256,24 @@ public class AimStateManager : MonoBehaviour
             ? hit.point
             : ray.GetPoint(maxAimDistance); // sky: aim far along the crosshair instead of keeping a stale point
 
-        aimPos.position = Vector3.Lerp(aimPos.position, aimPoint + recoilOffset, aimSmoothSpeed * Time.deltaTime);
+        AimPoint = Vector3.Lerp(AimPoint, aimPoint + recoilOffset, aimSmoothSpeed * Time.deltaTime);
 
-        Vector3 laserDirection = (aimPos.position - weaponLaser.laserOrigin.position);
-        Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection );
+        // the rig aims at aimPos: same direction from the camera, but never close enough to swing the gun toward near objects
+        Vector3 fromCamera = AimPoint - ray.origin;
+        aimPos.position = ray.origin + fromCamera.normalized * Mathf.Max(fromCamera.magnitude, minPoseDistance);
 
-        if (Physics.Raycast( ray2  , out RaycastHit hit2, Mathf.Infinity, laserMask, QueryTriggerInteraction.Ignore))
-        {
-            aimPosRenderer.enabled = false;
+        // the laser stops at the aim point, or earlier if something blocks the muzzle's line to it
+        Vector3 laserDirection = AimPoint - weaponLaser.laserOrigin.position;
+        Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection);
+        float laserLength = laserDirection.magnitude + 0.1f;
 
-            laserPosRenderer.enabled = true;
-            laserPos.position = hit2.point;
-            IsOnTarget = true;
-        }
-        else
-        {
-            aimPosRenderer.enabled = true;
+        laserPos.position = Physics.Raycast(ray2, out RaycastHit hit2, laserLength, laserMask, QueryTriggerInteraction.Ignore)
+            ? hit2.point
+            : AimPoint;
 
-            laserPosRenderer.enabled = false;
-            IsOnTarget = false;
-        }
+        // a fixed real-world size like the beam, until distance would shrink it too small to see
+        float laserDotDistance = Vector3.Distance(ray.origin, laserPos.position);
+        laserPos.localScale = Vector3.one * Mathf.Max(laserDotSize, laserDotDistance * laserDotMinSizePerMetre);
 
         // Gradually reduce the recoil offset over time
         recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, recoilDecaySpeed * Time.deltaTime);
@@ -277,44 +281,29 @@ public class AimStateManager : MonoBehaviour
      
     private void CharacterRotation()
     {
-        {
-            Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
-            Ray ray = Camera.main.ScreenPointToRay(screenCentre);
+        // the camera follows the aim state, so looking at the sky can't leave it stuck zoomed in or out
+        bool zoomed = CurrentState != AimIdleState || actionStateManager.CurrentState == actionStateManager.Reload || actionStateManager.CurrentState == actionStateManager.Grenade;
 
-            // rotate when not aiming 
-            if (Physics.Raycast(ray, out RaycastHit hit3, Mathf.Infinity, allMask) && CurrentState == AimIdleState && actionStateManager.CurrentState != actionStateManager.Reload && actionStateManager.CurrentState != actionStateManager.Grenade)
-            {
-                SwitchToDefaultCamera();
+        if (zoomed) SwitchToZoomedCamera();
+        else SwitchToDefaultCamera();
 
-                // Calculate the direction from the character to the hit point
-                direction = hit3.point - transform.position;
-                direction.y = 0; // Keep the rotation on the y-axis only
+        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
+        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
 
-                // Calculate the target rotation and smoothly rotate the character towards it
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5 * Time.deltaTime);
+        // sky: keep turning toward a point far along the crosshair
+        Vector3 lookPoint = Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, allMask)
+            ? hit.point
+            : ray.GetPoint(maxAimDistance);
 
-            }
+        // Calculate the direction from the character to the look point
+        direction = lookPoint - transform.position;
+        direction.y = 0; // Keep the rotation on the y-axis only
 
-            // Rotate the character during aiming 
-            else
-            {
-                if (Physics.Raycast(ray, out RaycastHit hit2, Mathf.Infinity, allMask))
+        if (direction.sqrMagnitude < 0.001f) return;
 
-                {
-                    SwitchToZoomedCamera();
-
-                    // Calculate the direction from the character to the hit point
-                    direction = hit2.point - transform.position;
-                    direction.y = 0; // Keep the rotation on the y-axis only
-
-                    // Calculate the target rotation and smoothly rotate the character towards it
-                    Quaternion targetRotation = Quaternion.LookRotation(direction);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation,
-                        aimRotationSpeed * Time.deltaTime);
-                }
-            }
-        }
+        // Calculate the target rotation and smoothly rotate the character towards it
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, (zoomed ? aimRotationSpeed : 5) * Time.deltaTime);
     }
 
     public void SwitchToDefaultCamera()

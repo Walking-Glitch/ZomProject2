@@ -27,7 +27,6 @@ namespace Assets.Scripts.Player.Weapon
         // ray casting variables 
         [SerializeField] private LayerMask shootMask;
         public Transform GunEndTransform;
-        public Transform TargetTransform;
 
         // position variables
         public Transform weaponTransform;
@@ -194,7 +193,7 @@ namespace Assets.Scripts.Player.Weapon
             gameManager.WeaponAmmo.currentAmmo--;
             TriggerMuzzleFlash();
 
-            Vector3 direction = TargetTransform.position - GunEndTransform.position;
+            Vector3 direction = aimStateManager.AimPoint - GunEndTransform.position;
             if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
                     shootMask, QueryTriggerInteraction.Ignore))
             {

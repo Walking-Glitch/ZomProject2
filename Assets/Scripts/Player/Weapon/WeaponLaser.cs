@@ -3,7 +3,6 @@ using UnityEngine;
 public class WeaponLaser : MonoBehaviour
 {
     public Transform laserOrigin;
-    public Transform laseroffTarget;
     public Transform laseronTarget;
     public float range;
 
@@ -24,7 +23,7 @@ public class WeaponLaser : MonoBehaviour
         laserLine.enabled = false;
     }
  
-    public void DisplayLaser(bool isOnTargert)
+    public void DisplayLaser()
     {
         CheckAnimationProgress(); 
 
@@ -32,7 +31,7 @@ public class WeaponLaser : MonoBehaviour
         {
             laserLine.enabled = true;
             laserLine.SetPosition(0, laserOrigin.position);
-            laserLine.SetPosition(1, isOnTargert ? laseronTarget.position : laseroffTarget.position);
+            laserLine.SetPosition(1, laseronTarget.position);
         }
     }
 

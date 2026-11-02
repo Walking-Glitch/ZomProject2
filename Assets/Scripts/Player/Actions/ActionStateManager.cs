@@ -192,7 +192,7 @@ namespace Assets.Scripts.Player.Actions
         }
         public void GrenadeToss()
         {
-           Vector3 direction = (WeaponManager.TargetTransform.position - WeaponManager.RightHandTransform.position).normalized;
+           Vector3 direction = (AimStateManager.AimPoint - WeaponManager.RightHandTransform.position).normalized;
             grenadeClone.transform.SetParent(null);
             grenadeClone.GetComponent<Rigidbody>().isKinematic = false;
             grenadeClone.GetComponent<Rigidbody>().AddForce(direction * grenadeThrowForce, ForceMode.Impulse);

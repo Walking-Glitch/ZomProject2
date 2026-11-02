@@ -276,8 +276,13 @@ public class GameOverManager : MonoBehaviour
     private void TeleportPlayer(Vector3 position)
     {
         // a CharacterController overrides transform moves while it's enabled; it's off while dead
+        Vector3 positionDelta = position - gameManager.PlayerGameObject.transform.position;
+
         gameManager.PlayerGameObject.transform.position = position;
         Physics.SyncTransforms();
+
+        AimStateManager aim = gameManager.PlayerGameObject.GetComponentInChildren<AimStateManager>();
+        if (aim != null) aim.NotifyTeleported(positionDelta);
     }
 
     #endregion

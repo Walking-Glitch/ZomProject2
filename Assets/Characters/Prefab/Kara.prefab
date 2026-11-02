@@ -4994,7 +4994,7 @@ MonoBehaviour:
   TiltAxis:
     Value: 0
     Center: 0
-    Range: {x: -20, y: 20}
+    Range: {x: -35, y: 45}
     Wrap: 0
     Recentering:
       Enabled: 0
@@ -11711,7 +11711,7 @@ MonoBehaviour:
   TiltAxis:
     Value: 0
     Center: 0
-    Range: {x: -20, y: 20}
+    Range: {x: -35, y: 45}
     Wrap: 0
     Recentering:
       Enabled: 0

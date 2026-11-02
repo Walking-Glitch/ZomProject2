@@ -19,7 +19,6 @@ public class AimStateManager : MonoBehaviour
 
     // camera rotation
     private Vector2 lookInput;
-    private Vector3 direction;
     [Header("Aim")]
     [Tooltip("How fast the character body turns to face where the camera aims.")]
     [SerializeField] private float aimRotationSpeed;
@@ -42,7 +41,6 @@ public class AimStateManager : MonoBehaviour
     // what's really under the crosshair; bullets, grenades and the laser use this, the rig uses aimPos
     public Vector3 AimPoint { get; private set; }
     [SerializeField] private LayerMask laserMask;
-    [SerializeField] private LayerMask allMask;
 
     // camera zoom
     [Tooltip("How fast the aim point follows the crosshair. Lower = smoother but laggier aim.")]
@@ -73,7 +71,6 @@ public class AimStateManager : MonoBehaviour
     [HideInInspector] public WeaponManager WeaponManager;
 
     // cinemachine references
-    private CinemachineBrain brain;
     public CinemachineCamera DefaultCamera;
     public CinemachineCamera ZoomedCamera;
     public CinemachinePanTilt cineDefaultTilt;
@@ -105,8 +102,6 @@ public class AimStateManager : MonoBehaviour
         actionStateManager = GetComponent<ActionStateManager>();
         movementStateManager = GetComponent<MovementStateManager>();
         LeftHandIKConstraint = GetComponentInChildren<TwoBoneIKConstraint>();
-
-        brain = Camera.main.GetComponent<CinemachineBrain>();
 
         // aimPos can sit past what the crosshair is on, so only the laser dot is drawn
         AimPoint = aimPos.position;
@@ -287,33 +282,42 @@ public class AimStateManager : MonoBehaviour
         if (zoomed) SwitchToZoomedCamera();
         else SwitchToDefaultCamera();
 
-        Vector2 screenCentre = new Vector2(Screen.width / 2, Screen.height / 2);
-        Ray ray = Camera.main.ScreenPointToRay(screenCentre);
+        // Cinemachine keeps resetting the input smoothing of the camera that isn't live, so its axes fall behind: copy them from the live one
+        CinemachinePanTilt liveTilt = zoomed ? cineZoomedTilt : cineDefaultTilt;
+        CinemachinePanTilt standbyTilt = zoomed ? cineDefaultTilt : cineZoomedTilt;
+        standbyTilt.PanAxis.Value = liveTilt.PanAxis.Value;
+        standbyTilt.TiltAxis.Value = liveTilt.TiltAxis.Value;
 
-        // sky: keep turning toward a point far along the crosshair
-        Vector3 lookPoint = Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, allMask)
-            ? hit.point
-            : ray.GetPoint(maxAimDistance);
+        Quaternion cameraYaw = Quaternion.Euler(0, liveTilt.PanAxis.Value, 0);
 
-        // Calculate the direction from the character to the look point
-        direction = lookPoint - transform.position;
-        direction.y = 0; // Keep the rotation on the y-axis only
+        // the cameras sit relative to the holster: facing the view keeps them behind it, instead of swinging around after the body
+        DefaultCamera.Target.TrackingTarget.rotation = cameraYaw;
 
-        if (direction.sqrMagnitude < 0.001f) return;
+        // the body smoothly turns to face the same way as the camera
+        transform.rotation = Quaternion.Slerp(transform.rotation, cameraYaw, (zoomed ? aimRotationSpeed : 5) * Time.deltaTime);
+    }
 
-        // Calculate the target rotation and smoothly rotate the character towards it
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, (zoomed ? aimRotationSpeed : 5) * Time.deltaTime);
+    // call after moving the player instantly, so the cameras jump with it instead of damping across the map
+    public void NotifyTeleported(Vector3 positionDelta)
+    {
+        CinemachineCore.OnTargetObjectWarped(DefaultCamera.Target.TrackingTarget, positionDelta);
+    }
+
+    private void SetLookInputEnabled(bool isEnabled)
+    {
+        foreach (CinemachineCamera cinemachineCamera in new[] { DefaultCamera, ZoomedCamera })
+        {
+            if (cinemachineCamera != null && cinemachineCamera.TryGetComponent(out CinemachineInputAxisController lookInputController))
+            {
+                lookInputController.enabled = isEnabled;
+            }
+        }
     }
 
     public void SwitchToDefaultCamera()
     {
         DefaultCamera.Priority = 10;
         ZoomedCamera.Priority = 5;
-        if (brain.IsBlending)
-        {
-            cineDefaultTilt.PanAxis = cineZoomedTilt.PanAxis;
-        }
     }
 
     public void SwitchToZoomedCamera()
@@ -321,12 +325,6 @@ public class AimStateManager : MonoBehaviour
        
         DefaultCamera.Priority = 5;
         ZoomedCamera.Priority = 10;
-        
-        if (brain.IsBlending)
-        {
-            cineZoomedTilt.PanAxis = cineDefaultTilt.PanAxis;
-        }
-
     }
 
 
@@ -352,11 +350,14 @@ public class AimStateManager : MonoBehaviour
     void OnEnable()
     {
         actionSystem.Enable();
+        SetLookInputEnabled(true);
     }
 
+    // these read input on their own and ignore time scale, so the view would keep turning while dead or on the results screen
     void OnDisable()
     {
         actionSystem.Disable();
+        SetLookInputEnabled(false);
     }
 
 }

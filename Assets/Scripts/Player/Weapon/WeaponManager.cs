@@ -193,8 +193,10 @@ namespace Assets.Scripts.Player.Weapon
             gameManager.WeaponAmmo.currentAmmo--;
             TriggerMuzzleFlash();
 
-            Vector3 direction = aimStateManager.AimPoint - GunEndTransform.position;
-            if (Physics.Raycast(GunEndTransform.position, direction.normalized, out RaycastHit hit, Mathf.Infinity,
+            // starts behind the muzzle: a raycast ignores a collider it starts inside, so a muzzle poking through a wall would shoot through it
+            Vector3 shotStart = aimStateManager.BehindMuzzle(GunEndTransform.position);
+            Vector3 direction = aimStateManager.AimPoint - shotStart;
+            if (Physics.Raycast(shotStart, direction.normalized, out RaycastHit hit, Mathf.Infinity,
                     shootMask, QueryTriggerInteraction.Ignore))
             {
                 if (hit.collider.CompareTag("Ground")|| hit.collider.CompareTag("Environment"))
@@ -299,7 +301,8 @@ namespace Assets.Scripts.Player.Weapon
                 }
                 return false;
             }
-            if (moveStateManager.currentState == moveStateManager.Run) return false;            
+            if (moveStateManager.currentState == moveStateManager.Run) return false;
+            if (aimStateManager.IsGunBlocked) return false;
             if (actionStateManager.CurrentState != actionStateManager.Default) return false;
             if (aimStateManager.CurrentState == aimStateManager.AimingState) return true;
       

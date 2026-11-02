@@ -41,6 +41,22 @@ public class AimStateManager : MonoBehaviour
     // what's really under the crosshair; bullets, grenades and the laser use this, the rig uses aimPos
     public Vector3 AimPoint { get; private set; }
     [SerializeField] private LayerMask laserMask;
+    private MeshRenderer laserPosRenderer;
+
+    [Header("Gun Blocked")]
+    [Tooltip("What makes her lower the gun when it's too close. Zombies and ground aren't included, so she can still shoot what's right in front of her.")]
+    [SerializeField] private LayerMask gunBlockMask = 1 | 1 << 10 | 1 << 13; // Default, Environment, Turret
+    [Tooltip("Height (m) above the feet of the check, about where the gun is held.")]
+    [SerializeField] private float gunCheckHeight = 1.35f;
+    [Tooltip("How far (m) from her centre the gun reaches. Raise it if the barrel still clips into walls, lower it if she lowers the gun too early.")]
+    [SerializeField] private float gunReach = 1f;
+    [Tooltip("Radius (m) of the check around the gun's line.")]
+    [SerializeField] private float gunCheckRadius = 0.1f;
+    [Tooltip("Extra room (m) needed before the gun comes back up, so it doesn't flicker at the edge.")]
+    [SerializeField] private float gunUnblockClearance = 0.15f;
+    [Tooltip("How far (m) behind the muzzle bullets and the laser start, so a muzzle poking through a wall can't shoot through it.")]
+    [SerializeField] private float muzzleBackOffset = 0.8f;
+    public bool IsGunBlocked { get; private set; }
 
     // camera zoom
     [Tooltip("How fast the aim point follows the crosshair. Lower = smoother but laggier aim.")]
@@ -106,7 +122,8 @@ public class AimStateManager : MonoBehaviour
         // aimPos can sit past what the crosshair is on, so only the laser dot is drawn
         AimPoint = aimPos.position;
         aimPos.GetComponent<MeshRenderer>().enabled = false;
-        laserPos.GetComponent<MeshRenderer>().enabled = true;
+        laserPosRenderer = laserPos.GetComponent<MeshRenderer>();
+        laserPosRenderer.enabled = true;
 
         Cursor.lockState = CursorLockMode.Locked;
         SwitchState(AimIdleState);
@@ -115,6 +132,7 @@ public class AimStateManager : MonoBehaviour
     private void Update()
     {
         MoveAimReference();
+        UpdateGunBlocked();
         CharacterRotation();
         CurrentState.UpdateState(this);
         AdjustConstraintWeight();
@@ -140,7 +158,7 @@ public class AimStateManager : MonoBehaviour
         }
 
         // hip and aim poses only blend when the target changes, instead of restarting a no-op blend every frame
-        PoseBlend target = CurrentState == AimingState ? PoseBlend.Shooting : PoseBlend.Main;
+        PoseBlend target = CurrentState == AimingState && !IsGunBlocked ? PoseBlend.Shooting : PoseBlend.Main;
         if (target == lastPoseBlend) return;
 
         lastPoseBlend = target;
@@ -258,8 +276,9 @@ public class AimStateManager : MonoBehaviour
         aimPos.position = ray.origin + fromCamera.normalized * Mathf.Max(fromCamera.magnitude, minPoseDistance);
 
         // the laser stops at the aim point, or earlier if something blocks the muzzle's line to it
-        Vector3 laserDirection = AimPoint - weaponLaser.laserOrigin.position;
-        Ray ray2 = new Ray(weaponLaser.laserOrigin.position, laserDirection);
+        Vector3 laserStart = BehindMuzzle(weaponLaser.laserOrigin.position);
+        Vector3 laserDirection = AimPoint - laserStart;
+        Ray ray2 = new Ray(laserStart, laserDirection);
         float laserLength = laserDirection.magnitude + 0.1f;
 
         laserPos.position = Physics.Raycast(ray2, out RaycastHit hit2, laserLength, laserMask, QueryTriggerInteraction.Ignore)
@@ -274,6 +293,34 @@ public class AimStateManager : MonoBehaviour
         recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, recoilDecaySpeed * Time.deltaTime);
     }
      
+    public Vector3 BehindMuzzle(Vector3 muzzle)
+    {
+        return muzzle - transform.forward * muzzleBackOffset;
+    }
+
+    // lowers the gun when it would go through something. The check ignores the gun's actual position, which moves
+    // as it lowers and would make it flicker up and down. Reload and grenade animations keep their own pose.
+    private void UpdateGunBlocked()
+    {
+        bool blocked = false;
+
+        if (CurrentState == AimingState && actionStateManager.CurrentState != actionStateManager.Reload && actionStateManager.CurrentState != actionStateManager.Grenade)
+        {
+            Vector3 origin = transform.position + Vector3.up * gunCheckHeight;
+            float reach = IsGunBlocked ? gunReach + gunUnblockClearance : gunReach;
+
+            blocked = Physics.SphereCast(origin, gunCheckRadius, (aimPos.position - origin).normalized, out _, reach, gunBlockMask, QueryTriggerInteraction.Ignore);
+        }
+
+        if (blocked == IsGunBlocked) return;
+
+        IsGunBlocked = blocked;
+        laserPosRenderer.enabled = !blocked;
+        anim.SetBool("IsAiming", CurrentState == AimingState && !blocked);
+
+        if (blocked) anim.ResetTrigger("Firing");
+    }
+
     private void CharacterRotation()
     {
         // the camera follows the aim state, so looking at the sky can't leave it stuck zoomed in or out

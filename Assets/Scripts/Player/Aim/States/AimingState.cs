@@ -14,7 +14,11 @@ public class AimingState : AimStateBase
             aimStateManager.SwitchState(aimStateManager.AimIdleState);             
         }
 
-        if ((aimStateManager.actionStateManager.CurrentState == aimStateManager.actionStateManager.Default || aimStateManager.actionStateManager.CurrentState == aimStateManager.actionStateManager.Build) && aimStateManager.movementStateManager.currentState != aimStateManager.movementStateManager.Run)
+        if (aimStateManager.IsGunBlocked)
+        {
+            aimStateManager.WeaponManager.laser.DisableLaser();
+        }
+        else if ((aimStateManager.actionStateManager.CurrentState == aimStateManager.actionStateManager.Default || aimStateManager.actionStateManager.CurrentState == aimStateManager.actionStateManager.Build) && aimStateManager.movementStateManager.currentState != aimStateManager.movementStateManager.Run)
         {
             aimStateManager.WeaponManager.laser.DisplayLaser();
         }
